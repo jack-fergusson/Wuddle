@@ -1,6 +1,9 @@
 const express = require('express');
 const bodyParser = require('body-parser');
 const { MongoClient } = require('mongodb');
+const mongoose = require('mongoose');
+
+const helpers = require('./helpers');
 
 // initialize the application
 const app = express();
@@ -12,64 +15,120 @@ app.set('views', (__dirname + '/views'));
 app.use(bodyParser.urlencoded({extended: true}));
 app.use(express.static("public"));
 
-// Connection URL
-const url = 'mongodb://localhost:27017';
-const client = new MongoClient(url);
-
-// Database Name
-const dbName = 'BingoDB';
+mongoose.connect('mongodb://localhost:27017/BingoDB');
 
 async function main() {
-  // Use connect method to connect to the server
-  await client.connect();
-  console.log('Connected successfully to server');
-  const db = client.db(dbName);
-  const collection = db.collection('Rooms');
+  
 
-  // the following code examples can be pasted here...
-  const insertResult = await collection.insertMany([{ a: 1 }, { a: 2 }, { a: 3 }]);
-  console.log('Inserted documents =>', insertResult);
+  // const roomInstance = new Room();
+  // roomInstance.ID = helpers.makeID(6);
+  // console.log(roomInstance);
+  // await roomInstance.save();
 
-  return 'done.';
+  // await Room.find({}, 'ID').exec()
+  //   .then(function(results) {
+  //     console.log(results);
+
+  //     let roomIDs = [];
+  //     results.forEach((result) => roomIDs.push(result.ID));
+
+  //     console.log(roomIDs);
+  //   })
+  //   .catch(function(err) {
+  //     console.log(err);
+  //   });
 }
 
-main()
-  .then(console.log)
-  .catch(console.error)
-  .finally(() => client.close());
+const Schema = mongoose.Schema;
+// const ObjectId = Schema.ObjectId;
+
+const playerSchema = new Schema({
+  ID: String,
+  DisplayName: String,
+  BoardOrder: [Number],
+  WinCondition: Boolean,
+});
+
+const roomSchema = new Schema ({
+  Name: String,
+  ID: String,
+  Events: [String],
+  Players: [playerSchema],
+});
+
+const Room = mongoose.model(
+  "Room",
+  roomSchema
+);
+
+const Player = mongoose.model(
+  "Player",
+  playerSchema
+);
+
+// main();
+
 
 // root GET request
 app.get('/', (req, res) => {
   res.render("home");
 });
 
-let squares = [];
-let allowedRoomIDs = [];
+app.post('/form', async (req, res) => {
 
-app.post('/form', (req, res) => {
+  // When form is sent, create a new room instance
+  const roomInstance = new Room();
 
-  squares = [];
+  // Create a new 6-letter ID for this specific room
+  roomInstance.ID = helpers.makeID(6);
 
+  let events = [];
+  // Get the events from the 9 squares in form
   for (var i = 1; i <= 9; i++) {
-    squares.push(req.body[i]);
+    events.push(req.body[i]);
   }
+  roomInstance.Events = events;
 
-  allowedRoomIDs.push(req.body.roomID);
+  // Save the room with all attributes.
+  await roomInstance.save();
 
-  res.redirect("/rooms/" + req.body.roomID);
+  res.redirect("/rooms/" + roomInstance.ID);
 });
 
-app.get('/rooms/:roomID', (req, res) => {
-  console.log(req.body);
+app.get('/rooms/:roomID', async (req, res) => {
+  let roomIDs = [];
 
-  if (allowedRoomIDs.includes(req.params.roomID)) {
+  // Get the IDs of all existing rooms to see if the requested URL is valid
+  await Room.find({}, 'ID').exec()
+    .then(function(results) {
+      console.log(results);
+
+      results.forEach((result) => roomIDs.push(result.ID));
+    })
+    .catch(function(err) {
+      console.log(err);
+      res.redirect("/error");
+    }
+  );
+
+  if (roomIDs.includes(req.params.roomID)) {
+    // Query this room's squares from database
+    let squares = [];
+    await Room.find({ ID: req.params.roomID }, 'Events').exec()
+      .then(function(results) {
+        squares = results[0].Events;
+      }
+    );
+    console.log(squares);
+
+    // Render the room with the found roomID and squares.
     res.render("room", { 
       roomID: req.params.roomID,
-      squares: squares
+      squares: squares,
     });
   }
   else {
-    console.log("ERROR: No such room");
+    console.log("ERROR: No such room: " + req.params.roomID);
     res.redirect("/error");
   }
 }); 
