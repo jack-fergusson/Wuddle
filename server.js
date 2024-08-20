@@ -2,8 +2,11 @@ const express = require('express');
 const bodyParser = require('body-parser');
 const { MongoClient } = require('mongodb');
 const mongoose = require('mongoose');
+const cookieParser = require("cookie-parser");
 
 const helpers = require('./helpers');
+
+
 
 // initialize the application
 const app = express();
@@ -14,30 +17,9 @@ app.set('views', (__dirname + '/views'));
 
 app.use(bodyParser.urlencoded({extended: true}));
 app.use(express.static("public"));
+app.use(cookieParser());
 
 mongoose.connect('mongodb://localhost:27017/BingoDB');
-
-async function main() {
-  
-
-  // const roomInstance = new Room();
-  // roomInstance.ID = helpers.makeID(6);
-  // console.log(roomInstance);
-  // await roomInstance.save();
-
-  // await Room.find({}, 'ID').exec()
-  //   .then(function(results) {
-  //     console.log(results);
-
-  //     let roomIDs = [];
-  //     results.forEach((result) => roomIDs.push(result.ID));
-
-  //     console.log(roomIDs);
-  //   })
-  //   .catch(function(err) {
-  //     console.log(err);
-  //   });
-}
 
 const Schema = mongoose.Schema;
 // const ObjectId = Schema.ObjectId;
@@ -66,33 +48,46 @@ const Player = mongoose.model(
   playerSchema
 );
 
-// main();
-
 
 // root GET request
 app.get('/', (req, res) => {
+  res.cookie("roomID", "abc123");
+
+
   res.render("home");
 });
 
 app.post('/form', async (req, res) => {
+  console.log("Cookies: " + req.cookies.roomID);
 
-  // When form is sent, create a new room instance
-  const roomInstance = new Room();
-
-  // Create a new 6-letter ID for this specific room
-  roomInstance.ID = helpers.makeID(6);
-
-  let events = [];
-  // Get the events from the 9 squares in form
-  for (var i = 1; i <= 9; i++) {
-    events.push(req.body[i]);
+  
+  if (roomIDCookie && roomIDCookie != "") {
+    console.log("Oh my got it worked");
+    res.redirect("/rooms/" + roomIDCookie);
   }
-  roomInstance.Events = events;
+  else {
+    // When form is sent, create a new room instance
+    const roomInstance = new Room();
 
-  // Save the room with all attributes.
-  await roomInstance.save();
+    // Create a new 6-letter ID for this specific room
+    roomInstance.ID = helpers.makeID(6);
 
-  res.redirect("/rooms/" + roomInstance.ID);
+    // Create a cookie to associate this browser user with their created room.
+    Cookies.set("roomID", roomInstance.ID, { expires: 1 });
+
+
+    let events = [];
+    // Get the events from the 9 squares in form
+    for (var i = 1; i <= 9; i++) {
+      events.push(req.body[i]);
+    }
+    roomInstance.Events = events;
+
+    // Save the room with all attributes.
+    await roomInstance.save();
+
+    res.redirect("/rooms/" + roomInstance.ID);
+  }
 });
 
 app.get('/rooms/:roomID', async (req, res) => {
