@@ -6,49 +6,53 @@
 </head>
 
 <body>
+        
+    <form class="container" action="/" method="post">
+        <div class="board" id="board">
+            <div class="square">
+                <input type="text" id="1" name="1" value="1">
+            </div>
+            <div class="square">
+                <input type="text" id="2" name="2" value="2">
+            </div>
+            <div class="square">
+                <input type="text" id="3" name="3" value="3">
+            </div>
 
-<form class="container" action="/form" method="post">
-    <div class="board" id="board">
-        <div class="square">
-            <input type="text" id="1" name="1" value="1">
-        </div>
-        <div class="square">
-            <input type="text" id="2" name="2" value="2">
-        </div>
-        <div class="square">
-            <input type="text" id="3" name="3" value="3">
+            <div class="square">
+                <input type="text" id="4" name="4" value="4">
+            </div>
+            <div class="square">
+                <input type="text" id="5" name="5" value="5">
+            </div>
+            <div class="square">
+                <input type="text" id="6" name="6" value="6">
+            </div>
+
+            <div class="square">
+                <input type="text" id="7" name="7" value="7">
+            </div>
+            <div class="square">
+                <input type="text" id="8" name="8" value="8">
+            </div>
+            <div class="square">
+                <input type="text" id="9" name="9" value="9">
+            </div>
         </div>
 
-        <div class="square">
-            <input type="text" id="4" name="4" value="4">
-        </div>
-        <div class="square">
-            <input type="text" id="5" name="5" value="5">
-        </div>
-        <div class="square">
-            <input type="text" id="6" name="6" value="6">
-        </div>
+        <br>
 
-        <div class="square">
-            <input type="text" id="7" name="7" value="7">
-        </div>
-        <div class="square">
-            <input type="text" id="8" name="8" value="8">
-        </div>
-        <div class="square">
-            <input type="text" id="9" name="9" value="9">
-        </div>
-    </div>
+        <input type="text" id="roomID" name="roomID" value="123456">
 
-    <br>
+        <button type="submit">SUBMIT</button>
 
-    <input type="text" id="roomID" name="roomID" value="123456">
+    </form>
 
-    <button type="submit">SUBMIT</button>
-
-</form>
-
-<script src="js/script.js"></script>
-
+    <script src="js/script.js"></script>
+    <script>
+        if (document.cookie.includes("roomID")) {
+            alert("It looks like you already have an ongoing game. Click 'submit' to redirect");
+        }
+    </script>
 </body>
 </html>

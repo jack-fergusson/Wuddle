@@ -6,8 +6,6 @@ const cookieParser = require("cookie-parser");
 
 const helpers = require('./helpers');
 
-
-
 // initialize the application
 const app = express();
 
@@ -51,30 +49,24 @@ const Player = mongoose.model(
 
 // root GET request
 app.get('/', (req, res) => {
-  res.cookie("roomID", "abc123");
-
 
   res.render("home");
 });
 
-app.post('/form', async (req, res) => {
-  console.log("Cookies: " + req.cookies.roomID);
-
-  
-  if (roomIDCookie && roomIDCookie != "") {
-    console.log("Oh my got it worked");
-    res.redirect("/rooms/" + roomIDCookie);
+app.post('/', async (req, res, next) => {
+  if (req.cookies.roomID) {
+    console.log("Oh my got it worked: " + req.cookies.roomID);
+    res.redirect("/rooms/" + req.cookies.roomID);
   }
   else {
+
     // When form is sent, create a new room instance
     const roomInstance = new Room();
 
     // Create a new 6-letter ID for this specific room
-    roomInstance.ID = helpers.makeID(6);
+    roomInstance.ID = helpers.makeID(8);
 
-    // Create a cookie to associate this browser user with their created room.
-    Cookies.set("roomID", roomInstance.ID, { expires: 1 });
-
+    res.cookie("roomID", roomInstance.roomID, {maxAge: 360000}, "/");
 
     let events = [];
     // Get the events from the 9 squares in form
@@ -107,6 +99,7 @@ app.get('/rooms/:roomID', async (req, res) => {
   );
 
   if (roomIDs.includes(req.params.roomID)) {
+    res.cookie("roomID", req.params.roomID, {maxAge: 360000}, "/")
     // Query this room's squares from database
     let squares = [];
     await Room.find({ ID: req.params.roomID }, 'Events').exec()
