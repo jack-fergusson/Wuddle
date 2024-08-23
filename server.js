@@ -1,3 +1,5 @@
+require('dotenv').config();
+
 const express = require('express');
 const bodyParser = require('body-parser');
 const { MongoClient } = require('mongodb');
@@ -95,7 +97,8 @@ app.post('/', async (req, res, next) => {
     // Save the room with all attributes.
     await roomInstance.save();
 
-    res.redirect("/rooms/" + roomInstance.ID);
+    // Route the owner of the room directly to the overview page.
+    res.redirect("/rooms/" + roomInstance.ID + "/boards");
   }
 });
 
@@ -115,7 +118,7 @@ async function checkRoomID(req, res, next) {
   );
 
   if (roomIDs.includes(req.params.roomID)) {
-    console.log("ROOM ID VERIFIED");
+    // console.log("ROOM ID VERIFIED");
     next();
   }
   else {
@@ -124,13 +127,35 @@ async function checkRoomID(req, res, next) {
   }
 }
 
-// Route to the right sub-URL depending on cookie info
-app.get("/rooms/:roomID", checkRoomID, async (req, res) => {
-  if (typeof req.cookies.playerID == String) {
-    res.redirect("/rooms/" + req.params.roomID + "/" + req.cookies.playerID);
-    // res.redirect("/rooms/" + req.params.roomID + "/boards");
+// Check to see if the requested player page matches a player in the DB in the right room
+async function checkPlayerID(req, res, next) {
+  let playerIDs = [];
+
+  await Room.findOne({ ID: req.params.roomID }, 'Players').exec()
+    .then(function(results) {
+      results.Players.forEach((player) => {
+        playerIDs.push(player.ID);
+      }
+    )
+  });
+
+  if (playerIDs.includes(req.params.playerID)) {
+    next();
   }
   else {
+    res.redirect("/error");
+  }
+}
+
+// Route to the right sub-URL depending on cookie info
+app.get("/rooms/:roomID", checkRoomID, async (req, res) => {
+  console.log(req.cookies.playerID);
+  if (typeof req.cookies.playerID != undefined) {
+    // console.log("PLAYER COOKIE EXISTS");
+    res.redirect("/rooms/" + req.params.roomID + "/" + req.cookies.playerID);
+  }
+  else {
+    // console.log("NO COOKIE, SIGN UP");
     res.redirect("/rooms/" + req.params.roomID + "/signup");
   }
 });
@@ -163,8 +188,6 @@ app.get("/rooms/:roomID/signup", checkRoomID, (req, res) => {
 
 // A user joins the game
 app.post("/rooms/:roomID/signup", async (req, res) => {
-  console.log(req.body.displayName);
-  console.log(req.params.roomID);
 
   const playerInstance = new Player();
 
@@ -189,16 +212,28 @@ app.post("/rooms/:roomID/signup", async (req, res) => {
   res.redirect("/rooms/" + req.params.roomID + "/" + playerInstance.ID);
 });
 
-app.get("/rooms/:roomID/:playerID", checkRoomID, async (req, res) => {
-  console.log("Made it to the player page");
-  console.log(req.cookies.playerID);
-  res.render("player");
+app.get("/rooms/:roomID/:playerID", checkRoomID, checkPlayerID, async (req, res) => {
+  const room = await Room.findOne({ ID: req.params.roomID });
+
+  // Search for the requested player in the room's players list
+  var currentPlayer;
+  room.Players.forEach((player) => {
+    if (player.ID == req.params.playerID) {
+      currentPlayer = player;
+    }
+  });
+
+  // Pass along the player's info to the ejs page
+  res.render("player", {
+    Events: room.Events,
+    Player: currentPlayer,
+  });
 });
 
 app.get('/error', (req, res) => {
   res.render("error");
 });
 
-server.listen(3000, () => {
+server.listen(3000, process.env.IP, () => {
   console.log('listening on port 3000')
 });
