@@ -1,21 +1,74 @@
 <!DOCTYPE html>
-<html lang="en">
+<html>
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Document</title>
+    <!-- FOR WHATEVER REASON when using dynamic routes, you need a / at the start of the CSS link -->
+    <link href="/css/styles.css" rel="stylesheet">
+    <title>Bingo! With Friends</title>
 </head>
+
 <body>
-    <h1>Hello world!</h1>
+    <div class="container">
 
-    <h2><%= roomID %></h2>
+        <h2>Welcome to Room <%= roomID %></h2>
 
-    <%= squares[0] %>
+        <div class="board" id="board">
+            <div class="square">
+                <div>
+                    <%= squares[0] %>
+                </div>
+            </div>
+            <div class="square">
+                <div>
+                    <%= squares[1] %>
+                </div>
+            </div>
+            <div class="square">
+                <div>
+                    <%= squares[2] %>
+                </div>
+            </div>
 
-    <h2 id="cookie">hello</h2>
+            <div class="square">
+                <div>
+                    <%= squares[3] %>
+                </div>
+            </div>
+            <div class="square">
+                <div>
+                    <%= squares[4] %>
+                </div>
+            </div>
+            <div class="square">
+                <div>
+                    <%= squares[5] %>
+                </div>
+            </div>
 
+            <div class="square">
+                <div>
+                    <%= squares[6] %>
+                </div>
+            </div>
+            <div class="square">
+                <div>
+                    <%= squares[7] %>
+                </div>
+            </div>
+            <div class="square">
+                <div>
+                    <%= squares[8] %>
+                </div>
+            </div>
+        </div>
+
+        <br>
+    </div>
+
+    <script src="http://localhost:3000/socket.io/socket.io.js"></script>
     <script>
-        document.getElementById("cookie").innerHTML = document.cookie;
+        var socket = io();
+        
+        socket.emit('room ID', '<%= roomID %>');
     </script>
 
 </body>
