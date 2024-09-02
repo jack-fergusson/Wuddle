@@ -69,13 +69,17 @@ io.on("connection", (socket) => {
     socket.join(ID);
     console.log("A user joined room " + ID);
     console.log(socket.rooms);
-  })
+  });
+
+  socket.on('player name', (Name) => {
+    console.log("Player", Name, "has joined the room.");
+  });
 
 });
 
 app.post('/', async (req, res, next) => {
   if (req.cookies.roomID) {
-    res.redirect("/rooms/" + req.cookies.roomID);
+    res.redirect("/rooms/" + req.cookies.roomID + "/boards");
   }
   else {
 
@@ -113,6 +117,7 @@ async function checkRoomID(req, res, next) {
     })
     .catch(function(err) {
       console.log(err);
+      alert("Could not query db");
       res.redirect("/error");
     }
   );
@@ -122,7 +127,7 @@ async function checkRoomID(req, res, next) {
     next();
   }
   else {
-    console.log("ERROR: No such room: " + req.params.roomID);
+    alert("ERROR: No such room: " + req.params.roomID);
     res.redirect("/error");
   }
 }
@@ -140,18 +145,19 @@ async function checkPlayerID(req, res, next) {
   });
 
   if (playerIDs.includes(req.params.playerID)) {
+    // Good to go!
     next();
   }
   else {
+    console.log("Error. No such player: ", req.params.playerID);
     res.redirect("/error");
   }
 }
 
 // Route to the right sub-URL depending on cookie info
 app.get("/rooms/:roomID", checkRoomID, async (req, res) => {
-  console.log(req.cookies.playerID);
-  if (typeof req.cookies.playerID != undefined) {
-    // console.log("PLAYER COOKIE EXISTS");
+  if (req.cookies.playerID) {
+    console.log("PLAYER COOKIE EXISTS: ", req.cookies.playerID);
     res.redirect("/rooms/" + req.params.roomID + "/" + req.cookies.playerID);
   }
   else {
@@ -176,6 +182,7 @@ app.get('/rooms/:roomID/boards', checkRoomID, async (req, res) => {
   // Render the room with the found roomID and squares.
   res.render("room", { 
     roomID: req.params.roomID,
+    IP: process.env.IP,
     squares: squares,
   });
 }); 
@@ -223,10 +230,14 @@ app.get("/rooms/:roomID/:playerID", checkRoomID, checkPlayerID, async (req, res)
     }
   });
 
+  console.log(currentPlayer);
+
   // Pass along the player's info to the ejs page
   res.render("player", {
     Events: room.Events,
     Player: currentPlayer,
+    roomID: req.params.roomID,
+    IP: process.env.IP,
   });
 });
 
@@ -234,6 +245,12 @@ app.get('/error', (req, res) => {
   res.render("error");
 });
 
+// Home server
 server.listen(3000, process.env.IP, () => {
   console.log('listening on port 3000')
 });
+
+// Pure localhost
+// server.listen(3000, () => {
+//   console.log('listening on port 3000')
+// });

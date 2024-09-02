@@ -1,1 +1,41 @@
-<h1>Individual player's page</h1>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link href="/css/styles.css" rel="stylesheet">
+    <title><%= Player.DisplayName %></title>
+</head>
+<body>
+    <div class="container">
+
+        <h2>Welcome to <%= Player.DisplayName %>'s Bingo Board</h2>
+
+        <div class="board" id="board">
+            <% for (let i = 0; i < 9; i++) { %>
+                <div class="square">
+                    <div id="<%= i %>">
+                        <!-- Call the function indicating which event occurred -->
+                        <a onClick="eventHappened(<%= i %>)"><%= Events[Player.BoardOrder[i]] %></a>
+                    </div>
+                </div>
+            <% } %>
+        </div>
+    </div>
+
+    <script>
+        function eventHappened(i) {
+            // alert("Hello!" + i);
+            document.getElementById(i).style.backgroundColor= "green";
+        }
+    </script>
+    <script src="http://<%= IP %>:3000/socket.io/socket.io.js"></script>
+    <script>
+        var socket = io();
+        
+        socket.emit('room ID', '<%= roomID %>');
+        socket.emit('player name', '<%= Player.DisplayName %>');
+    </script>
+</body>
+</html>
+
