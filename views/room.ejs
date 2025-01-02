@@ -29,7 +29,6 @@
             <% } %>
         </div>
 
-
         <br>
 
         <div id="qrcode-container"></div>
@@ -44,19 +43,13 @@
 
         var socket = io();
 
-        socket.on("connect", () => {
-
-        });
-
-
         socket.emit('room ID', '<%=roomID%>');
 
         // Register hits from player pages and change color of given square
         socket.on('hit', (playerID, hitIndex, room) => {
-            alert('gottem');
             document.getElementById(playerID).style.backgroundColor = "green";
         });
-    </script>
 
+    </script>
 </body>
 </html>

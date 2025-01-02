@@ -77,14 +77,42 @@ io.on("connection", (socket) => {
   });
 
   // Register hits FROM the client side
-  socket.on('hit', (playerID, hitIndex, room) => {
+  socket.on('hit', async (playerID, hitIndex, roomID) => {
     console.log("Player", playerID, "has completed square", hitIndex, ". Should save to db and update color.");
     console.log(socket.rooms);
 
     // THIS IS IT WOOOOO
-    io.to(room).emit('hit', playerID, hitIndex);
-  });
+    io.to(roomID).emit('hit', playerID, hitIndex);
 
+    // Step 1: Get current Players Array
+    await Room.findOne({ ID : roomID }).exec()
+    .then(async function(room) {
+      // console.log(room.Players);
+
+      // Step 2: Update player's BoardState
+      room.Players.forEach(player => {
+        if (player.ID == playerID) {
+          player.BoardState[hitIndex] = true;
+        }
+      });
+
+      // Step 3: Push back into db
+      await Room.updateOne(
+        { ID : roomID },
+        { Players: room.Players }
+      )
+      .exec()
+      .catch(function(err) {
+        console.log(err);
+      });
+    })
+    .catch(function(err) {
+      console.log(err);
+      alert("Could not query db");
+      res.redirect("/error");
+    });
+
+  });
 });
 
 app.post('/', async (req, res, next) => {
@@ -215,8 +243,6 @@ app.post("/rooms/:roomID/signup", async (req, res) => {
   playerInstance.WinCondition = false;
   playerInstance.BoardState = [false, false, false, false, false, false, false, false, false];
 
-  // playerInstance.save();
-
   // Add the new player to the db using Mongoose syntax, not MongoDB.
   const room = await Room.findOne({ ID: req.params.roomID });
 
@@ -261,11 +287,11 @@ app.get('/error', (req, res) => {
 });
 
 // Home server
-// server.listen(3000, process.env.IP, () => {
-//   console.log('listening on port 3000')
-// });
-
-// Pure localhost
-server.listen(3000, () => {
+server.listen(3000, process.env.IP, () => {
   console.log('listening on port 3000')
 });
+
+// Pure localhost
+// server.listen(3000, () => {
+//   console.log('listening on port 3000')
+// });
