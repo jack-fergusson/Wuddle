@@ -23,18 +23,26 @@
         </div>
     </div>
 
-    <script>
-        function eventHappened(i) {
-            // alert("Hello!" + i);
-            document.getElementById(i).style.backgroundColor= "green";
-        }
-    </script>
     <script src="http://<%= IP %>:3000/socket.io/socket.io.js"></script>
     <script>
-        var socket = io();
-        
-        socket.emit('room ID', '<%= roomID %>');
-        socket.emit('player name', '<%= Player.DisplayName %>');
+        const socket = io();
+
+        // Do this to have this socket join the room on the server side.
+        socket.emit('room ID', '<%=roomID%>');
+
+
+        // ROOMS ARE SERVER SIDE ONLY BUDDY!
+
+        function eventHappened(i) {
+            document.getElementById(i).style.backgroundColor= "green";
+
+            socket.emit('hit', '<%=Player.ID%>', i, '<%=roomID%>');
+        }
+
+        // Register hits from player pages and change color of given square
+        socket.on('hit', (playerID, hitIndex) => {
+            alert('zowie');
+        });
     </script>
 </body>
 </html>

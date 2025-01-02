@@ -11,55 +11,24 @@
 
         <h2>Welcome to Room <%= roomID %></h2>
 
-        <div class="board" id="board">
-            <div class="square">
-                <div>
-                    <%= squares[0] %>
+        <div class="boardGrid">
+            <% for (let i = 0; i < room.Players.length; i++) { %>
+                <div class="boardContainer">
+                    <div class="board" id="<%= room.Players[i].ID %>">
+                        <% for (let j = 0; j < 9; j++) { %>
+                            <div class="square">
+                                <div id="<%= i %> <%= j %>">
+                                    <!-- Individual square of individiual player -->
+                                    Hey
+                                </div>
+                            </div>
+                        <% } %>
+                    </div>
+                    <%= room.Players[i].DisplayName %>
                 </div>
-            </div>
-            <div class="square">
-                <div>
-                    <%= squares[1] %>
-                </div>
-            </div>
-            <div class="square">
-                <div>
-                    <%= squares[2] %>
-                </div>
-            </div>
-
-            <div class="square">
-                <div>
-                    <%= squares[3] %>
-                </div>
-            </div>
-            <div class="square">
-                <div>
-                    <%= squares[4] %>
-                </div>
-            </div>
-            <div class="square">
-                <div>
-                    <%= squares[5] %>
-                </div>
-            </div>
-
-            <div class="square">
-                <div>
-                    <%= squares[6] %>
-                </div>
-            </div>
-            <div class="square">
-                <div>
-                    <%= squares[7] %>
-                </div>
-            </div>
-            <div class="square">
-                <div>
-                    <%= squares[8] %>
-                </div>
-            </div>
+            <% } %>
         </div>
+
 
         <br>
 
@@ -70,11 +39,23 @@
     <script src="http://<%= IP %>:3000/socket.io/socket.io.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js" integrity="sha512-CNgIRecGo7nphbeZ04Sc13ka07paqdeTu0WR1IM4kNcpmBAUSHSQX0FslNhTDadL4O5SAGapGt4FodqL8My0mA==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
     <script>
-        var socket = io();
-        
-        socket.emit('room ID', '<%= roomID %>');
 
-        new QRCode(document.getElementById("qrcode-container"), 'http://<%= process.env.IP %>:3000/rooms/<%= roomID %>');
+        new QRCode(document.getElementById("qrcode-container"), 'http://<%=process.env.IP%>:3000/rooms/<%=roomID%>');
+
+        var socket = io();
+
+        socket.on("connect", () => {
+
+        });
+
+
+        socket.emit('room ID', '<%=roomID%>');
+
+        // Register hits from player pages and change color of given square
+        socket.on('hit', (playerID, hitIndex, room) => {
+            alert('gottem');
+            document.getElementById(playerID).style.backgroundColor = "green";
+        });
     </script>
 
 </body>

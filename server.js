@@ -41,6 +41,7 @@ const roomSchema = new Schema ({
   ID: String,
   Events: [String],
   Players: [playerSchema],
+  socketRoom: String,
 });
 
 const Room = mongoose.model(
@@ -61,6 +62,7 @@ app.get('/', (req, res) => {
 
 io.on("connection", (socket) => {
   console.log('A user connected');
+
   socket.on('disconnect', () => {
     console.log('user disconnected');
   });
@@ -68,11 +70,19 @@ io.on("connection", (socket) => {
   socket.on('room ID', (ID) => {
     socket.join(ID);
     console.log("A user joined room " + ID);
-    console.log(socket.rooms);
   });
 
   socket.on('player name', (Name) => {
     console.log("Player", Name, "has joined the room.");
+  });
+
+  // Register hits FROM the client side
+  socket.on('hit', (playerID, hitIndex, room) => {
+    console.log("Player", playerID, "has completed square", hitIndex, ". Should save to db and update color.");
+    console.log(socket.rooms);
+
+    // THIS IS IT WOOOOO
+    io.to(room).emit('hit', playerID, hitIndex);
   });
 
 });
@@ -171,11 +181,12 @@ app.get('/rooms/:roomID/boards', checkRoomID, async (req, res) => {
   // Refresh the cookie
   res.cookie("roomID", req.params.roomID, {maxAge: 3600000000}, "/");
 
-  let squares = [];
+  let room;
   // Query this room's squares from database
-  await Room.find({ ID: req.params.roomID }, 'Events').exec()
-    .then(function(results) {
-      squares = results[0].Events;
+  await Room.findOne({ ID: req.params.roomID }).exec()
+    .then(function(result) {
+      room = result;
+      console.log(room);
     }
   );
 
@@ -183,7 +194,7 @@ app.get('/rooms/:roomID/boards', checkRoomID, async (req, res) => {
   res.render("room", { 
     roomID: req.params.roomID,
     IP: process.env.IP,
-    squares: squares,
+    room: room,
   });
 }); 
 
@@ -222,6 +233,9 @@ app.post("/rooms/:roomID/signup", async (req, res) => {
 app.get("/rooms/:roomID/:playerID", checkRoomID, checkPlayerID, async (req, res) => {
   const room = await Room.findOne({ ID: req.params.roomID });
 
+  console.log("waaaa");
+  console.log(room.socketRoom);
+
   // Search for the requested player in the room's players list
   var currentPlayer;
   room.Players.forEach((player) => {
@@ -238,6 +252,7 @@ app.get("/rooms/:roomID/:playerID", checkRoomID, checkPlayerID, async (req, res)
     Player: currentPlayer,
     roomID: req.params.roomID,
     IP: process.env.IP,
+    socketRoom: room.socketRoom
   });
 });
 
@@ -246,11 +261,11 @@ app.get('/error', (req, res) => {
 });
 
 // Home server
-server.listen(3000, process.env.IP, () => {
-  console.log('listening on port 3000')
-});
-
-// Pure localhost
-// server.listen(3000, () => {
+// server.listen(3000, process.env.IP, () => {
 //   console.log('listening on port 3000')
 // });
+
+// Pure localhost
+server.listen(3000, () => {
+  console.log('listening on port 3000')
+});
