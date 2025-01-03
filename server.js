@@ -26,7 +26,6 @@ app.use(cookieParser());
 mongoose.connect('mongodb://localhost:27017/BingoDB');
 
 const Schema = mongoose.Schema;
-// const ObjectId = Schema.ObjectId;
 
 const playerSchema = new Schema({
   ID: String,
@@ -41,7 +40,6 @@ const roomSchema = new Schema ({
   ID: String,
   Events: [String],
   Players: [playerSchema],
-  socketRoom: String,
 });
 
 const Room = mongoose.model(
@@ -54,12 +52,12 @@ const Player = mongoose.model(
   playerSchema
 );
 
-
 // root GET request
 app.get('/', (req, res) => {
   res.render("home");
 });
 
+// What to do when a client-side socket connects to io
 io.on("connection", (socket) => {
   console.log('A user connected');
 
@@ -67,9 +65,14 @@ io.on("connection", (socket) => {
     console.log('user disconnected');
   });
 
-  socket.on('room ID', (ID) => {
-    socket.join(ID);
-    console.log("A user joined room " + ID);
+  socket.on('joinRoom', (roomID) => {
+    socket.join(roomID);
+    console.log("A user joined room " + roomID);
+  });
+
+  socket.on('announcePlayer', (roomID, PlayerID, PlayerName) => {
+    console.log("Announced!");
+    io.to(roomID).emit('newPlayer', PlayerID, PlayerName);
   });
 
   socket.on('player name', (Name) => {
@@ -79,7 +82,6 @@ io.on("connection", (socket) => {
   // Register hits FROM the client side
   socket.on('hit', async (playerID, hitIndex, roomID) => {
     console.log("Player", playerID, "has completed square", hitIndex, ". Should save to db and update color.");
-    console.log(socket.rooms);
 
     // THIS IS IT WOOOOO
     io.to(roomID).emit('hit', playerID, hitIndex);
@@ -87,8 +89,6 @@ io.on("connection", (socket) => {
     // Step 1: Get current Players Array
     await Room.findOne({ ID : roomID }).exec()
     .then(async function(room) {
-      // console.log(room.Players);
-
       // Step 2: Update player's BoardState
       room.Players.forEach(player => {
         if (player.ID == playerID) {
@@ -120,7 +120,6 @@ app.post('/', async (req, res, next) => {
     res.redirect("/rooms/" + req.cookies.roomID + "/boards");
   }
   else {
-
     // When form is sent, create a new room instance
     const roomInstance = new Room();
 
@@ -178,18 +177,17 @@ async function checkPlayerID(req, res, next) {
     .then(function(results) {
       results.Players.forEach((player) => {
         playerIDs.push(player.ID);
-      }
-    )
-  });
+      });
 
-  if (playerIDs.includes(req.params.playerID)) {
-    // Good to go!
-    next();
-  }
-  else {
-    console.log("Error. No such player: ", req.params.playerID);
-    res.redirect("/error");
-  }
+      if (playerIDs.includes(req.params.playerID)) {
+        // Good to go!
+        next();
+      }
+      else {
+        console.log("Error. No such player: ", req.params.playerID);
+        res.redirect("/error");
+      }
+  });
 }
 
 // Route to the right sub-URL depending on cookie info
@@ -259,9 +257,6 @@ app.post("/rooms/:roomID/signup", async (req, res) => {
 app.get("/rooms/:roomID/:playerID", checkRoomID, checkPlayerID, async (req, res) => {
   const room = await Room.findOne({ ID: req.params.roomID });
 
-  console.log("waaaa");
-  console.log(room.socketRoom);
-
   // Search for the requested player in the room's players list
   var currentPlayer;
   room.Players.forEach((player) => {
@@ -270,7 +265,7 @@ app.get("/rooms/:roomID/:playerID", checkRoomID, checkPlayerID, async (req, res)
     }
   });
 
-  console.log(currentPlayer);
+  // console.log(currentPlayer);
 
   // Pass along the player's info to the ejs page
   res.render("player", {
@@ -278,7 +273,6 @@ app.get("/rooms/:roomID/:playerID", checkRoomID, checkPlayerID, async (req, res)
     Player: currentPlayer,
     roomID: req.params.roomID,
     IP: process.env.IP,
-    socketRoom: room.socketRoom
   });
 });
 
@@ -290,8 +284,3 @@ app.get('/error', (req, res) => {
 server.listen(3000, process.env.IP, () => {
   console.log('listening on port 3000')
 });
-
-// Pure localhost
-// server.listen(3000, () => {
-//   console.log('listening on port 3000')
-// });

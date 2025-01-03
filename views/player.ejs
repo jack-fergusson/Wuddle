@@ -13,22 +13,32 @@
 
         <div class="board" id="board">
             <% for (let i = 0; i < 9; i++) { %>
-                <div class="square">
-                    <div id="<%= i %>">
-                        <!-- Call the function indicating which event occurred -->
-                        <a onClick="eventHappened(<%= i %>)"><%= Events[Player.BoardOrder[i]] %></a>
+                <% if (Player.BoardState[i] == true ) { %>
+                    <div class="square" id="<%= i %>" style="background-color: green;" onClick="eventHappened(<%= i %>)">
+                        <div>
+                            <h2><%= Events[Player.BoardOrder[i]] %></h2>
+                        </div>
                     </div>
-                </div>
+                <% } else { %>
+                    <div class="square" id="<%= i %>" onClick="eventHappened(<%= i %>)">
+                        <div>
+                            <h2><%= Events[Player.BoardOrder[i]] %></h2>
+                        </div>
+                    </div>  
+                <% } %>
             <% } %>
         </div>
     </div>
 
     <script src="http://<%= IP %>:3000/socket.io/socket.io.js"></script>
     <script>
-        const socket = io();
+        var socket = io();
 
-        // Do this to have this socket join the room on the server side.
-        socket.emit('room ID', '<%=roomID%>');
+        // Do this to have this socket join the room on the server side
+        socket.emit('joinRoom', '<%=roomID%>');
+
+        // Do this to have this socket  announce to room.ejs that a player joined
+        socket.emit('announcePlayer', '<%=roomID%>', '<%=Player.ID%>', '<%=Player.DisplayName%>');
 
         function eventHappened(i) {
             document.getElementById(i).style.backgroundColor= "green";

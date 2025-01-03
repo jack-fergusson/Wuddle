@@ -16,12 +16,19 @@
                 <div class="boardContainer">
                     <div class="board" id="<%= room.Players[i].ID %>">
                         <% for (let j = 0; j < 9; j++) { %>
-                            <div class="square">
-                                <div id="<%= i %> <%= j %>">
-                                    <!-- Individual square of individiual player -->
-                                    Hey
+                            <% if (room.Players[i].BoardState[j] == true ) { %>
+                                <div class="square" id="<%= room.Players[i].ID %><%= j %>" style="background-color: green;">
+                                    <div>
+                                        <!-- Individual square of individiual player -->
+                                    </div>
                                 </div>
-                            </div>
+                            <% } else { %>
+                                <div class="square" id="<%= room.Players[i].ID %><%= j %>">
+                                    <div>
+                                        <!-- Individual square of individiual player -->
+                                    </div>
+                                </div>
+                            <% } %>
                         <% } %>
                     </div>
                     <%= room.Players[i].DisplayName %>
@@ -43,11 +50,17 @@
 
         var socket = io();
 
-        socket.emit('room ID', '<%=roomID%>');
+        socket.emit('joinRoom', '<%=roomID%>');
 
         // Register hits from player pages and change color of given square
         socket.on('hit', (playerID, hitIndex, room) => {
-            document.getElementById(playerID).style.backgroundColor = "green";
+            document.getElementById(playerID + hitIndex).style.backgroundColor = "green";
+        });
+
+        socket.on('newPlayer', (PlayerID, PlayerName) => {
+            // TECHNICALLY works but I would like a more elegant solution at some point...
+            // Some method of adding the new board to the list of boards and having it recognized
+            location.reload();
         });
 
     </script>
