@@ -23,7 +23,7 @@ app.use(bodyParser.urlencoded({extended: true}));
 app.use(express.static(__dirname + '/public'));
 app.use(cookieParser());
 
-mongoose.connect('mongodb://localhost:27017/BingoDB');
+mongoose.connect('mongodb+srv://jackfergusson03:' + process.env.DBPassword + '@bingo.64i2b.mongodb.net/BingoDB');
 
 const Schema = mongoose.Schema;
 
@@ -55,6 +55,7 @@ const Player = mongoose.model(
 // root GET request
 app.get('/', (req, res) => {
   res.render("home");
+  // res.render("header");
 });
 
 // What to do when a client-side socket connects to io
@@ -126,7 +127,7 @@ app.post('/', async (req, res, next) => {
     // Create a new 6-letter ID for this specific room
     roomInstance.ID = helpers.makeID(8);
 
-    res.cookie("roomID", roomInstance.roomID, {maxAge: 3600000000}, "/");
+    res.cookie("roomID", roomInstance.roomID, {maxAge: 3600000000}, "/boards");
 
     let events = [];
     // Get the events from the 9 squares in form

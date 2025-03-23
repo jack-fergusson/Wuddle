@@ -1,10 +1,100 @@
+@font-face {
+  font-family: 'lazy_dog';
+  src: url('../fonts/Lazydog.otf');
+}
+
+html {
+  background-color: #33658A;
+}
+
+body {
+  margin: 0;
+}
+
 .container {
   display: flex;
   flex-direction: column;
   width: 100%;
-  height: 100vh;
+  height: 100%;
   justify-content: center;
   align-items: center;
+}
+
+.entire-container {
+  height: 100vh;
+  justify-content: flex-start;
+}
+
+.page-container {
+  width: 95%;
+  height: 95%;
+  display: grid;
+  grid-template-rows: 10% 90%;
+  grid-template-columns: 100%;
+}
+
+.header-container {
+  display: grid;
+  grid-template-columns: 5% 25% 70%;
+}
+
+.title-container {
+  align-items: start;
+}
+
+.title {
+  text-align: left;
+  height: auto;
+  color: white;
+  margin: 0;
+  font-size: calc(3.5vh + 1vw);
+  font-family: lazy_dog;
+}
+
+.content-container {
+  background-color: white;
+  border-radius: 25px;
+}
+
+.landing-container {
+  display: grid;
+  grid-template-rows: 35% 30% 35%;
+}
+
+.landing-options-container {
+  justify-content: space-between;
+}
+
+.welcome {
+  text-align: center;
+  color: #33658A;
+  margin: 0;
+  font-size: calc(4vh + 2vw);
+  font-family: lazy_dog;
+}
+
+.or {
+  text-align: center;
+  color: #33658A;
+  margin: 0;
+  font-size: calc(3vh + 1vw);
+  font-family: lazy_dog;
+}
+
+.room-button {
+  background-color: #4daa57;
+  border: none;
+  border-radius: 8px;
+  color: white;
+  padding: 2vh 3vh;
+  text-align: center;
+  text-decoration: none;
+  display: inline-block;
+  font-size: calc(1.5vh + 1vw);
+}
+
+.room-code {
+  font-size: calc(2vh + 1vw);
 }
 
 .board {
