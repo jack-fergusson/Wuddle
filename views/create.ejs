@@ -1,0 +1,64 @@
+<%- include('header.ejs') %>
+<div class="container create-container">
+    <div class="container">
+        <h2>
+            Create Your Room
+        </h2>
+    </div>
+    <form class="container new-room-form" action="/create" method="post">
+        <div class="container room-name-input-container">
+            <div>
+                <h3>
+                    Room Name
+                </h3>
+            </div>
+            <div class="spacer"></div>
+            <input type="text" class="room-name-input" name="roomName" size="15" maxlength="22" placeholder="Jim's Golf Trip 2025" required>
+        </div>
+        <div class="container">
+            <div>
+                <h3>
+                    Wuddle happen?
+                </h3>
+            </div>
+            <div class="spacer"></div>
+            <div class="container events-input-container">
+                <div class="board" id="board">
+                    <div class="square">
+                        <input type="text" id="1" name="1" placeholder="Event 1" maxlength="25" required>
+                    </div>
+                    <div class="square">
+                        <input type="text" id="2" name="2" placeholder="Event 2" maxlength="40" required>
+                    </div>
+
+                    <div class="square">
+                        <input type="text" id="3" name="3" placeholder="Event 3" maxlength="40" required>
+                    </div>
+                    <div class="square">
+                        <input type="text" id="4" name="4" placeholder="Event 4" maxlength="40" required>
+                    </div>
+
+                    <div class="square">
+                        <input type="text" id="5" name="5" placeholder="Event 5" maxlength="40" required>
+                    </div>
+                    <div class="square">
+                        <input type="text" id="6" name="6" placeholder="Event 6" maxlength="40" required>
+                    </div>
+
+                    <div class="square">
+                        <input type="text" id="7" name="7" placeholder="Event 7" maxlength="40" required>
+                    </div>
+                    <div class="square">
+                        <input type="text" id="8" name="8" placeholder="Event 8" maxlength="40" required>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="container">
+            <button type="submit" class="room-button">Create Room</button>
+        </div>
+    </form>
+    <div></div>
+</div>
+
+<%- include('footer.ejs') %>

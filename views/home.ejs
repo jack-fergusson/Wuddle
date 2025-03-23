@@ -14,65 +14,23 @@
 <%- include('header.ejs') %>
 <div class="container landing-container">
     <div class="container">
-        <h2 class="welcome">
+        <h2>
             WELCOME
         </h2>
     </div>
     <div class="container landing-options-container">
         <div>
-            <a href="/error"><button class="room-button">Create a Room</button></a>
+            <a href="/create"><button class="room-button">Create a Room</button></a>
         </div>
         <div>
             <h3 class="or">OR</h3>
         </div>
         <div>
             <form class="room-code-form" action="/" method="post">
-                <input type="text" class="room-code" name="room-code" placeholder="Room Code" size="8" maxlength="8" required>
+                <input type="text" class="room-code" name="roomID" placeholder="Room Code" size="8" maxlength="8" required>
                 <button type="submit" class="room-button">Join a Room</button>
             </form>
         </div>
     </div>
-</div>
-                <!-- <form class="container" action="/" method="post">
-                    <div class="board" id="board">
-                        <div class="square">
-                            <input type="text" id="1" name="1" value="1">
-                        </div>
-                        <div class="square">
-                            <input type="text" id="2" name="2" value="2">
-                        </div>
-                        <div class="square">
-                            <input type="text" id="3" name="3" value="3">
-                        </div>
-
-                        <div class="square">
-                            <input type="text" id="4" name="4" value="4">
-                        </div>
-                        <div class="square">
-                            <input type="text" id="5" name="5" value="5">
-                        </div>
-                        <div class="square">
-                            <input type="text" id="6" name="6" value="6">
-                        </div>
-
-                        <div class="square">
-                            <input type="text" id="7" name="7" value="7">
-                        </div>
-                        <div class="square">
-                            <input type="text" id="8" name="8" value="8">
-                        </div>
-                        <div class="square">
-                            <input type="text" id="9" name="9" value="9">
-                        </div>
-                    </div>
-
-                    <br>
-
-                    <button type="submit">Start a New Room!</button>
-                </form> -->
-            </div>
-        </div>
-    </div>
-
-</body>
-</html>
+</div> 
+<%- include('footer.ejs') %>

@@ -30,7 +30,7 @@ const Schema = mongoose.Schema;
 const playerSchema = new Schema({
   ID: String,
   DisplayName: String,
-  BoardOrder: [Number],
+  Events: [String],
   BoardState: [Boolean],
   WinCondition: Boolean,
 });
@@ -55,7 +55,15 @@ const Player = mongoose.model(
 // root GET request
 app.get('/', (req, res) => {
   res.render("home");
-  // res.render("header");
+});
+
+app.post('/', (req, res, next) => {
+  res.redirect("/rooms/" + req.body.roomID);
+});
+
+// root GET request
+app.get('/create', (req, res) => {
+  res.render("create");
 });
 
 // What to do when a client-side socket connects to io
@@ -116,32 +124,32 @@ io.on("connection", (socket) => {
   });
 });
 
-app.post('/', async (req, res, next) => {
-  if (req.cookies.roomID) {
-    res.redirect("/rooms/" + req.cookies.roomID + "/boards");
+app.post('/create', async (req, res, next) => {
+  // console.log("Hiiiiiiiii");
+  // console.log(req.body.roomName);
+
+  // When form is sent, create a new room instance
+  const roomInstance = new Room();
+
+  // Create a new 6-letter ID for this specific room
+  roomInstance.ID = helpers.makeID(8);
+
+  res.cookie("roomID", roomInstance.roomID, {maxAge: 3600000000}, "/boards");
+
+  let events = [];
+  // Get the events from the 8 squares in form
+  for (var i = 1; i <= 8; i++) {
+    events.push(req.body[i]);
   }
-  else {
-    // When form is sent, create a new room instance
-    const roomInstance = new Room();
+  roomInstance.Events = events;
+  roomInstance.Name = req.body.roomName;
 
-    // Create a new 6-letter ID for this specific room
-    roomInstance.ID = helpers.makeID(8);
 
-    res.cookie("roomID", roomInstance.roomID, {maxAge: 3600000000}, "/boards");
+  // Save the room with all attributes.
+  await roomInstance.save();
 
-    let events = [];
-    // Get the events from the 9 squares in form
-    for (var i = 1; i <= 9; i++) {
-      events.push(req.body[i]);
-    }
-    roomInstance.Events = events;
-
-    // Save the room with all attributes.
-    await roomInstance.save();
-
-    // Route the owner of the room directly to the overview page.
-    res.redirect("/rooms/" + roomInstance.ID + "/boards");
-  }
+  // Route the owner of the room to be signed up to play.
+  res.redirect("/rooms/" + roomInstance.ID + "/signup");
 });
 
 // Middleware for checking roomID validity in the URL
@@ -225,26 +233,29 @@ app.get('/rooms/:roomID/boards', checkRoomID, async (req, res) => {
   });
 }); 
 
-app.get("/rooms/:roomID/signup", checkRoomID, (req, res) => {
+app.get("/rooms/:roomID/signup", checkRoomID, async (req, res) => {
+  const room = await Room.findOne({ ID: req.params.roomID });
+
   res.render("signup", {
     roomID: req.params.roomID,
+    room: room,
   });
 });
 
 // A user joins the game
 app.post("/rooms/:roomID/signup", async (req, res) => {
+  const room = await Room.findOne({ ID: req.params.roomID });
+  room.Events.push(req.body.event);
 
   const playerInstance = new Player();
 
   playerInstance.ID = helpers.makeID(6);
   playerInstance.DisplayName = req.body.displayName;
-  playerInstance.BoardOrder = helpers.shuffle([0, 1, 2, 3, 4, 5, 6, 7, 8]);
+  playerInstance.Events = helpers.shuffle(room.Events).slice(0, 9);
   playerInstance.WinCondition = false;
   playerInstance.BoardState = [false, false, false, false, false, false, false, false, false];
 
   // Add the new player to the db using Mongoose syntax, not MongoDB.
-  const room = await Room.findOne({ ID: req.params.roomID });
-
   room.Players.push(playerInstance);
   room.save();
 
@@ -270,7 +281,7 @@ app.get("/rooms/:roomID/:playerID", checkRoomID, checkPlayerID, async (req, res)
 
   // Pass along the player's info to the ejs page
   res.render("player", {
-    Events: room.Events,
+    Room: room,
     Player: currentPlayer,
     roomID: req.params.roomID,
     IP: process.env.IP,

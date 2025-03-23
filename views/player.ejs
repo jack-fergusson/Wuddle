@@ -1,32 +1,26 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link href="/css/styles.css" rel="stylesheet">
-    <title><%= Player.DisplayName %></title>
-</head>
-<body>
-    <div class="container">
-
-        <h2>Welcome to <%= Player.DisplayName %>'s Bingo Board</h2>
-
-        <div class="board" id="board">
-            <% for (let i = 0; i < 9; i++) { %>
-                <% if (Player.BoardState[i] == true ) { %>
-                    <div class="square" id="<%= i %>" style="background-color: green;" onClick="eventHappened(<%= i %>)">
-                        <div>
-                            <h2><%= Events[Player.BoardOrder[i]] %></h2>
+<%- include('header.ejs') %>
+    <div class="container personal-board-container">
+        <div>
+            <h2><%= Room.Name %></h2>
+        </div>
+        <div class="container">
+            <div class="personal-board" id="board">
+                <% for (let i = 0; i < 9; i++) { %>
+                    <% if (Player.BoardState[i] == true ) { %>
+                        <div class="square" id="<%= i %>" style="background-color: #4daa57;" onClick="eventHappened(<%= i %>)">
+                            <div>
+                                <h4><%= Player.Events[i] %></h4>
+                            </div>
                         </div>
-                    </div>
-                <% } else { %>
-                    <div class="square" id="<%= i %>" onClick="eventHappened(<%= i %>)">
-                        <div>
-                            <h2><%= Events[Player.BoardOrder[i]] %></h2>
-                        </div>
-                    </div>  
+                    <% } else { %>
+                        <div class="square" id="<%= i %>" onClick="eventHappened(<%= i %>)">
+                            <div>
+                                <h4><%= Player.Events[i] %></h4>
+                            </div>
+                        </div>  
+                    <% } %>
                 <% } %>
-            <% } %>
+            </div>
         </div>
     </div>
 
@@ -41,11 +35,11 @@
         socket.emit('announcePlayer', '<%=roomID%>', '<%=Player.ID%>', '<%=Player.DisplayName%>');
 
         function eventHappened(i) {
-            document.getElementById(i).style.backgroundColor= "green";
+            document.getElementById(i).style.backgroundColor= "#4daa57";
 
             socket.emit('hit', '<%=Player.ID%>', i, '<%=roomID%>');
         }
     </script>
-</body>
-</html>
 
+
+<%- include('footer.ejs') %>

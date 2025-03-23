@@ -1,7 +1,52 @@
-<h1>Signup</h1>
+<script src="js/script.js"></script>
+<script>
+    if (document.cookie.includes("roomID") && document.cookie.includes("playerID")) {
+        // alert("It looks like you already have an ongoing game. Click 'submit' to redirect");
+        const roomValue = document.cookie
+        .split("; ")
+        .find((row) => row.startsWith("roomID="))
+        ?.split("=")[1];
 
-<form action="/rooms/<%= roomID %>/signup" method="post">
-    <input type="text" id="displayName" name="displayName" placeholder="Display Name">
+        const playerValue = document.cookie
+        .split("; ")
+        .find((row) => row.startsWith("playerID="))
+        ?.split("=")[1];
 
-    <button type="submit">Join Game!</button>
-</form>
+        window.location.replace("/rooms/" + roomValue + "/" + playerValue);
+    }
+</script>
+
+<%- include('header.ejs') %>
+<div class="container create-container">
+    <div class="container">
+        <h2>Welcome to <%= room.Name %></h2>
+    </div>
+    <form class="container" action="/rooms/<%= roomID %>/signup" method="post">
+        <div class="container room-name-input-container">
+            <div>
+                <h3>
+                    Your Name
+                </h3>
+            </div>
+            <div class="spacer"></div>
+            <input type="text" class="room-name-input" size="10" max="15" name="displayName" placeholder="John" required>
+        </div>
+        <div class="container room-name-input-container">
+            <div>
+                <h3>
+                    Wuddle happen?
+                </h3>
+            </div>
+            <div class="spacer"></div>
+            <div>
+                <input type="text" class="room-name-input" id="event" name="event" placeholder="Somebody gets hurt" maxlength="40" required>
+            </div>
+        </div>
+        <div class="container">
+            <button type="submit" class="room-button">Join Game!</button>
+        </div>
+    </form>
+    <div></div>
+</div>
+
+<%- include('footer.ejs') %>
