@@ -1,9 +1,20 @@
 <%- include('header.ejs') %>
     <div class="container personal-board-container">
         <div>
+            <div class="spacer"></div>
             <h2><%= Room.Name %></h2>
+            <div class="spacer"></div>
         </div>
-        <div class="container">
+        <div class="container view-selector">
+            <button class="selected">
+                <a href="/rooms/<%=roomID%>/<%=Player.ID%>">My Board</a>
+            </button>
+            <div class="spacer"></div>
+            <button class="unselected">
+                <a href="/rooms/<%=roomID%>/<%=Player.ID%>/boards">All Boards</a>
+            </button>
+        </div>
+        <div class="container board-grid-container">
             <div class="personal-board" id="board">
                 <% for (let i = 0; i < 9; i++) { %>
                     <% if (Player.BoardState[i] == true ) { %>
@@ -22,6 +33,14 @@
                 <% } %>
             </div>
         </div>
+        <div class="container icons-container">
+            <button class="trash-button" onclick="clearAll()">
+                <img src="/images/trash-can.svg" class="trash">
+            </button>
+            <button class="copy-button" onclick="copyInvite()">
+                <img src="/images/copy.svg" class="copy">
+            </button>
+        </div>
     </div>
 
     <script src="http://<%= IP %>:3000/socket.io/socket.io.js"></script>
@@ -38,6 +57,25 @@
             document.getElementById(i).style.backgroundColor= "#4daa57";
 
             socket.emit('hit', '<%=Player.ID%>', i, '<%=roomID%>');
+        }
+
+        function clearAll() {
+            for (let i=0; i<9; i++) {
+                document.getElementById(i).style.backgroundColor= "white";
+            }
+            socket.emit('clear', '<%=Player.ID%>', '<%=roomID%>');
+        }
+
+        function copyInvite() {
+            navigator.permissions.query({ name: "clipboard-write" }).then((result) => {
+                if (result.state === "granted" || result.state === "prompt") {
+                    navigator.clipboard.writeText("You have been invited to play Wuddle!\n");
+                    alert("Invite copied to clipboard!");
+                }
+                else {
+                    alert("Copy failed.");
+                }
+            });
         }
     </script>
 

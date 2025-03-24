@@ -1,60 +1,62 @@
-<!DOCTYPE html>
-<html>
-<head>
-    <!-- FOR WHATEVER REASON when using dynamic routes, you need a / at the start of the CSS link -->
-    <link href="/css/styles.css" rel="stylesheet">
-    <title>Bingo! With Friends</title>
-</head>
-
-<body>
-    <div class="container">
-
-        <h2>Welcome to Room <%= roomID %></h2>
-
-        <div class="boardGrid">
-            <% for (let i = 0; i < room.Players.length; i++) { %>
-                <div class="boardContainer">
-                    <div class="board" id="<%= room.Players[i].ID %>">
-                        <% for (let j = 0; j < 9; j++) { %>
-                            <% if (room.Players[i].BoardState[j] == true ) { %>
-                                <div class="square" id="<%= room.Players[i].ID %><%= j %>" style="background-color: green;">
-                                    <div>
-                                        <!-- Individual square of individiual player -->
+<%- include('header.ejs') %>
+    <div class="container all-boards-container">
+        <div>
+            <div class="spacer"></div>
+            <h2><%= room.Name %></h2>
+            <div class="spacer"></div>
+        </div>
+        <div class="container view-selector">
+            <button class="unselected">
+                <a href="/rooms/<%=roomID%>/<%=PlayerID%>">My Board</a>
+            </button>
+            <div class="spacer"></div>
+            <button class="selected">
+                <a href="/rooms/<%=roomID%>/<%=PlayerID%>/boards">All Boards</a>
+            </button>
+        </div>
+        <div class="container grid-container">
+            <div class="boardGrid">
+                <% for (let i = 0; i < room.Players.length; i++) { %>
+                    <div class="container blank-board-container">
+                        <div class="blank-board" id="<%= room.Players[i].ID %>">
+                            <% for (let j = 0; j < 9; j++) { %>
+                                <% if (room.Players[i].BoardState[j] == true ) { %>
+                                    <div class="blank-square" id="<%= room.Players[i].ID %><%= j %>" style="background-color: #4daa57;">
+                                        <div>
+                                            <!-- Individual square of individiual player -->
+                                        </div>
                                     </div>
-                                </div>
-                            <% } else { %>
-                                <div class="square" id="<%= room.Players[i].ID %><%= j %>">
-                                    <div>
-                                        <!-- Individual square of individiual player -->
+                                <% } else { %>
+                                    <div class="blank-square" id="<%= room.Players[i].ID %><%= j %>">
+                                        <div>
+                                            <!-- Individual square of individiual player -->
+                                        </div>
                                     </div>
-                                </div>
+                                <% } %>
                             <% } %>
-                        <% } %>
+                        </div>
+                        <h4><%= room.Players[i].DisplayName %></h4>
                     </div>
-                    <%= room.Players[i].DisplayName %>
-                </div>
-            <% } %>
+                <% } %>
+            </div>
+        </div>
+        <div>
+            <div class="spacer"></div>
+            <div class="spacer"></div>
+            <div class="spacer"></div>
+            <div class="spacer"></div>
+            <div class="spacer"></div>
         </div>
 
-        <br>
-
-        <div id="qrcode-container"></div>
-
-    </div>
-
     <script src="http://<%= IP %>:3000/socket.io/socket.io.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js" integrity="sha512-CNgIRecGo7nphbeZ04Sc13ka07paqdeTu0WR1IM4kNcpmBAUSHSQX0FslNhTDadL4O5SAGapGt4FodqL8My0mA==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
     <script>
-
-        new QRCode(document.getElementById("qrcode-container"), 'http://<%=process.env.IP%>:3000/rooms/<%=roomID%>');
-
         var socket = io();
 
         socket.emit('joinRoom', '<%=roomID%>');
 
         // Register hits from player pages and change color of given square
         socket.on('hit', (playerID, hitIndex, room) => {
-            document.getElementById(playerID + hitIndex).style.backgroundColor = "green";
+            document.getElementById(playerID + hitIndex).style.backgroundColor = "#4daa57";
         });
 
         socket.on('newPlayer', (PlayerID, PlayerName) => {
@@ -63,6 +65,11 @@
             location.reload();
         });
 
+        socket.on('clear', (PlayerID) => {
+            for (let i = 0; i < 9; i++) {
+                document.getElementById(PlayerID + i.toString()).style.backgroundColor = "white";
+            }
+        });
     </script>
-</body>
-</html>
+
+<%- include('footer.ejs') %>

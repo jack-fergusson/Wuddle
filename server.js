@@ -122,6 +122,34 @@ io.on("connection", (socket) => {
     });
 
   });
+
+
+  socket.on('clear', async (playerID, roomID) => {
+    console.log("Player", playerID, "has cleared their board. Should save to db and update color.");
+    io.to(roomID).emit('clear', playerID);
+
+    // clear Players Array
+    await Room.findOne({ ID : roomID }).exec()
+    .then(async function(room) {
+      // Step 2: Update player's BoardState
+      room.Players.forEach(player => {
+        if (player.ID == playerID) {
+          for (let i = 0; i < 9; i++) {
+            player.BoardState[i] = false;
+          }
+        }
+      });
+      // Step 3: Push back into db
+      await Room.updateOne(
+        { ID : roomID },
+        { Players: room.Players }
+      )
+      .exec()
+      .catch(function(err) {
+        console.log(err);
+      });
+    });
+  });
 });
 
 app.post('/create', async (req, res, next) => {
@@ -173,7 +201,7 @@ async function checkRoomID(req, res, next) {
     next();
   }
   else {
-    alert("ERROR: No such room: " + req.params.roomID);
+    console.log("ERROR: No such room: " + req.params.roomID);
     res.redirect("/error");
   }
 }
@@ -211,8 +239,7 @@ app.get("/rooms/:roomID", checkRoomID, async (req, res) => {
   }
 });
 
-app.get('/rooms/:roomID/boards', checkRoomID, async (req, res) => {
-
+app.get('/rooms/:roomID/:playerID/boards', checkRoomID, async (req, res) => {
   // Refresh the cookie
   res.cookie("roomID", req.params.roomID, {maxAge: 3600000000}, "/");
 
@@ -227,6 +254,7 @@ app.get('/rooms/:roomID/boards', checkRoomID, async (req, res) => {
 
   // Render the room with the found roomID and squares.
   res.render("room", { 
+    PlayerID: req.params.playerID,
     roomID: req.params.roomID,
     IP: process.env.IP,
     room: room,
