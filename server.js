@@ -35,9 +35,15 @@ const playerSchema = new Schema({
   WinCondition: Boolean,
 });
 
+const chatSchema = new Schema({
+  Player: playerSchema,
+  Text: String,
+});
+
 const roomSchema = new Schema ({
   Name: String,
   ID: String,
+  Chats: [chatSchema],
   Events: [String],
   Players: [playerSchema],
 });
@@ -123,6 +129,44 @@ io.on("connection", (socket) => {
 
   });
 
+  // Register new chat messages FROM the client side
+  socket.on('chat', async (playerID, chatMessage, roomID) => {
+    console.log("Player", playerID, "has sent message", chatMessage, ". Should save to db and message board.");
+    let sender;
+
+    // Step 1: Get current Players Array
+    await Room.findOne({ ID : roomID }).exec()
+    .then(async function(room) {
+      // Step 2: Update player's BoardState
+      room.Players.forEach(player => {
+        if (player.ID == playerID) {
+          // THIS IS IT WOOOOO
+          sender = player;
+          io.to(roomID).emit('chat', sender, chatMessage);
+        }
+      });
+
+      const chatInstance = new Chat();
+      chatInstance.Player = sender;
+      chatInstance.Message = chatMessage;
+
+      // Step 3: Push back into db
+      await Room.updateOne(
+        { ID : roomID },
+        { Chats: room.Chats.push(chatInstance) }
+      )
+      .exec()
+      .catch(function(err) {
+        console.log(err);
+      });
+    })
+    .catch(function(err) {
+      console.log(err);
+      alert("Could not query db");
+      res.redirect("/error");
+    });
+
+  });
 
   socket.on('clear', async (playerID, roomID) => {
     console.log("Player", playerID, "has cleared their board. Should save to db and update color.");
@@ -161,6 +205,7 @@ app.post('/create', async (req, res, next) => {
 
   // Create a new 6-letter ID for this specific room
   roomInstance.ID = helpers.makeID(8);
+  roomInstance.Chats = [];
 
   res.cookie("roomID", roomInstance.roomID, {maxAge: 3600000000}, "/boards");
 
@@ -240,8 +285,9 @@ app.get("/rooms/:roomID", checkRoomID, async (req, res) => {
 });
 
 app.get('/rooms/:roomID/:playerID/boards', checkRoomID, async (req, res) => {
-  // Refresh the cookie
+  // Refresh the cookies
   res.cookie("roomID", req.params.roomID, {maxAge: 3600000000}, "/");
+  res.cookie("playerID", req.params.playerID, {maxAge: 3600000000}, "/");
 
   let room;
   // Query this room's squares from database
@@ -260,6 +306,25 @@ app.get('/rooms/:roomID/:playerID/boards', checkRoomID, async (req, res) => {
     room: room,
   });
 }); 
+
+app.get('/rooms/:roomID/:playerID/chat', checkRoomID, async (req, res) => {
+  let room;
+  // Query this room's squares from database
+  await Room.findOne({ ID: req.params.roomID }).exec()
+    .then(function(result) {
+      room = result;
+      console.log(room);
+    }
+  );
+
+  // Render the room with the found roomID and squares.
+  res.render("chat", { 
+    PlayerID: req.params.playerID,
+    roomID: req.params.roomID,
+    IP: process.env.IP,
+    room: room,
+  });
+});
 
 app.get("/rooms/:roomID/signup", checkRoomID, async (req, res) => {
   const room = await Room.findOne({ ID: req.params.roomID });

@@ -13,6 +13,10 @@
             <button class="unselected">
                 <a href="/rooms/<%=roomID%>/<%=Player.ID%>/boards">All Boards</a>
             </button>
+            <div class="spacer"></div>
+            <button class="unselected">
+                <a href="/rooms/<%=roomID%>/<%=Player.ID%>/chat">Chat</a>
+            </button>
         </div>
         <div class="container board-grid-container">
             <div class="personal-board" id="board">
@@ -41,6 +45,7 @@
                 <img src="/images/copy.svg" class="copy">
             </button>
         </div>
+        <div class="spacer"></div>
     </div>
 
     <script src="http://<%= IP %>:3000/socket.io/socket.io.js"></script>

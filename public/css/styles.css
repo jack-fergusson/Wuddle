@@ -204,17 +204,6 @@ h3 {
   font-family: lazy_dog;
 }
 
-.personal-board-container {
-  display: grid;
-  grid-template-rows: 15% 10% 65% 10%;
-}
-
-/* .all-boards-container {
-  height: auto;
-  display: grid;
-  grid-template-rows: 15% 10% auto 10%;
-} */
-
 .grid-container {
   padding-top: 2vh;
   padding-bottom: 2vh;
@@ -274,6 +263,35 @@ h3 {
 
 .square > input {
   font-size: calc(1vh + 1vw);
+}
+
+.chatbox-container {
+  border-style: solid;
+  border-color: black;
+  min-height: 60vh;
+  max-height: 60vh;
+  width: calc(20vw + 20vh);
+}
+
+.chats-container {
+  height: 100000px;
+  padding: 10px;
+  justify-content: flex-start;
+  align-items: flex-start;
+  flex-direction: column-reverse;
+  background-color: lightgray;
+  overflow: auto;
+}
+
+.chat-container {
+  align-items: start;
+  padding: 2px;
+  height: 5vh;
+  width: calc(15vw + 15vh)
+}
+
+.chat-input {
+  width: calc(20vw + 20vh);
 }
 
 h4 {
