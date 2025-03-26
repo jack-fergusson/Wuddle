@@ -293,7 +293,8 @@ async function checkRoomID(req, res, next) {
   }
   else {
     console.log("ERROR: No such room: " + req.params.roomID);
-    res.redirect("/error");
+    res.clearCookie("roomID");
+    res.redirect("/");
   }
 }
 
@@ -313,7 +314,8 @@ async function checkPlayerID(req, res, next) {
       }
       else {
         console.log("Error. No such player: ", req.params.playerID);
-        res.redirect("/error");
+        res.clearCookie("playerID");
+        res.redirect("/");
       }
   });
 }
