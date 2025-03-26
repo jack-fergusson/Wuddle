@@ -36,7 +36,8 @@ const playerSchema = new Schema({
 });
 
 const chatSchema = new Schema({
-  Player: playerSchema,
+  PlayerID: String,
+  PlayerName: String,
   Text: String,
 });
 
@@ -56,6 +57,11 @@ const Room = mongoose.model(
 const Player = mongoose.model(
   "Player",
   playerSchema
+);
+
+const Chat = mongoose.model(
+  "Chat",
+  chatSchema
 );
 
 // root GET request
@@ -142,20 +148,31 @@ io.on("connection", (socket) => {
         if (player.ID == playerID) {
           // THIS IS IT WOOOOO
           sender = player;
-          io.to(roomID).emit('chat', sender, chatMessage);
         }
       });
 
       const chatInstance = new Chat();
-      chatInstance.Player = sender;
-      chatInstance.Message = chatMessage;
+      chatInstance.PlayerID = sender.ID;
+      chatInstance.PlayerName = sender.DisplayName;
+      chatInstance.Text = chatMessage;
+
+      console.log(chatInstance);
+
+      // add chat to room's chats
+      room.Chats.push(chatInstance)
+      // console.log(room.Chats);
+
 
       // Step 3: Push back into db
       await Room.updateOne(
         { ID : roomID },
-        { Chats: room.Chats.push(chatInstance) }
+        { Chats: room.Chats }
       )
       .exec()
+      .then(function() {
+        // Let all the chat viewers know to refresh
+        io.to(roomID).emit('chat', sender.ID, sender.DisplayName, chatMessage);
+      })
       .catch(function(err) {
         console.log(err);
       });

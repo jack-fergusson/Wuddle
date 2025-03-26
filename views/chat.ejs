@@ -20,109 +20,94 @@
         </div>
         <div class="spacer"></div>
         <div class="container chatbox-container">
-            <div class="container chats-container">
-                <div class="container chat-container">
-                    User1: Hiiiiii
-                </div>
-                <div class="container chat-container">
-                    User2: Heyo
-                </div>
-                <div class="container chat-container">
-                    User1: Hiiiiii
-                </div>
-                <div class="container chat-container">
-                    User2: Heyo
-                </div>
-                <div class="container chat-container">
-                    User1: Hiiiiii
-                </div>
-                <div class="container chat-container">
-                    User2: Heyo
-                </div>
-                <div class="container chat-container">
-                    User1: Hiiiiii
-                </div>
-                <div class="container chat-container">
-                    User2: Heyo
-                </div>
-                <div class="container chat-container">
-                    User1: Hiiiiii
-                </div>
-                <div class="container chat-container">
-                    User2: Heyo
-                </div>
-                <div class="container chat-container">
-                    User1: Hiiiiii
-                </div>
-                <div class="container chat-container">
-                    User2: Heyo
-                </div>
-                <div class="container chat-container">
-                    User1: Hiiiiii
-                </div>
-                <div class="container chat-container">
-                    User2: Heyo
-                </div>
-                <div class="container chat-container">
-                    User1: Hiiiiii
-                </div>
-                <div class="container chat-container">
-                    User2: Heyo
-                </div>
-                <div class="container chat-container">
-                    User1: Hiiiiii
-                </div>
-                <div class="container chat-container">
-                    User2: Heyo
-                </div>
-                <div class="container chat-container">
-                    User1: Hiiiiii
-                </div>
-                <div class="container chat-container">
-                    User2: Heyo
-                </div>
-                <div class="container chat-container">
-                    User1: Hiiiiii
-                </div>
-                <div class="container chat-container">
-                    User2: Heyo
-                </div>
-                <div class="container chat-container">
-                    User1: Hiiiiii
-                </div>
-                <div class="container chat-container">
-                    User2: Heyo
-                </div>
-                <div class="container chat-container">
-                    User1: Hiiiiii
-                </div>
-                <div class="container chat-container">
-                    User2: Heyo
-                </div>
-                <div class="container chat-container">
-                    User1: Hiiiiii
-                </div>
-                <div class="container chat-container">
-                    User2: Heyo
-                </div>
-                <div class="container chat-container">
-                    User1: Hiiiiii
-                </div>
-                <div class="container chat-container">
-                    User2: Heyo
-                </div>
-                <div class="container chat-container">
-                    User1: Hiiiiii
-                </div>
-                <div class="container chat-container">
-                    User2: Heyo
-                </div>
+            <div class="container chats-container" id="chats">
+                <% for (let i = room.Chats.length-1; i >= 0; i--) { %>
+                    <% if (room.Chats[i].PlayerID != PlayerID) { %>
+                        <div class="container chat-container">
+                            <p><span><%=room.Chats[i].PlayerName%>: </span><%=room.Chats[i].Text%></p>
+                        </div>
+                    <% } else { %>
+                        <div class="container chat-container">
+                            <p><span>Me: </span><%=room.Chats[i].Text%></p>
+                        </div>
+                    <% } %>
+                <% } %>
             </div>
-            <div class="chat-input">
-                <input type="text" placeholder="Hello!" size="50">
+            <div class="container chat-input-container">
+                <form id="chat-form">
+                    <input type="text" id="chatbox" placeholder="Hello..." maxlength="40" class="chat-input" autofocus onfocus="this.select()">
+                    <button class="chat-submit" onclick="chatSubmission()"></button>
+                </form>
             </div>
         </div>
         <div class="spacer"></div>
     </div>
+
+
+    <script src="http://<%= IP %>:3000/socket.io/socket.io.js"></script>
+    <script>
+
+        // Prevent page refresh when submitting form
+        var form = document.getElementById("chat-form");
+        function handleForm(event) { event.preventDefault(); } 
+        form.addEventListener('submit', handleForm);
+
+        var socket = io();
+
+        socket.emit('joinRoom', '<%=roomID%>');
+
+        socket.on('chat', (senderID, senderName, chatMessage) => {
+            // Somebody submitted a chat in this room!
+
+            var chats = JSON.parse('<%- JSON.stringify(room.Chats) %>');
+            var meID = JSON.parse('<%- JSON.stringify(PlayerID) %>');
+
+            // If it didn't come from current user, add it to view
+            if (senderID != meID) {
+                let newChat = { 
+                    PlayerID: senderID,
+                    PlayerName: senderName,
+                    Text: chatMessage,
+                };
+
+                addChat(newChat);
+            } else {
+                // alert("I sent it!");
+            }
+        });
+
+        function chatSubmission() {
+            let chat = document.getElementById('chatbox').value;
+
+            // Send info off to update db
+            socket.emit('chat', '<%=PlayerID%>', chat, '<%=roomID%>');
+
+            // var chats = JSON.parse('<%- JSON.stringify(room.Chats) %>');
+            var meID = JSON.parse('<%- JSON.stringify(PlayerID) %>');
+
+            let newChat = {
+                PlayerID: meID,
+                PlayerName: "Me",
+                Text: chat,
+            }
+            
+            addChat(newChat);
+        }
+
+        function addChat(chat) {
+            var meID = JSON.parse('<%- JSON.stringify(PlayerID) %>');
+
+            let existingChats = document.getElementById('chats').innerHTML;
+            let newChat;
+
+            if (chat.PlayerID == meID) {
+                newChat = `<div class="container chat-container"><p><span> Me: </span>${chat.Text}</div>`;
+            } else {
+                newChat = `<div class="container chat-container"><p><span> ${chat.PlayerName}: </span>${chat.Text}</div>`;
+            }
+
+            document.getElementById('chats').innerHTML = newChat + existingChats;
+        }
+    </script>
 
 <%- include('footer.ejs') %>

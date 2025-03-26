@@ -275,23 +275,47 @@ h3 {
 
 .chats-container {
   height: 100000px;
-  padding: 10px;
   justify-content: flex-start;
-  align-items: flex-start;
   flex-direction: column-reverse;
   background-color: lightgray;
+  border-bottom: solid black 3px;
   overflow: auto;
 }
 
 .chat-container {
+  width: 95%;
   align-items: start;
   padding: 2px;
   height: 5vh;
-  width: calc(15vw + 15vh)
+}
+
+.chat-submit {
+  display: none;
+  width: none;
+}
+
+span {
+  font-family: lazy_dog;
+}
+
+.chat-input-container {
+  display: grid;
+  grid-template-columns: 1fr 0fr;
 }
 
 .chat-input {
-  width: calc(20vw + 20vh);
+  width: 98%;
+  border: 0;
+  padding-left: 0;
+  padding-right: 0;
+  padding-bottom: 15px;
+  padding-top: 15px;
+  font-size: calc(1vh + 1vw);
+  border-left: 4px solid white;
+}
+
+textarea:focus, input:focus{
+  outline: none;
 }
 
 h4 {
