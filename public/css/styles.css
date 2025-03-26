@@ -76,7 +76,7 @@ body {
 }
 
 .signup-container {
-  height: 80vh;
+  height: 70vh;
   display: flex;
   justify-content: space-between;
 }
@@ -321,7 +321,7 @@ h3 {
   width: 95%;
   align-items: start;
   padding: 2px;
-  height: 3.5vh;
+  height: 4.5vh;
   border-top: 1px solid gray;
 }
 
