@@ -19,7 +19,7 @@
 <%- include('header.ejs') %>
 <div class="container create-container">
     <div class="container roomName-container">
-        <h2>Welcome to '<%= room.Name %>'</h2>
+        <h2><%= room.Name %></h2>
     </div>
     <form class="container" action="/rooms/<%= roomID %>/signup" method="post">
         <div class="container room-name-input-container">
