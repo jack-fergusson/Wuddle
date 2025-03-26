@@ -1,6 +1,6 @@
 <%- include('header.ejs') %>
     <div class="container all-boards-container">
-        <div>
+        <div class="roomName-container">
             <div class="spacer"></div>
             <h2><%= room.Name %></h2>
             <div class="spacer"></div>
@@ -18,6 +18,7 @@
                 <a href="/rooms/<%=roomID%>/<%=PlayerID%>/chat">Chat</a>
             </button>
         </div>
+        <div class="spacer"></div>
         <div class="container grid-container">
             <div class="boardGrid">
                 <% for (let i = 0; i < room.Players.length; i++) { %>
@@ -39,14 +40,21 @@
                                 <% } %>
                             <% } %>
                         </div>
-                        <h4><%= room.Players[i].DisplayName %></h4>
+                        <div class="nametag">
+                            <img src="/images/crown.svg" class="crown" id="crown<%= room.Players[i].ID %>" <% if (room.Players[i].WinCondition == false ) { %>style="display: none;"<% } %>>
+                            <h4><%= room.Players[i].DisplayName %></h4>
+                        </div>
                     </div>
                 <% } %>
             </div>
         </div>
         <div>
             <div class="spacer"></div>
-            <div class="spacer"></div>
+        </div>
+        <div class="container room-code-container">
+            <h4>Room code: <span><%= room.ID %></span></h4>
+        </div>
+        <div>
             <div class="spacer"></div>
             <div class="spacer"></div>
             <div class="spacer"></div>
@@ -59,8 +67,12 @@
         socket.emit('joinRoom', '<%=roomID%>');
 
         // Register hits from player pages and change color of given square
-        socket.on('hit', (playerID, hitIndex, room) => {
+        socket.on('hit', (playerID, hitIndex, winCondition) => {
             document.getElementById(playerID + hitIndex).style.backgroundColor = "#4daa57";
+
+            if (winCondition) {
+                document.getElementById("crown" + playerID).style.display = "block";
+            }
         });
 
         socket.on('newPlayer', (PlayerID, PlayerName) => {
@@ -73,6 +85,8 @@
             for (let i = 0; i < 9; i++) {
                 document.getElementById(PlayerID + i.toString()).style.backgroundColor = "white";
             }
+
+            document.getElementById("crown" + PlayerID).style.display = "none";
         });
     </script>
 

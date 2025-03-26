@@ -75,6 +75,10 @@ body {
   grid-template-rows: 25% 70% 5%;
 }
 
+.roomName-container {
+  max-width: 95%;
+}
+
 .room-name-input-container {
   flex-direction: row;
 }
@@ -128,6 +132,15 @@ h3 {
   font-size: calc(1.5vh + 1vw);
 }
 
+.room-code-container h4 {
+  padding: 4px;
+  border: 2px solid black;
+}
+
+.room-code-container span {
+  color: #33658A;
+}
+
 .board {
   width: 100%;
   height: 100%;
@@ -142,6 +155,16 @@ h3 {
 
 .trash {
   width: 5vh;
+}
+
+.crown {
+  width: calc(1vh + 1vw);
+  padding-right: 1vw;
+}
+
+.nametag {
+  display: flex;
+  flex-direction: row;
 }
 
 .copy {
@@ -172,7 +195,8 @@ h3 {
   border-color: #33658A;
   border-radius: 8px;
   color: white;
-  padding: 1.5vh 2vh;
+  /* padding: 1.5vh 2vh; */
+  padding: 0;
   text-align: center;
   text-decoration: none;
   display: inline-block;
@@ -183,6 +207,8 @@ h3 {
   color: white;
   text-decoration: none;
   font-family: lazy_dog;
+  display: block;
+  padding: 1.5vh 2vh;
 }
 
 .unselected {
@@ -191,7 +217,7 @@ h3 {
   border-radius: 8px;
   border-color: #33658A;
   color: #33658A;
-  padding: 1.5vh 2vh;
+  padding: 0;
   text-align: center;
   text-decoration: none;
   display: inline-block;
@@ -202,6 +228,8 @@ h3 {
   color: #33658A;
   text-decoration: none;
   font-family: lazy_dog;
+  display: block;
+  padding: 1.5vh 2vh;
 }
 
 .grid-container {
@@ -268,9 +296,9 @@ h3 {
 .chatbox-container {
   border-style: solid;
   border-color: black;
-  min-height: 60vh;
-  max-height: 60vh;
-  width: calc(20vw + 20vh);
+  min-height: 50vh;
+  max-height: 50vh;
+  width: calc(20vw + 30vh);
 }
 
 .chats-container {
@@ -286,7 +314,8 @@ h3 {
   width: 95%;
   align-items: start;
   padding: 2px;
-  height: 5vh;
+  height: 3.5vh;
+  border-top: 1px solid gray;
 }
 
 .chat-submit {
@@ -296,6 +325,12 @@ h3 {
 
 span {
   font-family: lazy_dog;
+  font-size: calc(1.5vh + 0.5vw);
+}
+
+.chat {
+  font-size: calc(1.5vh + 0.5vw);
+  font-family: 'Lucida Sans', 'Lucida Sans Regular', 'Lucida Grande', 'Lucida Sans Unicode', Geneva, Verdana, sans-serif;
 }
 
 .chat-input-container {

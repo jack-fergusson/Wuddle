@@ -1,6 +1,6 @@
 <%- include('header.ejs') %>
     <div class="container personal-board-container">
-        <div>
+        <div class="roomName-container">
             <div class="spacer"></div>
             <h2><%= Room.Name %></h2>
             <div class="spacer"></div>
@@ -18,6 +18,7 @@
                 <a href="/rooms/<%=roomID%>/<%=Player.ID%>/chat">Chat</a>
             </button>
         </div>
+        <div class="spacer"></div>
         <div class="container board-grid-container">
             <div class="personal-board" id="board">
                 <% for (let i = 0; i < 9; i++) { %>
@@ -45,6 +46,7 @@
                 <img src="/images/copy.svg" class="copy">
             </button>
         </div>
+        <div class="spacer"></div>
         <div class="spacer"></div>
     </div>
 
@@ -74,8 +76,8 @@
         function copyInvite() {
             navigator.permissions.query({ name: "clipboard-write" }).then((result) => {
                 if (result.state === "granted" || result.state === "prompt") {
-                    navigator.clipboard.writeText("You have been invited to play Wuddle!\n");
-                    alert("Invite copied to clipboard!");
+                    navigator.clipboard.writeText("<%=Player.Name%> has invited you to play Wuddle!\nFollow this link to join the room '<%= Room.Name %>' play-wuddle.com/rooms/<%= Room.ID %>\nPlease ensure you have cookies turned on!");
+                    // alert("Invite copied to clipboard!");
                 }
                 else {
                     alert("Copy failed.");

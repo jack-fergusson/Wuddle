@@ -104,23 +104,48 @@ io.on("connection", (socket) => {
   socket.on('hit', async (playerID, hitIndex, roomID) => {
     console.log("Player", playerID, "has completed square", hitIndex, ". Should save to db and update color.");
 
-    // THIS IS IT WOOOOO
-    io.to(roomID).emit('hit', playerID, hitIndex);
-
     // Step 1: Get current Players Array
     await Room.findOne({ ID : roomID }).exec()
     .then(async function(room) {
       // Step 2: Update player's BoardState
       room.Players.forEach(player => {
         if (player.ID == playerID) {
+          // Update their boardstate to reflect hit
           player.BoardState[hitIndex] = true;
+
+          console.log(room.Chats);
+
+          // Create an admin chat announcing hit
+          const chatInstance = new Chat();
+          chatInstance.PlayerID = "0";
+          chatInstance.PlayerName = "";
+          chatInstance.Text = `${player.DisplayName} has checked off '${player.Events[hitIndex]}'`;
+
+          // update room's chats
+          room.Chats.push(chatInstance);
+
+          // send out new chat to room
+          io.to(roomID).emit('chat', chatInstance.PlayerID, chatInstance.PlayerName, chatInstance.Text);
+          
+          // Find out if the player has achieved bingo
+          let board = player.BoardState;
+          if (board[0] && board[3] && board[6] || board[1] && board[4] && board[7] || board[2] && board[5] && board[8] || board[0] && board[1] && board[2] || board[3] && board[4] && board[5] || board[6] && board[7] && board[8] || board[0] && board[4] && board[8] || board[2] && board[4] && board[6]) {
+            // update the player's wincondition
+            player.WinCondition = true;
+          }
+
+          // THIS IS IT WOOOOO
+          io.to(roomID).emit('hit', playerID, hitIndex, player.WinCondition);
         }
       });
+
 
       // Step 3: Push back into db
       await Room.updateOne(
         { ID : roomID },
-        { Players: room.Players }
+        { Players: room.Players,
+          Chats: room.Chats
+         }
       )
       .exec()
       .catch(function(err) {
@@ -159,7 +184,7 @@ io.on("connection", (socket) => {
       console.log(chatInstance);
 
       // add chat to room's chats
-      room.Chats.push(chatInstance)
+      room.Chats.push(chatInstance);
       // console.log(room.Chats);
 
 
@@ -197,6 +222,7 @@ io.on("connection", (socket) => {
         if (player.ID == playerID) {
           for (let i = 0; i < 9; i++) {
             player.BoardState[i] = false;
+            player.WinCondition = false;
           }
         }
       });
@@ -311,7 +337,7 @@ app.get('/rooms/:roomID/:playerID/boards', checkRoomID, async (req, res) => {
   await Room.findOne({ ID: req.params.roomID }).exec()
     .then(function(result) {
       room = result;
-      console.log(room);
+      // console.log(room);
     }
   );
 
@@ -330,7 +356,7 @@ app.get('/rooms/:roomID/:playerID/chat', checkRoomID, async (req, res) => {
   await Room.findOne({ ID: req.params.roomID }).exec()
     .then(function(result) {
       room = result;
-      console.log(room);
+      // console.log(room);
     }
   );
 

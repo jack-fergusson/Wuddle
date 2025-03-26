@@ -1,6 +1,6 @@
 <%- include('header.ejs') %>
     <div class="container all-boards-container">
-        <div>
+        <div class="roomName-container">
             <div class="spacer"></div>
             <h2><%= room.Name %></h2>
             <div class="spacer"></div>
@@ -19,37 +19,39 @@
             </button>
         </div>
         <div class="spacer"></div>
+        <div class="spacer"></div>
         <div class="container chatbox-container">
             <div class="container chats-container" id="chats">
                 <% for (let i = room.Chats.length-1; i >= 0; i--) { %>
                     <% if (room.Chats[i].PlayerID != PlayerID) { %>
                         <div class="container chat-container">
-                            <p><span><%=room.Chats[i].PlayerName%>: </span><%=room.Chats[i].Text%></p>
+                            <p class="chat"><% if (room.Chats[i].PlayerID != "0") { %><span><%=room.Chats[i].PlayerName%>: </span><% } %><%=room.Chats[i].Text%></p>
                         </div>
                     <% } else { %>
                         <div class="container chat-container">
-                            <p><span>Me: </span><%=room.Chats[i].Text%></p>
+                            <p class="chat"><span>Me: </span><%=room.Chats[i].Text%></p>
                         </div>
                     <% } %>
                 <% } %>
             </div>
             <div class="container chat-input-container">
                 <form id="chat-form">
-                    <input type="text" id="chatbox" placeholder="Hello..." maxlength="40" class="chat-input" autofocus onfocus="this.select()">
+                    <input type="text" id="chatbox" placeholder="Hello..." maxlength="30" class="chat-input" autofocus onfocus="this.select()">
                     <button class="chat-submit" onclick="chatSubmission()"></button>
                 </form>
             </div>
         </div>
         <div class="spacer"></div>
+        <div class="spacer"></div>
     </div>
-
 
     <script src="http://<%= IP %>:3000/socket.io/socket.io.js"></script>
     <script>
-
-        // Prevent page refresh when submitting form
         var form = document.getElementById("chat-form");
-        function handleForm(event) { event.preventDefault(); } 
+        function handleForm(event) { 
+            event.preventDefault();
+            document.getElementById("chatbox").value = "";
+        } 
         form.addEventListener('submit', handleForm);
 
         var socket = io();
@@ -58,8 +60,9 @@
 
         socket.on('chat', (senderID, senderName, chatMessage) => {
             // Somebody submitted a chat in this room!
+            // alert(chatMessage);
 
-            var chats = JSON.parse('<%- JSON.stringify(room.Chats) %>');
+            // var chats = JSON.parse('<%- JSON.stringify(room.Chats) %>');
             var meID = JSON.parse('<%- JSON.stringify(PlayerID) %>');
 
             // If it didn't come from current user, add it to view
@@ -78,9 +81,7 @@
 
         function chatSubmission() {
             let chat = document.getElementById('chatbox').value;
-
-            // Send info off to update db
-            socket.emit('chat', '<%=PlayerID%>', chat, '<%=roomID%>');
+            // alert(chat);
 
             // var chats = JSON.parse('<%- JSON.stringify(room.Chats) %>');
             var meID = JSON.parse('<%- JSON.stringify(PlayerID) %>');
@@ -91,7 +92,11 @@
                 Text: chat,
             }
             
+            // alert(newChat);
             addChat(newChat);
+
+            // Send info off to update db
+            socket.emit('chat', '<%=PlayerID%>', chat, '<%=roomID%>');
         }
 
         function addChat(chat) {
@@ -101,9 +106,12 @@
             let newChat;
 
             if (chat.PlayerID == meID) {
-                newChat = `<div class="container chat-container"><p><span> Me: </span>${chat.Text}</div>`;
-            } else {
-                newChat = `<div class="container chat-container"><p><span> ${chat.PlayerName}: </span>${chat.Text}</div>`;
+                newChat = `<div class="container chat-container"><p class="chat"><span> Me: </span>${chat.Text}</div>`;
+            } else if (chat.PlayerID == "0") {
+                newChat = `<div class="container chat-container"><p class="chat">${chat.Text}</div>`;
+            }
+            else {
+                newChat = `<div class="container chat-container"><p class="chat"><span> ${chat.PlayerName}: </span>${chat.Text}</div>`;
             }
 
             document.getElementById('chats').innerHTML = newChat + existingChats;
