@@ -7,6 +7,8 @@ const mongoose = require('mongoose');
 const cookieParser = require("cookie-parser");
 const ejs = require("ejs");
 
+const port = process.env.PORT || 3000;
+
 const helpers = require('./helpers');
 
 // initialize the application
@@ -23,7 +25,8 @@ app.use(bodyParser.urlencoded({extended: true}));
 app.use(express.static(__dirname + '/public'));
 app.use(cookieParser());
 
-mongoose.connect('mongodb+srv://jackfergusson03:' + process.env.DBPassword + '@bingo.64i2b.mongodb.net/BingoDB');
+const uri = process.env.MONGODB_URI;
+mongoose.connect(uri);
 
 const Schema = mongoose.Schema;
 
@@ -429,6 +432,11 @@ app.get('/error', (req, res) => {
 });
 
 // Home server
-server.listen(3000, process.env.IP, () => {
-  console.log('listening on port 3000')
+server.listen(port, () => {
+  console.log(`listening on port ${port}`)
 });
+
+
+// server.listen(port, process.env.IP, () => {
+//   console.log(`listening on port ${port}`)
+// });
