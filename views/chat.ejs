@@ -80,6 +80,30 @@
             }
         });
 
+        socket.on('refresh', (senderName) => {
+            var meID = JSON.parse('<%- JSON.stringify(PlayerID) %>');
+
+            let newChat = { 
+                PlayerID: "0",
+                PlayerName: "",
+                Text: `${senderName} has refreshed their board.`,
+            };
+
+            addChat(newChat);
+        });
+
+        socket.on('newPlayer', (playerID, playerName) => {
+            var meID = JSON.parse('<%- JSON.stringify(PlayerID) %>');
+
+            let newChat = { 
+                PlayerID: "0",
+                PlayerName: "",
+                Text: `${playerName} has joined the game!`,
+            };
+
+            addChat(newChat);
+        });
+
         function chatSubmission() {
             let chat = document.getElementById('chatbox').value;
             // alert(chat);

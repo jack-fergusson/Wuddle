@@ -73,7 +73,8 @@ app.get('/', (req, res) => {
 });
 
 app.post('/', (req, res, next) => {
-  res.redirect("/rooms/" + req.body.roomID);
+  roomID = req.body.roomID.toUpperCase();
+  res.redirect("/rooms/" + roomID);
 });
 
 // root GET request
@@ -94,10 +95,10 @@ io.on("connection", (socket) => {
     console.log("A user joined room " + roomID);
   });
 
-  socket.on('announcePlayer', (roomID, PlayerID, PlayerName) => {
-    console.log("Announced!");
-    io.to(roomID).emit('newPlayer', PlayerID, PlayerName);
-  });
+  // socket.on('announcePlayer', (roomID, PlayerID, PlayerName) => {
+  //   console.log("Announced!");
+  //   io.to(roomID).emit('newPlayer', PlayerID, PlayerName);
+  // });
 
   socket.on('player name', (Name) => {
     console.log("Player", Name, "has joined the room.");
@@ -116,7 +117,7 @@ io.on("connection", (socket) => {
           // Update their boardstate to reflect hit
           player.BoardState[hitIndex] = true;
 
-          console.log(room.Chats);
+          // console.log(room.Chats);
 
           // Create an admin chat announcing hit
           const chatInstance = new Chat();
@@ -157,7 +158,7 @@ io.on("connection", (socket) => {
     })
     .catch(function(err) {
       console.log(err);
-      alert("Could not query db");
+      console.log("Could not query db");
       res.redirect("/error");
     });
 
@@ -207,10 +208,72 @@ io.on("connection", (socket) => {
     })
     .catch(function(err) {
       console.log(err);
-      alert("Could not query db");
+      console.log("Could not query db");
       res.redirect("/error");
     });
 
+  });
+
+  // User requested a new board
+  socket.on('refresh', async (playerID, roomID) => {
+    console.log("Player", playerID, "has requested a new board. Should update DB");
+    let sender;
+
+    // Step 1: Get current Players Array
+    await Room.findOne({ ID : roomID }).exec()
+    .then(async function(room) {
+      // Step 2: Update player's BoardState
+      room.Players.forEach(player => {
+        if (player.ID == playerID) {
+          player.Events = helpers.shuffle(room.Events).slice(0, 9);
+          player.WinCondition = false;
+          player.BoardState = [false, false, false, false, false, false, false, false, false];
+          sender = player;
+
+          // Create an admin chat announcing refreh
+          const chatInstance = new Chat();
+          chatInstance.PlayerID = "0";
+          chatInstance.PlayerName = "";
+          chatInstance.Text = `${player.DisplayName} has refreshed their board.`;
+
+          // update room's chats
+          room.Chats.push(chatInstance);
+        }
+      });
+
+
+      // Step 3: Push back into db
+      await Room.updateOne(
+        { ID : roomID },
+        { Players: room.Players },
+      )
+      .exec()
+      .then(function() {
+        // Let chat know they refreshed
+        io.to(roomID).emit('refresh', sender.DisplayName);
+      })
+      .catch(function(err) {
+        console.log(err);
+      });
+
+      // Step 4: Push chat into db
+      await Room.updateOne(
+        { ID : roomID },
+        { Chats: room.Chats },
+      )
+      .exec()
+      .then(function() {
+
+      })
+      .catch(function(err) {
+        console.log(err);
+      });
+    })
+    .catch(function(err) {
+      console.log(err);
+      console.log("Could not query db");
+      res.redirect("/error");
+    });
   });
 
   socket.on('clear', async (playerID, roomID) => {
@@ -282,7 +345,7 @@ async function checkRoomID(req, res, next) {
     })
     .catch(function(err) {
       console.log(err);
-      alert("Could not query db");
+      console.log("Could not query db");
       res.redirect("/error");
     }
   );
@@ -293,8 +356,11 @@ async function checkRoomID(req, res, next) {
   }
   else {
     console.log("ERROR: No such room: " + req.params.roomID);
-    res.clearCookie("roomID");
-    res.redirect("/");
+    if (req.cookies.playerID == req.params.roomID) {
+      res.clearCookie("roomID");
+    } 
+    var string = encodeURIComponent('Invalid Room ID: ' + req.params.roomID);
+    res.redirect("/error?msg=" + string);
   }
 }
 
@@ -314,8 +380,11 @@ async function checkPlayerID(req, res, next) {
       }
       else {
         console.log("Error. No such player: ", req.params.playerID);
-        res.clearCookie("playerID");
-        res.redirect("/");
+        if (req.cookies.playerID == req.params.roomID) {
+          res.clearCookie("playerID");
+        } 
+        var string = encodeURIComponent('Invalid Player ID: ' + req.params.playerID);
+        res.redirect("/error?msg=" + string);
       }
   });
 }
@@ -375,6 +444,11 @@ app.get('/rooms/:roomID/:playerID/chat', checkRoomID, async (req, res) => {
 });
 
 app.get("/rooms/:roomID/signup", checkRoomID, async (req, res) => {
+  if (req.cookies.playerID) {
+    console.log("PLAYER COOKIE EXISTS: ", req.cookies.playerID);
+    res.redirect("/rooms/" + req.params.roomID + "/" + req.cookies.playerID);
+  }
+
   const room = await Room.findOne({ ID: req.params.roomID });
 
   res.render("signup", {
@@ -398,10 +472,21 @@ app.post("/rooms/:roomID/signup", async (req, res) => {
 
   // Add the new player to the db using Mongoose syntax, not MongoDB.
   room.Players.push(playerInstance);
+
+  let chatInstance = new Chat();
+  chatInstance.PlayerID = "0";
+  chatInstance.PlayerName = "";
+  chatInstance.Text = `${req.body.displayName} has joined the room!`;
+
+  room.Chats.push(chatInstance);
+
   room.save();
 
   // Save a cookie to remember this player
   res.cookie("playerID", playerInstance.ID, {maxAge: 3600000000}, "/");
+
+  // Announce to the room that a brand new player has joined
+  io.to(room.ID).emit('newPlayer', playerInstance.ID, playerInstance.DisplayName);
 
   // Redirect them to their personal view.
   res.redirect("/rooms/" + req.params.roomID + "/" + playerInstance.ID);
@@ -418,7 +503,7 @@ app.get("/rooms/:roomID/:playerID", checkRoomID, checkPlayerID, async (req, res)
     }
   });
 
-  // console.log(currentPlayer);
+  console.log(currentPlayer);
 
   // Pass along the player's info to the ejs page
   res.render("player", {
@@ -430,15 +515,23 @@ app.get("/rooms/:roomID/:playerID", checkRoomID, checkPlayerID, async (req, res)
 });
 
 app.get('/error', (req, res) => {
-  res.render("error");
+  var errorString = req.query.msg;
+  console.log(errorString);
+
+  console.log("Room Cookie: " + req.cookies.roomID);
+  console.log("Player Cookie: " + req.cookies.playerID);
+
+  res.render("error", {
+    errorString: errorString
+  });
 });
 
-// Home server
-server.listen(port, () => {
-  console.log(`listening on port ${port}`)
-});
-
-
-// server.listen(port, process.env.IP, () => {
+// Heroku
+// server.listen(port, () => {
 //   console.log(`listening on port ${port}`)
 // });
+
+// Elsewhere
+server.listen(port, process.env.IP, () => {
+  console.log(`listening on port ${port}`)
+});

@@ -126,6 +126,8 @@ h3 {
 
 .room-code {
   font-size: calc(2vh + 1vw);
+  height: calc(2vh + 2vw);
+  text-transform: uppercase;
 }
 
 .room-name-input {
@@ -154,7 +156,7 @@ h3 {
 }
 
 .trash {
-  width: 5vh;
+  width: calc(5vh + 2vw);
 }
 
 .crown {
@@ -168,7 +170,18 @@ h3 {
 }
 
 .copy {
-  width: 5vh;
+  width: calc(5vh + 2vw);
+}
+
+.refresh {
+  width: calc(5vh + 2vw);
+}
+
+.refresh-button {
+  background-color: white;
+  border-style: none;
+  padding: 0;
+  margin: 0;
 }
 
 .trash-button {
@@ -255,8 +268,8 @@ h3 {
   min-height: 40vh;
   display: grid;
   gap: 2px;
-  grid-template-columns: 1fr 1fr 1fr;
-  grid-template-rows: 1fr 1fr 1fr;
+  grid-template-columns: minmax(0, 1fr) minmax(0, 1fr) minmax(0, 1fr);
+  grid-template-rows: minmax(0, 1fr) minmax(0, 1fr) minmax(0, 1fr);
 }
 
 .blank-board {
@@ -314,7 +327,7 @@ h3 {
   width: 95%;
   align-items: start;
   padding: 2px;
-  height: 3.5vh;
+  height: calc(3.5vh + 1vw);
   border-top: 1px solid gray;
 }
 
@@ -356,12 +369,14 @@ textarea:focus, input:focus{
 h4 {
   text-align: center;
   color: black;
-  margin: 0;
+  margin: 2px;
   font-size: calc(1.5vh + 0.5vw);
   font-family: lazy_dog;
+  overflow-wrap: break-word;
 }
 
 .square div {
+  width: 100%;
   text-align: center;
   padding: 10px;
 }

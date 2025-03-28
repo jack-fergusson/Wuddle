@@ -39,11 +39,14 @@
             </div>
         </div>
         <div class="container icons-container">
-            <button class="trash-button" onclick="clearAll()">
+            <button class="trash-button" title="Clear Board" onclick="clearAll()">
                 <img src="/images/trash-can.svg" class="trash">
             </button>
-            <button class="copy-button" onclick="copyInvite()">
+            <button class="copy-button" title="Copy Invitation" onclick="copyInvite()">
                 <img src="/images/copy.svg" class="copy">
+            </button>
+            <button class="refresh-button" title="New Board!" onclick="newBoard()">
+                <img src="/images/refresh.svg" class="refresh">
             </button>
         </div>
         <div class="spacer"></div>
@@ -54,22 +57,34 @@
     <script src="/socket.io/socket.io.js"></script>
     <script>
         var socket = io();
-
-        // Do this to have this socket join the room on the server side
         socket.emit('joinRoom', '<%=roomID%>');
 
-        // Do this to have this socket  announce to room.ejs that a player joined
-        socket.emit('announcePlayer', '<%=roomID%>', '<%=Player.ID%>', '<%=Player.DisplayName%>');
+        var WinCondition = JSON.parse('<%- JSON.stringify(Player.WinCondition) %>');
+        var BoardState = JSON.parse('<%- JSON.stringify(Player.BoardState) %>');
 
         function eventHappened(i) {
+            // alert("Here!");
             document.getElementById(i).style.backgroundColor= "#4daa57";
+            BoardState[i] = true;
+
+            // Check to see if they have won after this hit
+            let board = BoardState;
+            if (board[0] && board[3] && board[6] || board[1] && board[4] && board[7] || board[2] && board[5] && board[8] || board[0] && board[1] && board[2] || board[3] && board[4] && board[5] || board[6] && board[7] && board[8] || board[0] && board[4] && board[8] || board[2] && board[4] && board[6]) {
+                // update the player's wincondition
+                WinCondition = true;
+            } else {
+                WinCondition = false;
+            }
 
             socket.emit('hit', '<%=Player.ID%>', i, '<%=roomID%>');
         }
 
         function clearAll() {
+            WinCondition = false;
+
             for (let i=0; i<9; i++) {
                 document.getElementById(i).style.backgroundColor= "white";
+                BoardState[i] = false;
             }
             socket.emit('clear', '<%=Player.ID%>', '<%=roomID%>');
         }
@@ -85,7 +100,81 @@
                 }
             });
         }
+
+        function newBoard() {
+            if (WinCondition) {
+                socket.emit('refresh', '<%=Player.ID%>', '<%=Room.ID%>');
+                socket.emit('clear', '<%=Player.ID%>', '<%=roomID%>');
+                // alert("New Board!");
+                // TECHNICALLY works but I would like a more elegant solution at some point...
+                location.reload();
+            }
+            else {
+                alert("Must complete a line first!");
+            }
+        }
     </script>
 
 
 <%- include('footer.ejs') %>
+
+<!-- // // Do this to have this socket join the room on the server side
+        // socket.emit('joinRoom', '<%=roomID%>');
+
+        // // Do this to have this socket announce to room.ejs that a new player joined
+        // // socket.emit('announcePlayer', '<%=roomID%>', '<%=Player.ID%>', '<%=Player.DisplayName%>');
+
+        // var Player = '<%=Player%>';
+        // alert(Player.ID);
+
+        // function eventHappened(i) {
+        //     alert("Here!");
+        //     document.getElementById(i).style.backgroundColor= "#4daa57";
+        //     // Player.BoardState[i] = true;
+
+        //     // Check to see if they have won after this hit
+        //     // let board = Player.BoardState;
+        //     // if (board[0] && board[3] && board[6] || board[1] && board[4] && board[7] || board[2] && board[5] && board[8] || board[0] && board[1] && board[2] || board[3] && board[4] && board[5] || board[6] && board[7] && board[8] || board[0] && board[4] && board[8] || board[2] && board[4] && board[6]) {
+        //     //     // update the player's wincondition
+        //     //     Player.WinCondition = true;
+        //     // } else {
+        //     //     Player.WinCondition = false;
+        //     // }
+
+        //     socket.emit('hit', '<%=Player.ID%>', i, '<%=roomID%>');
+        // }
+
+        // function clearAll() {
+        //     Player.WinCondition = false;
+
+        //     for (let i=0; i<9; i++) {
+        //         document.getElementById(i).style.backgroundColor= "white";
+        //         Player.BoardState[i] = false;
+        //     }
+        //     socket.emit('clear', '<%=Player.ID%>', '<%=roomID%>');
+        // }
+
+        // function copyInvite() {
+        //     navigator.permissions.query({ name: "clipboard-write" }).then((result) => {
+        //         if (result.state === "granted" || result.state === "prompt") {
+        //             navigator.clipboard.writeText("<%=Player.Name%> has invited you to play Wuddle!\nFollow this link to join the room '<%= Room.Name %>' https://play-wuddle.com/rooms/<%= Room.ID %>\nPlease ensure you have cookies turned on!");
+        //             // alert("Invite copied to clipboard!");
+        //         }
+        //         else {
+        //             alert("Copy failed.");
+        //         }
+        //     });
+        // }
+
+        // function newBoard() {
+        //     if (Player.WinCondition) {
+        //         socket.emit('refresh', '<%=Player.ID%>', '<%=Room.ID%>');
+        //         socket.emit('clear', '<%=Player.ID%>', '<%=roomID%>');
+        //         // alert("New Board!");
+        //         // TECHNICALLY works but I would like a more elegant solution at some point...
+        //         location.reload();
+        //     }
+        //     else {
+        //         alert("Must complete a line first!");
+        //     }
+        // } -->
