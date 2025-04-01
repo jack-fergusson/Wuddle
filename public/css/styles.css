@@ -69,6 +69,25 @@ body {
   justify-content: space-between;
 }
 
+.my-rooms-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr 1fr;
+  gap: 5px;
+  background-color: white;
+}
+
+.my-rooms-grid-item {
+  background-color: white;
+}
+
+.my-rooms-grid-item * {
+  background-color: #33658A;
+  color: white;
+  padding: 10px;
+  text-align: center;
+  text-decoration: none;
+}
+
 .create-container {
   height: 85vh;
   display: grid;

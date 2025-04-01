@@ -68,12 +68,40 @@ const Chat = mongoose.model(
 );
 
 // root GET request
-app.get('/', (req, res) => {
-  res.render("home");
+app.get('/', async (req, res) => {
+  if (req.cookies.playerID) {
+    console.log("UserID Cookie!");
+    await Room.find().exec()
+    .then(async function(rooms) {
+      let playerRooms = [];
+
+      rooms.forEach(room => {
+        room.Players.forEach(player => {
+          if (player.ID == req.cookies.playerID) {
+            playerRooms.push({
+              ID: room.ID,
+              Name: room.Name
+            });
+          }
+        });
+      });
+
+      console.log(playerRooms);
+
+      res.render("home", {
+        rooms: playerRooms,
+      });
+    });
+  } else {
+    res.render("home", {
+      rooms: [],
+    });
+  }
 });
 
+// Route to user-entered room
 app.post('/', (req, res, next) => {
-  roomID = req.body.roomID.toUpperCase();
+  let roomID = req.body.roomID.toUpperCase();
   res.redirect("/rooms/" + roomID);
 });
 
@@ -306,9 +334,6 @@ io.on("connection", (socket) => {
 });
 
 app.post('/create', async (req, res, next) => {
-  // console.log("Hiiiiiiiii");
-  // console.log(req.body.roomName);
-
   // When form is sent, create a new room instance
   const roomInstance = new Room();
 
@@ -316,7 +341,20 @@ app.post('/create', async (req, res, next) => {
   roomInstance.ID = helpers.makeID(8);
   roomInstance.Chats = [];
 
-  res.cookie("roomID", roomInstance.roomID, {maxAge: 3600000000}, "/boards");
+  // // If already room cookie list, append to list if unique
+  // if (req.cookies.roomID) {
+  //   if (!JSON.parse(req.cookies.roomID).includes(roomInstance.ID)) {
+  //     console.log("UH OH!" + req.cookies.roomID + "and also " + roomInstance.ID);
+  //     let roomIDList = JSON.parse(req.cookies.roomID);
+  //     console.log(roomIDList);
+  //     roomIDList.push(roomInstance.ID);
+  //     res.cookie("roomID", JSON.stringify(roomIDList), {maxAge: 3600000000}, "/boards");
+  //   }
+  // } // else create new list
+  // else {
+  //   console.log(JSON.stringify([roomInstance.ID]));
+  //   res.cookie("roomID", JSON.stringify([roomInstance.ID]), {maxAge: 3600000000}, "/boards");
+  // }
 
   let events = [];
   // Get the events from the 8 squares in form
@@ -337,6 +375,7 @@ app.post('/create', async (req, res, next) => {
 // Middleware for checking roomID validity in the URL
 async function checkRoomID(req, res, next) {
   let roomIDs = [];
+  console.log("here1!");
 
   // Get the IDs of all existing rooms to see if the requested URL is valid
   await Room.find({}, 'ID').exec()
@@ -346,26 +385,30 @@ async function checkRoomID(req, res, next) {
     .catch(function(err) {
       console.log(err);
       console.log("Could not query db");
-      res.redirect("/error");
+      res.render("error", {
+        msg: "Could not query db"
+      });
+      res.end();
     }
   );
 
   if (roomIDs.includes(req.params.roomID)) {
-    // console.log("ROOM ID VERIFIED");
+    console.log("ROOM ID VERIFIED");
     next();
   }
   else {
     console.log("ERROR: No such room: " + req.params.roomID);
-    if (req.cookies.playerID == req.params.roomID) {
-      res.clearCookie("roomID");
-    } 
-    var string = encodeURIComponent('Invalid Room ID: ' + req.params.roomID);
-    res.redirect("/error?msg=" + string);
+    var string = ('Invalid Room ID: ' + req.params.roomID);
+    res.render("error", {
+      msg: string
+    });
+    res.end();
   }
 }
 
 // Check to see if the requested player page matches a player in the DB in the right room
 async function checkPlayerID(req, res, next) {
+  console.log("here!");
   let playerIDs = [];
 
   await Room.findOne({ ID: req.params.roomID }, 'Players').exec()
@@ -380,11 +423,11 @@ async function checkPlayerID(req, res, next) {
       }
       else {
         console.log("Error. No such player: ", req.params.playerID);
-        if (req.cookies.playerID == req.params.roomID) {
-          res.clearCookie("playerID");
-        } 
-        var string = encodeURIComponent('Invalid Player ID: ' + req.params.playerID);
-        res.redirect("/error?msg=" + string);
+        var string = ('Invalid Player ID: ' + req.params.playerID);
+        res.render("error", {
+          msg: string
+        });
+        res.end();
       }
   });
 }
@@ -392,18 +435,40 @@ async function checkPlayerID(req, res, next) {
 // Route to the right sub-URL depending on cookie info
 app.get("/rooms/:roomID", checkRoomID, async (req, res) => {
   if (req.cookies.playerID) {
-    console.log("PLAYER COOKIE EXISTS: ", req.cookies.playerID);
-    res.redirect("/rooms/" + req.params.roomID + "/" + req.cookies.playerID);
+    console.log("PLAYER COOKIE EXISTS: ", req.cookies.playerID + " Check if in room");
+    
+    let playerIDs = [];
+    let flag = 0;
+    
+    await Room.findOne({ ID: req.params.roomID }, 'Players').exec()
+    .then(function(results) {
+      results.Players.forEach((player) => {
+        playerIDs.push(player.ID);
+      });
+
+      if (playerIDs.includes(req.cookies.playerID)) {
+        // They have been here before!
+        console.log("They have been here before!");
+        flag = 1;
+        res.redirect("/rooms/" + req.params.roomID + "/" + req.cookies.playerID);
+      }
+    });
+
+    // Flag system ensure res is not sent twice.
+    if (flag == 0) {
+      // Sign up! Never been here.
+      res.redirect("/rooms/" + req.params.roomID + "/signup");
+    }
   }
   else {
-    // console.log("NO COOKIE, SIGN UP");
+    console.log("NO COOKIE, SIGN UP");
     res.redirect("/rooms/" + req.params.roomID + "/signup");
   }
 });
 
-app.get('/rooms/:roomID/:playerID/boards', checkRoomID, async (req, res) => {
+app.get('/rooms/:roomID/:playerID/boards', checkRoomID, checkPlayerID, async (req, res) => {
   // Refresh the cookies
-  res.cookie("roomID", req.params.roomID, {maxAge: 3600000000}, "/");
+  // res.cookie("roomID", JSON.stringify(JSON.parse(req.params.roomID)), {maxAge: 3600000000}, "/");
   res.cookie("playerID", req.params.playerID, {maxAge: 3600000000}, "/");
 
   let room;
@@ -444,13 +509,21 @@ app.get('/rooms/:roomID/:playerID/chat', checkRoomID, async (req, res) => {
 });
 
 app.get("/rooms/:roomID/signup", checkRoomID, async (req, res) => {
-  if (req.cookies.playerID) {
-    console.log("PLAYER COOKIE EXISTS: ", req.cookies.playerID);
-    res.redirect("/rooms/" + req.params.roomID + "/" + req.cookies.playerID);
-  }
-
   const room = await Room.findOne({ ID: req.params.roomID });
 
+  if (req.cookies.playerID) {
+    let playerID = req.cookies.playerID;
+    console.log("PLAYER COOKIE EXISTS: ", playerID + "Check if belongs to room");
+
+    room.Players.forEach((player) => {
+      if (player.ID == playerID) {
+        // This person has been here before!
+        res.redirect("/rooms/" + req.params.roomID + "/" + req.cookies.playerID);
+      }
+    });
+  }
+
+  // Player is new to this room
   res.render("signup", {
     roomID: req.params.roomID,
     room: room,
@@ -464,7 +537,14 @@ app.post("/rooms/:roomID/signup", async (req, res) => {
 
   const playerInstance = new Player();
 
-  playerInstance.ID = helpers.makeID(6);
+  if (req.cookies.playerID) {
+    // Player has played a game before, has an ID
+    playerInstance.ID = req.cookies.playerID;
+  }
+  else {
+    // This is this user's first game
+    playerInstance.ID = helpers.makeID(6);
+  }
   playerInstance.DisplayName = req.body.displayName;
   playerInstance.Events = helpers.shuffle(room.Events).slice(0, 9);
   playerInstance.WinCondition = false;
@@ -482,7 +562,7 @@ app.post("/rooms/:roomID/signup", async (req, res) => {
 
   room.save();
 
-  // Save a cookie to remember this player
+  // Save a cookie to remember this player / refresh cookie if already exists
   res.cookie("playerID", playerInstance.ID, {maxAge: 3600000000}, "/");
 
   // Announce to the room that a brand new player has joined
@@ -493,32 +573,35 @@ app.post("/rooms/:roomID/signup", async (req, res) => {
 });
 
 app.get("/rooms/:roomID/:playerID", checkRoomID, checkPlayerID, async (req, res) => {
-  const room = await Room.findOne({ ID: req.params.roomID });
+  console.log("Almost made it!");
 
-  // Search for the requested player in the room's players list
-  var currentPlayer;
-  room.Players.forEach((player) => {
-    if (player.ID == req.params.playerID) {
-      currentPlayer = player;
-    }
-  });
+  await Room.findOne({ ID : req.params.roomID }).exec()
+  .then(async function(room) {
+    // Search for the requested player in the room's players list
+    var currentPlayer;
+    room.Players.forEach((player) => {
+      if (player.ID == req.params.playerID) {
+        currentPlayer = player;
+      }
+    });
 
-  console.log(currentPlayer);
+    // console.log(currentPlayer);
 
-  // Pass along the player's info to the ejs page
-  res.render("player", {
-    Room: room,
-    Player: currentPlayer,
-    roomID: req.params.roomID,
-    IP: process.env.IP,
+    // Pass along the player's info to the ejs page
+    res.render("player", {
+      Room: room,
+      Player: currentPlayer,
+      roomID: req.params.roomID,
+      IP: process.env.IP,
+    });
   });
 });
+
 
 app.get('/error', (req, res) => {
   var errorString = req.query.msg;
   console.log(errorString);
 
-  console.log("Room Cookie: " + req.cookies.roomID);
   console.log("Player Cookie: " + req.cookies.playerID);
 
   res.render("error", {

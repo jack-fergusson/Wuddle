@@ -1,14 +1,14 @@
 <script src="js/script.js"></script>
 <script>
-    if (document.cookie.includes("roomID")) {
-        // alert("It looks like you already have an ongoing game. Click 'submit' to redirect");
-        const cookieValue = document.cookie
-        .split("; ")
-        .find((row) => row.startsWith("roomID="))
-        ?.split("=")[1];
+    // if (document.cookie.includes("roomID")) {
 
-        window.location.replace("/rooms/" + cookieValue + "/");
-    }
+    //     const cookieValue = document.cookie
+    //     .split("; ")
+    //     .find((row) => row.startsWith("roomID="))
+    //     ?.split("=")[1];
+
+    //     window.location.replace("/rooms/" + cookieValue + "/");
+    // }
 </script>
 
 <%- include('header.ejs') %>
@@ -27,10 +27,23 @@
         </div>
         <div>
             <form class="room-code-form" action="/" method="post">
-                <input type="text" class="room-code" name="roomID" placeholder="Room Code" size="8" maxlength="8" required>
+                <input type="text" class="room-code" name="roomID" placeholder="Room Code" size="12" maxlength="8" required>
                 <button type="submit" class="room-button">Join a Room</button>
             </form>
         </div>
+        <% if (rooms.length > 0) { %>
+            <div class="container my-rooms-container">
+                <div class="my-rooms-text">
+                    <h3>My Rooms</h3>
+                </div>
+                <div class="spacer"></div>
+                <div class="my-rooms-grid">
+                    <% rooms.forEach(room => { %>
+                        <div class="container my-rooms-grid-item"><a href="/rooms/<%=room.ID%>/"><%= room.Name %></a></div>
+                    <% }); %>
+                </div>
+            </div>
+        <% } %>
     </div>
 </div> 
 <%- include('footer.ejs') %>
