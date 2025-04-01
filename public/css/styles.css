@@ -69,19 +69,22 @@ body {
   justify-content: space-between;
 }
 
-.my-rooms-grid {
-  display: grid;
-  grid-template-columns: 1fr 1fr 1fr;
-  gap: 5px;
-  background-color: white;
+.my-rooms-row {
+  display: flex;
+  width: 100%;
+  flex-direction: row;
+  align-items: center;
+  justify-content: space-evenly;
 }
 
-.my-rooms-grid-item {
-  background-color: white;
-}
-
-.my-rooms-grid-item * {
+.my-rooms-item {
+  width: 33%;
   background-color: #33658A;
+  margin: 2px;
+  margin-top: 4px;
+}
+
+.my-rooms-item * {
   color: white;
   padding: 10px;
   text-align: center;
@@ -189,7 +192,7 @@ h3 {
 }
 
 .copy {
-  width: calc(5vh + 2vw);
+  width: calc(2vh + 1vw);
 }
 
 .refresh {
@@ -386,6 +389,9 @@ textarea:focus, input:focus{
 }
 
 h4 {
+  display: flex;
+  justify-content: center;
+  align-items: center;
   text-align: center;
   color: black;
   margin: 2px;
@@ -409,4 +415,10 @@ h2 {
   display: grid;
   grid-template-columns: 1fr 1fr;
   gap: 10px;
+}
+
+.ui-widget-header,.ui-state-default, ui-button {
+  background:gray;
+  color: #FFFFFF;
+  font-weight: bold;
 }

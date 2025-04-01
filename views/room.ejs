@@ -52,7 +52,15 @@
             <div class="spacer"></div>
         </div>
         <div class="container room-code-container">
-            <h4>Room code: <span><%= room.ID %></span></h4>
+            <h4>
+                Room code:&nbsp;<span><%= room.ID %>&nbsp;</span>
+                <button class="copy-button" id="opener" title="Copy Invitation" onclick="copyInvite()">
+                    <img src="/images/copy.svg" class="copy">
+                </button>
+            </h4>
+        </div>
+        <div class="container copyText-container" id="copyText-container" style="display: none;">
+            <textarea id="copyText" style="width: 100%; min-height: 50px;">Come play Wuddle! Follow this link to join the room '<%= room.Name %>' https://play-wuddle.com/rooms/<%= room.ID %> Please ensure you have cookies turned on!"</textarea>
         </div>
         <div>
             <div class="spacer"></div>
@@ -89,6 +97,19 @@
 
             document.getElementById("crown" + PlayerID).style.display = "none";
         });
+
+        function copyInvite() {
+            navigator.permissions.query({ name: "clipboard-write" }).then((result) => {
+                if (result.state === "granted" || result.state === "prompt") {
+                    navigator.clipboard.writeText("Come play Wuddle!\nFollow this link to join the room '<%= room.Name %>' https://play-wuddle.com/rooms/<%= room.ID %>\nPlease ensure you have cookies turned on!");
+                    alert("Invite copied to clipboard!");
+                }
+                else {
+                    document.getElementById("copyText-container").style = "display: block; width: 40%";
+                    document.getElementById("copyText").elt.select();
+                }
+            });
+        }
     </script>
 
 <%- include('footer.ejs') %>

@@ -42,9 +42,6 @@
             <button class="trash-button" title="Clear Board" onclick="clearAll()">
                 <img src="/images/trash-can.svg" class="trash">
             </button>
-            <button class="copy-button" title="Copy Invitation" onclick="copyInvite()">
-                <img src="/images/copy.svg" class="copy">
-            </button>
             <button class="refresh-button" title="New Board!" onclick="newBoard()">
                 <img src="/images/refresh.svg" class="refresh">
             </button>
@@ -89,18 +86,6 @@
                 BoardState[i] = false;
             }
             socket.emit('clear', '<%=Player.ID%>', '<%=roomID%>');
-        }
-
-        function copyInvite() {
-            navigator.permissions.query({ name: "clipboard-write" }).then((result) => {
-                if (result.state === "granted" || result.state === "prompt") {
-                    navigator.clipboard.writeText("<%=Player.Name%> has invited you to play Wuddle!\nFollow this link to join the room '<%= Room.Name %>' https://play-wuddle.com/rooms/<%= Room.ID %>\nPlease ensure you have cookies turned on!");
-                    // alert("Invite copied to clipboard!");
-                }
-                else {
-                    alert("Copy failed.");
-                }
-            });
         }
 
         function newBoard() {
