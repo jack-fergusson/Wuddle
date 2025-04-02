@@ -61,6 +61,7 @@
         </div>
         <div class="container copyText-container" id="copyText-container" style="display: none;">
             <textarea id="copyText" style="width: 100%; min-height: 50px;">Come play Wuddle! Follow this link to join the room '<%= room.Name %>' https://play-wuddle.com/rooms/<%= room.ID %> Please ensure you have cookies turned on!"</textarea>
+            <button class="closeCopyText" onclick="closeCopyText()">X</button>
         </div>
         <div>
             <div class="spacer"></div>
@@ -98,6 +99,10 @@
             document.getElementById("crown" + PlayerID).style.display = "none";
         });
 
+        function closeCopyText() {   
+            document.getElementById("copyText-container").style = "display: none;";
+        }
+
         function copyInvite() {
             navigator.permissions.query({ name: "clipboard-write" }).then((result) => {
                 if (result.state === "granted" || result.state === "prompt") {
@@ -106,10 +111,11 @@
                 }
                 else {
                     document.getElementById("copyText-container").style = "display: block; width: 40%";
-                    document.getElementById("copyText").elt.select();
+                    document.getElementById("copyText").select();
                 }
             });
         }
+
     </script>
 
 <%- include('footer.ejs') %>

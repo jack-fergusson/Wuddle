@@ -36,6 +36,7 @@ const playerSchema = new Schema({
   Events: [String],
   BoardState: [Boolean],
   WinCondition: Boolean,
+  NumWins: Number,
 });
 
 const chatSchema = new Schema({
@@ -122,11 +123,6 @@ io.on("connection", (socket) => {
     socket.join(roomID);
     console.log("A user joined room " + roomID);
   });
-
-  // socket.on('announcePlayer', (roomID, PlayerID, PlayerName) => {
-  //   console.log("Announced!");
-  //   io.to(roomID).emit('newPlayer', PlayerID, PlayerName);
-  // });
 
   socket.on('player name', (Name) => {
     console.log("Player", Name, "has joined the room.");
@@ -256,6 +252,7 @@ io.on("connection", (socket) => {
           player.Events = helpers.shuffle(room.Events).slice(0, 9);
           player.WinCondition = false;
           player.BoardState = [false, false, false, false, false, false, false, false, false];
+          player.NumWins += 1;
           sender = player;
 
           // Create an admin chat announcing refreh
@@ -340,21 +337,6 @@ app.post('/create', async (req, res, next) => {
   // Create a new 6-letter ID for this specific room
   roomInstance.ID = helpers.makeID(8);
   roomInstance.Chats = [];
-
-  // // If already room cookie list, append to list if unique
-  // if (req.cookies.roomID) {
-  //   if (!JSON.parse(req.cookies.roomID).includes(roomInstance.ID)) {
-  //     console.log("UH OH!" + req.cookies.roomID + "and also " + roomInstance.ID);
-  //     let roomIDList = JSON.parse(req.cookies.roomID);
-  //     console.log(roomIDList);
-  //     roomIDList.push(roomInstance.ID);
-  //     res.cookie("roomID", JSON.stringify(roomIDList), {maxAge: 3600000000}, "/boards");
-  //   }
-  // } // else create new list
-  // else {
-  //   console.log(JSON.stringify([roomInstance.ID]));
-  //   res.cookie("roomID", JSON.stringify([roomInstance.ID]), {maxAge: 3600000000}, "/boards");
-  // }
 
   let events = [];
   // Get the events from the 8 squares in form
@@ -549,6 +531,7 @@ app.post("/rooms/:roomID/signup", async (req, res) => {
   playerInstance.Events = helpers.shuffle(room.Events).slice(0, 9);
   playerInstance.WinCondition = false;
   playerInstance.BoardState = [false, false, false, false, false, false, false, false, false];
+  playerInstance.NumWins = 0;
 
   // Add the new player to the db using Mongoose syntax, not MongoDB.
   room.Players.push(playerInstance);

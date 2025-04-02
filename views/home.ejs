@@ -1,54 +1,40 @@
-<script src="js/script.js"></script>
-<script>
-    // if (document.cookie.includes("roomID")) {
-
-    //     const cookieValue = document.cookie
-    //     .split("; ")
-    //     .find((row) => row.startsWith("roomID="))
-    //     ?.split("=")[1];
-
-    //     window.location.replace("/rooms/" + cookieValue + "/");
-    // }
-</script>
-
 <%- include('header.ejs') %>
-<div class="container landing-container">
-    <div class="container">
-        <h2>
-            WELCOME
-        </h2>
-    </div>
-    <div class="container landing-options-container">
-        <div>
-            <a href="/create"><button class="room-button">Create a Room</button></a>
+    <div class="container landing-container">
+        <div class="roomName-container">
+            <div class="spacer"></div>
+            <h2>WELCOME</h2>
+            <div class="spacer"></div>
         </div>
-        <div>
-            <h3 class="or">OR</h3>
-        </div>
-        <div>
-            <form class="room-code-form" action="/" method="post">
-                <input type="text" class="room-code" name="roomID" placeholder="Room Code" size="12" maxlength="8" required>
-                <button type="submit" class="room-button">Join a Room</button>
-            </form>
+        <div class="container landing-options-container">
+            <div>
+                <a href="/create"><button class="room-button">Create a Room</button></a>
+            </div>
+            <div>
+                <h3 class="or">OR</h3>
+            </div>
+            <div>
+                <form class="room-code-form" action="/" method="post">
+                    <input type="text" class="room-code" name="roomID" placeholder="Room Code" size="12" maxlength="8" required>
+                    <button type="submit" class="room-button">Join a Room</button>
+                </form>
+            </div>
         </div>
         <% if (rooms.length > 0) { %>
             <div class="container my-rooms-container">
                 <div class="my-rooms-text">
-                    <h3>My Rooms</h3>
+                    <h2>My Rooms</h2>
                 </div>
-                <div class="spacer"></div>
                 <div class="my-rooms-row">
                     <% for (let i = 0; i < rooms.length; i++) { %>
                         <% if (i > 0 && i % 3 == 0) { %>
                             </div>
-                            <div style="height: 4px;"></div>
                             <div class="my-rooms-row">
                         <% } %>
-                        <div class="container my-rooms-item"><a href="/rooms/<%=rooms[i].ID%>/"><%= rooms[i].Name %></a></div>
+                        <a href="/rooms/<%=rooms[i].ID%>/"><button class="my-rooms-button"><%= rooms[i].Name %></button></a>
                     <% } %>
                 </div>
             </div>
         <% } %>
     </div>
-</div> 
+
 <%- include('footer.ejs') %>

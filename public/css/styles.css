@@ -61,34 +61,50 @@ body {
 }
 
 .landing-container {
-  display: grid;
-  grid-template-rows: 35% 35% 30%;
+  min-height: 85vh;
 }
 
 .landing-options-container {
+  padding-top: 50px;
+  padding-bottom: 20px;
+  justify-content: space-between;
+}
+
+.my-rooms-container {
+  padding-top: 30px;
+  padding-bottom: 30px;
   justify-content: space-between;
 }
 
 .my-rooms-row {
+  padding-top: 10px;
+  height: calc(5vh + 3vw);
   display: flex;
-  width: 100%;
+  width: 70%;
   flex-direction: row;
   align-items: center;
-  justify-content: space-evenly;
+  justify-content: center;
 }
 
-.my-rooms-item {
-  width: 33%;
-  background-color: #33658A;
-  margin: 2px;
-  margin-top: 4px;
+.my-rooms-row a {
+  height: 100%;
+  width: 90%;
+  margin-left: 5px;
+  margin-right: 5px;
 }
 
-.my-rooms-item * {
+.my-rooms-button {
+  height: 100%;
+  width: 100%;
+  background-color: #4daa57;
+  border: none;
+  border-radius: 8px;
   color: white;
-  padding: 10px;
+  padding: 0.5vh;
   text-align: center;
   text-decoration: none;
+  display: inline-block;
+  font-size: calc(0.5vh + 2vw);
 }
 
 .create-container {
@@ -388,11 +404,24 @@ textarea:focus, input:focus{
   outline: none;
 }
 
-h4 {
+.square-text-container {
   display: flex;
   justify-content: center;
   align-items: center;
   text-align: center;
+}
+
+.square-text {
+  display: inline-block;
+  width: 95%;
+  color: black;
+  margin: 2px;
+  font-size: calc(1.5vh + 0.5vw);
+  font-family: lazy_dog;
+  overflow-wrap: break-word;
+}
+
+h4 {
   color: black;
   margin: 2px;
   font-size: calc(1.5vh + 0.5vw);
@@ -415,10 +444,4 @@ h2 {
   display: grid;
   grid-template-columns: 1fr 1fr;
   gap: 10px;
-}
-
-.ui-widget-header,.ui-state-default, ui-button {
-  background:gray;
-  color: #FFFFFF;
-  font-weight: bold;
 }
