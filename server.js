@@ -6,7 +6,7 @@ const { MongoClient } = require('mongodb');
 const mongoose = require('mongoose');
 const cookieParser = require("cookie-parser");
 const ejs = require("ejs");
-import sslRedirect from 'heroku-ssl-redirect';
+// import sslRedirect from 'heroku-ssl-redirect';
 
 const port = process.env.PORT || 3000;
 
@@ -25,7 +25,7 @@ app.set('views', (__dirname + '/views'));
 app.use(bodyParser.urlencoded({extended: true}));
 app.use(express.static(__dirname + '/public'));
 app.use(cookieParser());
-app.use(sslRedirect());
+// app.use(sslRedirect());
 
 const uri = process.env.MONGODB_URI;
 mongoose.connect(uri);
