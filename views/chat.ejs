@@ -36,7 +36,7 @@
             </div>
             <div class="container chat-input-container">
                 <form id="chat-form">
-                    <input type="text" id="chatbox" placeholder="Hello..." maxlength="30" class="chat-input" autofocus onfocus="this.select()">
+                    <input type="text" id="chatbox" placeholder="Hello..." maxlength="30" class="chat-input" autofocus onfocus="this.select()" autocomplete="off">
                     <button class="chat-submit" onclick="chatSubmission()"></button>
                 </form>
             </div>
@@ -80,13 +80,13 @@
             }
         });
 
-        socket.on('refresh', (senderName) => {
+        socket.on('refresh', (senderName, ID, Wins) => {
             var meID = JSON.parse('<%- JSON.stringify(PlayerID) %>');
 
             let newChat = { 
                 PlayerID: "0",
                 PlayerName: "",
-                Text: `${senderName} has refreshed their board.`,
+                Text: `${senderName} has finished a line & refreshed their board.`,
             };
 
             addChat(newChat);

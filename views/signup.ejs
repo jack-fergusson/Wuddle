@@ -1,27 +1,33 @@
-<script src="js/script.js"></script>
-<script>
-    if (document.cookie.includes("roomID") && document.cookie.includes("playerID")) {
-        // alert("It looks like you already have an ongoing game. Click 'submit' to redirect");
-        const roomValue = document.cookie
-        .split("; ")
-        .find((row) => row.startsWith("roomID="))
-        ?.split("=")[1];
-
-        const playerValue = document.cookie
-        .split("; ")
-        .find((row) => row.startsWith("playerID="))
-        ?.split("=")[1];
-
-        window.location.replace("/rooms/" + roomValue + "/" + playerValue);
-    }
-</script>
-
 <%- include('header.ejs') %>
-<div class="container create-container">
-    <div class="container roomName-container">
+<!-- <div class="container landing-container"> -->
+<div class="container">
+    <div class="roomName-container">
+        <div class="spacer"></div>
         <h2>Welcome to '<%= room.Name %>'</h2>
+        <div class="spacer"></div>
     </div>
-    <form class="container" action="/rooms/<%= roomID %>/signup" method="post">
+    <div class="container brief-instructions-container">
+        <div class="container join-container">
+            <h3>Join!</h3>
+            <p class="instruction">
+                Join a room with all your friends for an upcoming party, trip, or other fun event!
+            </p>
+        </div>
+        <div class="container guess-container">
+            <h3>Guess!</h3>
+            <p class="instruction">
+                Enter a prediction for something that will happen during the event. This can be anything from a frequent gag to a true psychic vision!
+            </p>
+        </div>
+        <div class="container check-container">
+            <h3>Check!</h3>
+            <p class="instruction">
+                Check off events from your personal random board as they happen. Three in a row is a win and lets you play again!
+            </p>
+        </div>
+    </div>
+    <div><h2 style="font-size: calc(6vh + 3vw)">↓</h2></div>
+    <form class="container signup-form-container" action="/rooms/<%= roomID %>/signup" method="post">
         <div class="container room-name-input-container">
             <div>
                 <h3>
@@ -29,7 +35,7 @@
                 </h3>
             </div>
             <div class="spacer"></div>
-            <input type="text" class="room-name-input" size="10" maxlength="15" name="displayName" placeholder="John" required>
+            <input type="text" class="room-name-input" size="10" maxlength="15" name="displayName" placeholder="John" autocomplete="off" required>
         </div>
         <div class="container room-name-input-container">
             <div>
@@ -39,7 +45,7 @@
             </div>
             <div class="spacer"></div>
             <div>
-                <input type="text" class="room-name-input" id="event" name="event" placeholder="Somebody gets hurt" maxlength="45" required>
+                <input type="text" class="room-name-input" id="event" name="event" placeholder="Somebody gets hurt" maxlength="45" autocomplete="off" required>
             </div>
             <div class="spacer"></div>
         </div>
@@ -47,7 +53,6 @@
             <button type="submit" class="room-button">Join Game!</button>
         </div>
     </form>
-    <div></div>
 </div>
 
 <%- include('footer.ejs') %>

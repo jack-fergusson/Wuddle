@@ -259,7 +259,7 @@ io.on("connection", (socket) => {
           const chatInstance = new Chat();
           chatInstance.PlayerID = "0";
           chatInstance.PlayerName = "";
-          chatInstance.Text = `${player.DisplayName} has refreshed their board.`;
+          chatInstance.Text = `${player.DisplayName} has finished a line & refreshed their board.`;
 
           // update room's chats
           room.Chats.push(chatInstance);
@@ -275,7 +275,7 @@ io.on("connection", (socket) => {
       .exec()
       .then(function() {
         // Let chat know they refreshed
-        io.to(roomID).emit('refresh', sender.DisplayName);
+        io.to(roomID).emit('refresh', sender.DisplayName, sender.ID, sender.NumWins);
       })
       .catch(function(err) {
         console.log(err);
@@ -545,11 +545,11 @@ app.post("/rooms/:roomID/signup", async (req, res) => {
 
   room.save();
 
-  // Save a cookie to remember this player / refresh cookie if already exists
-  res.cookie("playerID", playerInstance.ID, {maxAge: 3600000000}, "/");
-
   // Announce to the room that a brand new player has joined
   io.to(room.ID).emit('newPlayer', playerInstance.ID, playerInstance.DisplayName);
+
+  // Save a cookie to remember this player / refresh cookie if already exists
+  res.cookie("playerID", playerInstance.ID, {maxAge: 3600000000}, "/");
 
   // Redirect them to their personal view.
   res.redirect("/rooms/" + req.params.roomID + "/" + playerInstance.ID);

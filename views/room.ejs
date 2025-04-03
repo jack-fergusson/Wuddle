@@ -40,9 +40,20 @@
                                 <% } %>
                             <% } %>
                         </div>
-                        <div class="nametag">
-                            <img src="/images/crown.svg" class="crown" id="crown<%= room.Players[i].ID %>" <% if (room.Players[i].WinCondition == false ) { %>style="display: none;"<% } %>>
-                            <h4><%= room.Players[i].DisplayName %></h4>
+                        <div class="nametag" id="<%= room.Players[i].ID %>-nametag">
+                            <h4 style="padding-top: 5px;"><%= room.Players[i].DisplayName %></h4>
+                            <div class="container crowns-container">
+                                <% if (room.Players[i].NumWins > 0 && room.Players[i].NumWins < 5) { %>
+                                    <% for (let k = 0; k < room.Players[i].NumWins; k++) { %>
+                                        <img src="/images/crown.svg" class="crown">
+                                    <% } %>
+                                    <div><h4 style="color: white; user-select: none;">`</h4></div>
+                                <% } else if (room.Players[i].NumWins >= 5) { %>
+                                    <img src="/images/crown.svg" class="crown"><h4>x <%= room.Players[i].NumWins %></h4>
+                                <% } else { %>
+                                    <div><h4 style="color: white; user-select: none;">`</h4></div>
+                                <% } %>
+                            </div>
                         </div>
                     </div>
                 <% } %>
@@ -60,7 +71,7 @@
             </h4>
         </div>
         <div class="container copyText-container" id="copyText-container" style="display: none;">
-            <textarea id="copyText" style="width: 100%; min-height: 50px;">Come play Wuddle! Follow this link to join the room '<%= room.Name %>' https://play-wuddle.com/rooms/<%= room.ID %> Please ensure you have cookies turned on!"</textarea>
+            <textarea id="copyText" style="width: 100%; min-height: 50px;">Come play Wuddle! Follow this link to join the room '<%= room.Name %>' play-wuddle.com/rooms/<%= room.ID %> Please ensure you have cookies turned on!"</textarea>
             <button class="closeCopyText" onclick="closeCopyText()">X</button>
         </div>
         <div>
@@ -80,9 +91,9 @@
         socket.on('hit', (playerID, hitIndex, winCondition) => {
             document.getElementById(playerID + hitIndex).style.backgroundColor = "#4daa57";
 
-            if (winCondition) {
-                document.getElementById("crown" + playerID).style.display = "block";
-            }
+            // if (winCondition) {
+            //     document.getElementById("crown" + playerID).style.display = "block";
+            // }
         });
 
         socket.on('newPlayer', (PlayerID, PlayerName) => {
@@ -91,12 +102,32 @@
             location.reload();
         });
 
+        socket.on('refresh', (Name, ID, NumWins) => {
+            newNametag = `<h4 style="padding-top: 5px;">${Name}</h4>`;
+            newNametag += `<div class="container crowns-container">`;
+
+            if (NumWins > 0 && NumWins < 5) {
+                for (let i = 0; i < NumWins; i++) {
+                    newNametag += `<img src="/images/crown.svg" class="crown">`;
+                }
+                newNametag += `<div><h4 style="color: white; user-select: none;">,</h4></div>`;
+            } else if (NumWins >= 5) {
+                newNametag += `<img src="/images/crown.svg" class="crown"><h4>x ${NumWins}</h4>`;
+            } else {
+                newNametag += `<div><h4 style="color: white; user-select: none;">,</h4></div>`;
+            }
+
+            newNametag += `</div>`;
+
+            document.getElementById(`${ID}-nametag`).innerHTML = newNametag;
+        });
+
         socket.on('clear', (PlayerID) => {
             for (let i = 0; i < 9; i++) {
                 document.getElementById(PlayerID + i.toString()).style.backgroundColor = "white";
             }
 
-            document.getElementById("crown" + PlayerID).style.display = "none";
+            // document.getElementById("crown" + PlayerID).style.display = "none";
         });
 
         function closeCopyText() {   

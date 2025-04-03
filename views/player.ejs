@@ -93,10 +93,10 @@
                 socket.emit('refresh', '<%=Player.ID%>', '<%=Room.ID%>');
                 setTimeout(function() {
                     socket.emit('clear', '<%=Player.ID%>', '<%=roomID%>');
+                    // alert("New Board!");
+                    // TECHNICALLY works but I would like a more elegant solution at some point...
+                    location.reload();
                 }, 500);
-                // alert("New Board!");
-                // TECHNICALLY works but I would like a more elegant solution at some point...
-                location.reload();
             }
             else {
                 alert("Must complete a line first!");
