@@ -1,6 +1,6 @@
 function makeID(length) {
     let result = '';
-    const characters = 'ABCDEFGHJKLMNPQRSTUVWXYZabcdefghjkmnpqrstuvwxyz23456789';
+    const characters = 'ABCDEFGHJKLMNPQRSTUVWXYZ23456789';
     const charactersLength = characters.length;
     let counter = 0;
     while (counter < length) {

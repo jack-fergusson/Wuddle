@@ -61,12 +61,84 @@ body {
 }
 
 .landing-container {
-  display: grid;
-  grid-template-rows: 35% 35% 30%;
+  min-height: 85vh;
+  justify-content: space-around;
 }
 
 .landing-options-container {
+  height: 20vh;
   justify-content: space-between;
+  padding-top: 5vh;
+  padding-bottom: 5vh;
+}
+
+.signup-form-container {
+  height: 30vh;
+  justify-content: space-between;
+  margin-top: calc(1vh + 1vw);
+  margin-bottom: 2vh;
+}
+
+.brief-instructions-container {
+  flex-direction: row;
+  align-items: flex-start;
+  width: 90%;
+  margin-top: calc(5vh + 2vw);
+  margin-bottom: 2vh;
+}
+
+.brief-instructions-container div {
+  justify-content: flex-start;
+  height: 100%;
+  padding: 10px;
+}
+
+.guess-container {
+  border-left: 2px solid gray;
+  border-right: 2px solid gray;
+}
+
+.instruction {
+  text-align: center;
+  font-family: 'Lucida Sans', 'Lucida Sans Regular', 'Lucida Grande', 'Lucida Sans Unicode', Geneva, Verdana, sans-serif;
+  font-size: calc(0.8vh + 1vw);
+}
+
+.my-rooms-container {
+  padding-top: 30px;
+  padding-bottom: 30px;
+  justify-content: space-between;
+}
+
+.my-rooms-row {
+  padding-top: 10px;
+  height: calc(5vh + 3vw);
+  display: flex;
+  width: 70%;
+  flex-direction: row;
+  align-items: center;
+  justify-content: center;
+}
+
+.my-rooms-row a {
+  height: 100%;
+  width: 90%;
+  margin-left: 5px;
+  margin-right: 5px;
+}
+
+.my-rooms-button {
+  height: 100%;
+  width: 100%;
+  background-color: #4daa57;
+  border: none;
+  border-radius: 8px;
+  color: white;
+  padding: 0.5vh;
+  text-align: center;
+  text-decoration: none;
+  display: inline-block;
+  font-size: calc(0.5vh + 2vw);
 }
 
 .create-container {
@@ -98,7 +170,7 @@ h2 {
   text-align: center;
   color: #33658A;
   margin: 0;
-  font-size: calc(4vh + 2vw);
+  font-size: calc(2vh + 4vw);
   font-family: lazy_dog;
 }
 
@@ -133,6 +205,8 @@ h3 {
 .room-code {
   height: 100%;
   font-size: calc(2vh + 1vw);
+  height: calc(2vh + 2vw);
+  text-transform: uppercase;
 }
 
 .room-name-input {
@@ -161,21 +235,38 @@ h3 {
 }
 
 .trash {
-  width: 5vh;
+  width: calc(5vh + 2vw);
 }
 
 .crown {
-  width: calc(1vh + 1vw);
+  height: calc(1vh + 1vw);
   padding-right: 1vw;
+  filter: invert(56%) sepia(79%) saturate(731%) hue-rotate(14deg) brightness(109%) contrast(110%);
 }
 
 .nametag {
   display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.crowns-container {
   flex-direction: row;
 }
 
 .copy {
-  width: 5vh;
+  width: calc(2vh + 1vw);
+}
+
+.refresh {
+  width: calc(5vh + 2vw);
+}
+
+.refresh-button {
+  background-color: white;
+  border-style: none;
+  padding: 0;
+  margin: 0;
 }
 
 .trash-button {
@@ -262,8 +353,8 @@ h3 {
   min-height: 40vh;
   display: grid;
   gap: 2px;
-  grid-template-columns: 1fr 1fr 1fr;
-  grid-template-rows: 1fr 1fr 1fr;
+  grid-template-columns: minmax(0, 1fr) minmax(0, 1fr) minmax(0, 1fr);
+  grid-template-rows: minmax(0, 1fr) minmax(0, 1fr) minmax(0, 1fr);
 }
 
 .blank-board {
@@ -304,7 +395,7 @@ h3 {
   border-style: solid;
   border-color: black;
   min-height: 50vh;
-  max-height: 50vh;
+  max-height: 60vh;
   width: calc(20vw + 30vh);
 }
 
@@ -321,7 +412,12 @@ h3 {
   width: 95%;
   align-items: start;
   padding: 2px;
+<<<<<<< HEAD
   height: 4.5vh;
+=======
+  /* height: calc(3.5vh + 1.5vw); */
+  height:fit-content;
+>>>>>>> 24b2914d51d7699f7ba59a7ab4ab9390db278972
   border-top: 1px solid gray;
 }
 
@@ -336,6 +432,10 @@ span {
 }
 
 .chat {
+  margin-top: 12px;
+  margin-bottom: 12px;
+  max-width: 100%;
+  overflow-wrap: break-word;
   font-size: calc(1.5vh + 0.5vw);
   font-family: 'Lucida Sans', 'Lucida Sans Regular', 'Lucida Grande', 'Lucida Sans Unicode', Geneva, Verdana, sans-serif;
 }
@@ -360,15 +460,33 @@ textarea:focus, input:focus{
   outline: none;
 }
 
-h4 {
+.square-text-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
   text-align: center;
+}
+
+.square-text {
+  display: inline-block;
+  width: 95%;
   color: black;
-  margin: 0;
+  margin: 2px;
   font-size: calc(1.5vh + 0.5vw);
   font-family: lazy_dog;
+  overflow-wrap: break-word;
+}
+
+h4 {
+  color: black;
+  margin: 2px;
+  font-size: calc(1.5vh + 0.5vw);
+  font-family: lazy_dog;
+  overflow-wrap: break-word;
 }
 
 .square div {
+  width: 100%;
   text-align: center;
   padding: 10px;
 }
