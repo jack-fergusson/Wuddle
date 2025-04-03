@@ -69,7 +69,7 @@ body {
   height: 20vh;
   justify-content: space-between;
   padding-top: 5vh;
-  padding-bottom: 5vh;
+  padding-bottom: 7vh;
 }
 
 .signup-form-container {
@@ -412,12 +412,9 @@ h3 {
   width: 95%;
   align-items: start;
   padding: 2px;
-<<<<<<< HEAD
-  height: 4.5vh;
-=======
+  /* height: 4.5vh; */
   /* height: calc(3.5vh + 1.5vw); */
-  height:fit-content;
->>>>>>> 24b2914d51d7699f7ba59a7ab4ab9390db278972
+  height: fit-content;
   border-top: 1px solid gray;
 }
 

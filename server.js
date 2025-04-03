@@ -1,31 +1,37 @@
-require('dotenv').config();
+import 'dotenv/config'
 
-const express = require('express');
-const bodyParser = require('body-parser');
-const { MongoClient } = require('mongodb');
-const mongoose = require('mongoose');
-const cookieParser = require("cookie-parser");
-const ejs = require("ejs");
-// import sslRedirect from 'heroku-ssl-redirect';
+// const bodyParser = require('body-parser');
+// const { MongoClient } = require('mongodb');
+import mongoose from 'mongoose';
+import cookieParser from 'cookie-parser';
+// const ejs = require("ejs");
+import herokuSSLRedirect from 'heroku-ssl-redirect';
+const sslRedirect = herokuSSLRedirect.default
+import express from 'express';
 
 const port = process.env.PORT || 3000;
 
-const helpers = require('./helpers');
+import helpers from './helpers.js';
 
 // initialize the application
 const app = express();
-const server = require('http').createServer(app);
-const { Server } = require('socket.io');
+import * as http from 'http';
+const server = http.createServer(app);
+import { Server } from "socket.io";
 const io = new Server(server);
+
+const __dirname = import.meta.dirname;
 
 // set the view engine and licate the views folder
 app.set('view engine', 'ejs');
 app.set('views', (__dirname + '/views'));
 
-app.use(bodyParser.urlencoded({extended: true}));
+
 app.use(express.static(__dirname + '/public'));
+app.use(express.urlencoded({ extended: false }));
+app.use(express.json());
 app.use(cookieParser());
-// app.use(sslRedirect());
+app.use(sslRedirect());
 
 const uri = process.env.MONGODB_URI;
 mongoose.connect(uri);
@@ -104,6 +110,7 @@ app.get('/', async (req, res) => {
 
 // Route to user-entered room
 app.post('/', (req, res, next) => {
+  console.log(req.body);
   let roomID = req.body.roomID.toUpperCase();
   res.redirect("/rooms/" + roomID);
 });
