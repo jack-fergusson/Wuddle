@@ -114,6 +114,10 @@ app.post('/', (req, res, next) => {
   res.redirect("/rooms/" + roomID);
 });
 
+app.get('/info', (req, res) => {
+  res.render("info");
+});
+
 // root GET request
 app.get('/create', (req, res) => {
   res.render("create");
