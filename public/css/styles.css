@@ -240,7 +240,8 @@ h3 {
 
 .crown {
   height: calc(1vh + 1vw);
-  padding-right: 1vw;
+  padding-right: 0.5vw;
+  padding-left: 0.5vw;
   filter: invert(56%) sepia(79%) saturate(731%) hue-rotate(14deg) brightness(109%) contrast(110%);
 }
 
@@ -254,8 +255,46 @@ h3 {
   flex-direction: row;
 }
 
+.copyText-container {
+  display: flex;
+  align-items: center;
+  width: calc(40vw + 20vh);
+  flex-direction: row;
+}
+
+.copyText {
+  font-size: calc(1.5vh + 0.5vw);
+  width: 100%;
+  height: 13vh;
+}
+
 .copy {
   width: calc(2vh + 1vw);
+}
+
+.closeCopyText {
+  margin-left: 1vh;
+  font-size: calc(2vh);
+  padding: 5px;
+}
+
+.add-button {
+  background-color: white;
+  border-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+.add {
+  width: calc(3vh + 1.5vw);
+}
+
+.addEvent-input {
+  font-size: calc(1.5vh + 1vw);
+}
+
+.addEvent-container {
+  margin-top: 1vh;
 }
 
 .refresh {

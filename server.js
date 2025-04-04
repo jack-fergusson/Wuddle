@@ -110,7 +110,6 @@ app.get('/', async (req, res) => {
 
 // Route to user-entered room
 app.post('/', (req, res, next) => {
-  console.log(req.body);
   let roomID = req.body.roomID.toUpperCase();
   res.redirect("/rooms/" + roomID);
 });
@@ -458,7 +457,7 @@ app.get("/rooms/:roomID", checkRoomID, async (req, res) => {
 });
 
 app.get('/rooms/:roomID/:playerID/boards', checkRoomID, checkPlayerID, async (req, res) => {
-  // Refresh the cookies
+  // Refresh the cookie
   // res.cookie("roomID", JSON.stringify(JSON.parse(req.params.roomID)), {maxAge: 3600000000}, "/");
   res.cookie("playerID", req.params.playerID, {maxAge: 3600000000}, "/");
 
@@ -479,6 +478,29 @@ app.get('/rooms/:roomID/:playerID/boards', checkRoomID, checkPlayerID, async (re
     room: room,
   });
 }); 
+
+app.post('/rooms/:roomID/:playerID/boards', async (req, res) => {
+  // req.params.roomID;
+  // req.body.event
+
+  // Add new event to room
+  await Room.findOne({ ID : req.params.roomID }).exec()
+  .then(async function(room) {
+    room.Events.push(req.body.event);
+
+    await Room.updateOne(
+      { ID : req.params.roomID },
+      { Events: room.Events }
+    )
+    .exec()
+    .then(function() {
+      res.redirect("/rooms/" + req.params.roomID + "/" + req.params.playerID + "/boards");
+    })
+    .catch(function(err) {
+      console.log(err);
+    });
+  });
+});
 
 app.get('/rooms/:roomID/:playerID/chat', checkRoomID, async (req, res) => {
   let room;

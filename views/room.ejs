@@ -2,7 +2,7 @@
     <div class="container all-boards-container">
         <div class="roomName-container">
             <div class="spacer"></div>
-            <h2><%= room.Name %></h2>
+            <h2><%= room.Name %>!</h2>
             <div class="spacer"></div>
         </div>
         <div class="container view-selector">
@@ -17,6 +17,21 @@
             <button class="unselected">
                 <a href="/rooms/<%=roomID%>/<%=PlayerID%>/chat">Chat</a>
             </button>
+        </div>
+        <div>
+            <div class="spacer"></div>
+        </div>
+        <div class="container room-code-container">
+            <h4>
+                Room code:&nbsp;<span><%= room.ID %>&nbsp;</span>
+                <button class="copy-button" id="opener" title="Copy Invitation" onclick="copyInvite()">
+                    <img src="/images/copy.svg" class="copy">
+                </button>
+            </h4>
+        </div>
+        <div class="copyText-container" id="copyText-container" style="display: none;">
+            <textarea id="copyText" class="copyText" readonly>Come play Wuddle! Follow this link to join the room '<%= room.Name %>' play-wuddle.com/rooms/<%= room.ID %> Please ensure you have cookies turned on!</textarea>
+            <button class="closeCopyText" onclick="closeCopyText()">X</button>
         </div>
         <div class="spacer"></div>
         <div class="container grid-container">
@@ -59,24 +74,16 @@
                 <% } %>
             </div>
         </div>
+        <button class="add-button" title="Add Event" onclick="unhideEvent()">
+            <img src="/images/add.svg" class="add">
+        </button>
+        <form action="/rooms/<%= roomID %>/<%=PlayerID%>/boards" method="post">
+            <div class="addEvent-container" id="addEvent-container" style="display: none;">
+                <input type="text" class="addEvent-input" id="event" name="event" placeholder="<%= room.Players[0].DisplayName %> gets hurt" maxlength="45" autocomplete="off" required>
+                <button type="submit" class="submitEvent">ADD</button>
+            </div>
+        </form>
         <div>
-            <div class="spacer"></div>
-        </div>
-        <div class="container room-code-container">
-            <h4>
-                Room code:&nbsp;<span><%= room.ID %>&nbsp;</span>
-                <button class="copy-button" id="opener" title="Copy Invitation" onclick="copyInvite()">
-                    <img src="/images/copy.svg" class="copy">
-                </button>
-            </h4>
-        </div>
-        <div class="container copyText-container" id="copyText-container" style="display: none;">
-            <textarea id="copyText" style="width: 100%; min-height: 50px;">Come play Wuddle! Follow this link to join the room '<%= room.Name %>' play-wuddle.com/rooms/<%= room.ID %> Please ensure you have cookies turned on!"</textarea>
-            <button class="closeCopyText" onclick="closeCopyText()">X</button>
-        </div>
-        <div>
-            <div class="spacer"></div>
-            <div class="spacer"></div>
             <div class="spacer"></div>
         </div>
 
@@ -90,10 +97,6 @@
         // Register hits from player pages and change color of given square
         socket.on('hit', (playerID, hitIndex, winCondition) => {
             document.getElementById(playerID + hitIndex).style.backgroundColor = "#4daa57";
-
-            // if (winCondition) {
-            //     document.getElementById("crown" + playerID).style.display = "block";
-            // }
         });
 
         socket.on('newPlayer', (PlayerID, PlayerName) => {
@@ -135,16 +138,18 @@
         }
 
         function copyInvite() {
-            navigator.permissions.query({ name: "clipboard-write" }).then((result) => {
-                if (result.state === "granted" || result.state === "prompt") {
-                    navigator.clipboard.writeText("Come play Wuddle!\nFollow this link to join the room '<%= room.Name %>' https://play-wuddle.com/rooms/<%= room.ID %>\nPlease ensure you have cookies turned on!");
-                    alert("Invite copied to clipboard!");
-                }
-                else {
-                    document.getElementById("copyText-container").style = "display: block; width: 40%";
-                    document.getElementById("copyText").select();
-                }
-            });
+            document.getElementById("copyText-container").style = "display: flex;";
+            document.getElementById("copyText").select();
+        }
+
+        function unhideEvent() {
+            let addEvent = document.getElementById("addEvent-container");
+
+            if (addEvent.style.display == "none") {
+                addEvent.style = "display: flex;";
+            } else {
+                addEvent.style = "display: none;";
+            }
         }
 
     </script>
