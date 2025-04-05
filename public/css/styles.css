@@ -82,7 +82,7 @@ body {
   color: white;
   margin: 0;
   padding-top: 1.5vh;
-  padding-bottom: 1.5vh;
+  padding-bottom: 1vh;
   font-size: calc(3.5vh + 1vw);
   font-family: lazy_dog;
 }
@@ -180,6 +180,11 @@ body {
 .create-info {
   margin: 0;
   padding: 0;
+}
+
+.events-textarea {
+  font-size: calc(1vh + 1vw);
+  font-family: 'Lucida Sans', 'Lucida Sans Regular', 'Lucida Grande', 'Lucida Sans Unicode', Geneva, Verdana, sans-serif;
 }
 
 label {
