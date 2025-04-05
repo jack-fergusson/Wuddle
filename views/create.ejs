@@ -22,6 +22,7 @@
                 </h3>
             </div>
             <div class="spacer"></div>
+            <div class="spacer"></div>
             <div>
                 <input type="radio" id="3x3" name="boardSize" value="3" checked>
                 <label for="3x3">3x3</label><br>
@@ -40,16 +41,6 @@
             <div class="container create-sub-container">
                 <textarea id="events" name="events" class="events-textarea" rows="16" cols="40" placeholder="Enter events!&#10;&#10;Seperate events with a new line (enter).&#10;For a 3x3 board, enter 9+ events.&#10;For a 4x4 board, enter 16+ events.&#10;&#10;Each event should be no longer than 40 characters, which is the width of this box" autocomplete="off"></textarea>
             </div>
-            <!-- <div class="container events-input-container">
-                <div class="board" id="board">
-                    <% for (let i = 1; i <= 8; i++) { %>
-                        <div class="square">
-                            <input type="text" id="<%=i%>" name="<%=i%>" placeholder="Event <%= i %>" maxlength="45" required autocomplete="off">
-                        </div>
-                    <% } %>
-                               
-                </div>
-            </div> -->
         </div>
         <div class="container create-sub-container">
             <button type="submit" class="room-button">Create Room</button>

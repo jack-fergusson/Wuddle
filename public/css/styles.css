@@ -189,6 +189,7 @@ body {
 
 label {
   font-family: 'Lucida Sans', 'Lucida Sans Regular', 'Lucida Grande', 'Lucida Sans Unicode', Geneva, Verdana, sans-serif;
+  font-size: calc(1vh + 1vw);
 }
 
 .signup-container {
