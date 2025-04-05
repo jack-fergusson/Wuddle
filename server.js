@@ -57,6 +57,7 @@ const roomSchema = new Schema ({
   Name: String,
   ID: String,
   Chats: [chatSchema],
+  BoardSize: Number,
   Events: [String],
   Players: [playerSchema],
 });
@@ -169,9 +170,16 @@ io.on("connection", (socket) => {
           
           // Find out if the player has achieved bingo
           let board = player.BoardState;
-          if (board[0] && board[3] && board[6] || board[1] && board[4] && board[7] || board[2] && board[5] && board[8] || board[0] && board[1] && board[2] || board[3] && board[4] && board[5] || board[6] && board[7] && board[8] || board[0] && board[4] && board[8] || board[2] && board[4] && board[6]) {
-            // update the player's wincondition
-            player.WinCondition = true;
+          if (room.BoardSize == 3) {
+            if (board[0] && board[3] && board[6] || board[1] && board[4] && board[7] || board[2] && board[5] && board[8] || board[0] && board[1] && board[2] || board[3] && board[4] && board[5] || board[6] && board[7] && board[8] || board[0] && board[4] && board[8] || board[2] && board[4] && board[6]) {
+              // update the player's wincondition
+              player.WinCondition = true;
+            }
+          } else if (room.BoardSize == 4) {
+            if (board[0] && board[4] && board[8] && board[12] || board[1] && board[5] && board[9] && board[13] || board[2] && board[6] && board[10] && board[14] || board[3] && board[7] && board[11] && board [15] || board[0] && board[1] && board[2] && board[3] || board[4] && board[5] && board[6] && board[7] || board[8] && board[9] && board[10] && board[11] || board[12] && board[13] && board[14] && board[15] || board[0] && board[5] && board[10] && board[15] || board[3] && board[6] && board[9] && board[12]) {
+              // update the player's wincondition
+              player.WinCondition = true;
+            }
           }
 
           // THIS IS IT WOOOOO
@@ -261,9 +269,14 @@ io.on("connection", (socket) => {
       // Step 2: Update player's BoardState
       room.Players.forEach(player => {
         if (player.ID == playerID) {
-          player.Events = helpers.shuffle(room.Events).slice(0, 9);
+          if (room.BoardSize == 3) {
+            player.Events = helpers.shuffle(room.Events).slice(0, 9);
+            player.BoardState = [false, false, false, false, false, false, false, false, false];
+          } else if (room.BoardSize == 4) {
+            player.Events = helpers.shuffle(room.Events).slice(0, 16);
+            player.BoardState = [false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false];
+          }
           player.WinCondition = false;
-          player.BoardState = [false, false, false, false, false, false, false, false, false];
           player.NumWins += 1;
           sender = player;
 
@@ -323,9 +336,15 @@ io.on("connection", (socket) => {
       // Step 2: Update player's BoardState
       room.Players.forEach(player => {
         if (player.ID == playerID) {
-          for (let i = 0; i < 9; i++) {
-            player.BoardState[i] = false;
-            player.WinCondition = false;
+          player.WinCondition = false;
+          if (room.BoardSize == 3) {
+            for (let i = 0; i < 9; i++) {
+              player.BoardState[i] = false;
+            }
+          } else if (room.BoardSize == 4) {
+            for (let i = 0; i < 16; i++) {
+              player.BoardState[i] = false;
+            }
           }
         }
       });
@@ -350,13 +369,15 @@ app.post('/create', async (req, res, next) => {
   roomInstance.ID = helpers.makeID(8);
   roomInstance.Chats = [];
 
-  let events = [];
-  // Get the events from the 8 squares in form
-  for (var i = 1; i <= 8; i++) {
-    events.push(req.body[i]);
+  let events = req.body.events.split(/\r?\n/);
+  console.log(events);
+  for (let i = 0; i < events.length; i++) {
+    events[i] = events[i].substring(0, 40);
   }
+  
   roomInstance.Events = events;
   roomInstance.Name = req.body.roomName;
+  roomInstance.BoardSize = parseInt(req.body.boardSize);
 
 
   // Save the room with all attributes.
@@ -369,7 +390,6 @@ app.post('/create', async (req, res, next) => {
 // Middleware for checking roomID validity in the URL
 async function checkRoomID(req, res, next) {
   let roomIDs = [];
-  console.log("here1!");
 
   // Get the IDs of all existing rooms to see if the requested URL is valid
   await Room.find({}, 'ID').exec()
@@ -402,7 +422,6 @@ async function checkRoomID(req, res, next) {
 
 // Check to see if the requested player page matches a player in the DB in the right room
 async function checkPlayerID(req, res, next) {
-  console.log("here!");
   let playerIDs = [];
 
   await Room.findOne({ ID: req.params.roomID }, 'Players').exec()
@@ -563,10 +582,18 @@ app.post("/rooms/:roomID/signup", async (req, res) => {
     playerInstance.ID = helpers.makeID(6);
   }
   playerInstance.DisplayName = req.body.displayName;
-  playerInstance.Events = helpers.shuffle(room.Events).slice(0, 9);
   playerInstance.WinCondition = false;
-  playerInstance.BoardState = [false, false, false, false, false, false, false, false, false];
   playerInstance.NumWins = 0;
+
+  if (room.BoardSize == 3) {
+    playerInstance.Events = helpers.shuffle(room.Events).slice(0, 9);
+    playerInstance.BoardState = [false, false, false, false, false, false, false, false, false];
+  } 
+  else if (room.BoardSize == 4) {
+    console.log("Big board!");
+    playerInstance.Events = helpers.shuffle(room.Events).slice(0, 16);
+    playerInstance.BoardState = [false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false];
+  }
 
   // Add the new player to the db using Mongoose syntax, not MongoDB.
   room.Players.push(playerInstance);

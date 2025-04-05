@@ -19,30 +19,52 @@
             </button>
         </div>
         <div class="spacer"></div>
-        <div class="container board-grid-container">
-            <div class="personal-board" id="board">
-                <% for (let i = 0; i < 9; i++) { %>
-                    <% if (Player.BoardState[i] == true ) { %>
-                        <div class="square" id="<%= i %>" style="background-color: #4daa57;" onClick="eventHappened(<%= i %>)">
-                            <div class="container square-text-container">
-                                <p class="square-text"><%= Player.Events[i] %></p>
+        <% if (Room.BoardSize == 3) { %>
+            <div class="container board-grid-container">
+                <div class="personal-board" id="board">
+                    <% for (let i = 0; i < 9; i++) { %>
+                        <% if (Player.BoardState[i] == true ) { %>
+                            <div class="square" id="<%= i %>" style="background-color: #4daa57;" onClick="eventHappened(<%= i %>)">
+                                <div class="container square-text-container">
+                                    <p class="square-text"><%= Player.Events[i] %></p>
+                                </div>
                             </div>
-                        </div>
-                    <% } else { %>
-                        <div class="square" id="<%= i %>" onClick="eventHappened(<%= i %>)">
-                            <div class="container square-text-container">
-                                <p class="square-text"><%= Player.Events[i] %></p>
-                            </div>
-                        </div>  
+                        <% } else { %>
+                            <div class="square" id="<%= i %>" onClick="eventHappened(<%= i %>)">
+                                <div class="container square-text-container">
+                                    <p class="square-text"><%= Player.Events[i] %></p>
+                                </div>
+                            </div>  
+                        <% } %>
                     <% } %>
-                <% } %>
+                </div>
             </div>
-        </div>
+        <% } else if (Room.BoardSize == 4) { %>
+            <div class="container board-grid-container">
+                <div class="personal-board-4" id="board">
+                    <% for (let i = 0; i < 16; i++) { %>
+                        <% if (Player.BoardState[i] == true ) { %>
+                            <div class="square" id="<%= i %>" style="background-color: #4daa57;" onClick="eventHappened(<%= i %>)">
+                                <div class="container square-text-container">
+                                    <p class="square-text-4"><%= Player.Events[i] %></p>
+                                </div>
+                            </div>
+                        <% } else { %>
+                            <div class="square" id="<%= i %>" onClick="eventHappened(<%= i %>)">
+                                <div class="container square-text-container">
+                                    <p class="square-text-4"><%= Player.Events[i] %></p>
+                                </div>
+                            </div>  
+                        <% } %>
+                    <% } %>
+                </div>
+            </div>
+        <% } %>
         <div class="container icons-container">
             <button class="trash-button" title="Clear Board" onclick="clearAll()">
                 <img src="/images/trash-can.svg" class="trash">
             </button>
-            <button class="refresh-button" title="New Board!" onclick="newBoard()">
+            <button class="refresh-button" id="refresh" title="New Board!" onclick="newBoard()">
                 <img src="/images/refresh.svg" class="refresh">
             </button>
         </div>
@@ -58,6 +80,13 @@
 
         var WinCondition = JSON.parse('<%- JSON.stringify(Player.WinCondition) %>');
         var BoardState = JSON.parse('<%- JSON.stringify(Player.BoardState) %>');
+        var BoardSize = JSON.parse('<%- JSON.stringify(Room.BoardSize) %>');
+
+        if (WinCondition == false) {
+            document.getElementById("refresh").style = "opacity: 0.50";
+        } else {
+            document.getElementById("refresh").style = "opacity: 1";
+        }
 
         function eventHappened(i) {
             if (BoardState[i] == false) {
@@ -68,22 +97,38 @@
             document.getElementById(i).style.backgroundColor = "#4daa57";
             BoardState[i] = true;
 
+            WinCondition = false;
+
             // Check to see if they have won after this hit
             let board = BoardState;
-            if (board[0] && board[3] && board[6] || board[1] && board[4] && board[7] || board[2] && board[5] && board[8] || board[0] && board[1] && board[2] || board[3] && board[4] && board[5] || board[6] && board[7] && board[8] || board[0] && board[4] && board[8] || board[2] && board[4] && board[6]) {
-                // update the player's wincondition
-                WinCondition = true;
-            } else {
-                WinCondition = false;
+            if (BoardSize == 3) {
+                if (board[0] && board[3] && board[6] || board[1] && board[4] && board[7] || board[2] && board[5] && board[8] || board[0] && board[1] && board[2] || board[3] && board[4] && board[5] || board[6] && board[7] && board[8] || board[0] && board[4] && board[8] || board[2] && board[4] && board[6]) {
+                    // update the player's wincondition
+                    WinCondition = true;
+                    document.getElementById("refresh").style = "opacity: 1;";
+                }
+            } else if (BoardSize == 4) {
+                if (board[0] && board[4] && board[8] && board[12] || board[1] && board[5] && board[9] && board[13] || board[2] && board[6] && board[10] && board[14] || board[3] && board[7] && board[11] && board [15] || board[0] && board[1] && board[2] && board[3] || board[4] && board[5] && board[6] && board[7] || board[8] && board[9] && board[10] && board[11] || board[12] && board[13] && board[14] && board[15] || board[0] && board[5] && board[10] && board[15] || board[3] && board[6] && board[9] && board[12]) {
+                    // update the player's wincondition
+                    WinCondition = true;
+                    document.getElementById("refresh").style = "opacity: 1;";
+                }
             }
         }
 
         function clearAll() {
             WinCondition = false;
 
-            for (let i=0; i<9; i++) {
-                document.getElementById(i).style.backgroundColor= "white";
-                BoardState[i] = false;
+            if (BoardSize == 3) {
+                for (let i=0; i<9; i++) {
+                    document.getElementById(i).style.backgroundColor= "white";
+                    BoardState[i] = false;
+                }
+            } else if (BoardSize == 4) {
+                for (let i=0; i<16; i++) {
+                    document.getElementById(i).style.backgroundColor= "white";
+                    BoardState[i] = false;
+                }
             }
             socket.emit('clear', '<%=Player.ID%>', '<%=roomID%>');
         }

@@ -1,12 +1,12 @@
 <%- include('header.ejs') %>
-<div class="container create-container">
-    <div class="container">
+<div class="container create-container create-sub-container">
+    <div class="container" style="margin-bottom: 2vh;">
         <h2>
             Create Your Room
         </h2>
     </div>
     <form class="container new-room-form" action="/create" method="post">
-        <div class="container room-name-input-container">
+        <div class="container room-name-input-container create-sub-container">
             <div>
                 <h3>
                     Room Name
@@ -15,48 +15,43 @@
             <div class="spacer"></div>
             <input type="text" class="room-name-input" name="roomName" size="15" maxlength="25" placeholder="Jim's Golf Trip 2025" autocomplete="off" required>
         </div>
-        <div class="container">
+        <div class="container create-sub-container" style="flex-direction: row;">
             <div>
                 <h3>
-                    Wuddle happen?
+                    Board Size
                 </h3>
             </div>
             <div class="spacer"></div>
-            <div class="container events-input-container">
+            <div>
+                <input type="radio" id="3x3" name="boardSize" value="3" checked>
+                <label for="3x3">3x3</label><br>
+                <input type="radio" id="4x4" name="boardSize" value="4">
+                <label for="4x4">4x4</label><br>
+            </div>
+        </div>
+        <div class="container create-sub-container" style="margin-top: 2vh; margin-bottom: 2vh;">
+            <div style="display: flex; flex-direction: row; align-items: center;">
+                <h3>
+                    Wuddle happen?
+                </h3>
+                <a href="/info"><img class="info" style="filter: none; padding-left: 7px; padding-top: 4px;" src="/images/info.svg"></a>
+            </div>
+
+            <div class="container create-sub-container">
+                <textarea id="events" name="events" rows="16" cols="38" placeholder="Enter events!&#10;&#10;Seperate events with a new line (enter).&#10;For a 3x3 board, enter 9+ events.&#10;For a 4x4 board, enter 16+ events.&#10;&#10;Each event should be no longer than 40 characters, which is the width of this box" autocomplete="off"></textarea>
+            </div>
+            <!-- <div class="container events-input-container">
                 <div class="board" id="board">
                     <% for (let i = 1; i <= 8; i++) { %>
                         <div class="square">
                             <input type="text" id="<%=i%>" name="<%=i%>" placeholder="Event <%= i %>" maxlength="45" required autocomplete="off">
                         </div>
                     <% } %>
-                    <!-- <div class="square">
-                        <input type="text" id="2" name="2" placeholder="Event 2" maxlength="45" required>
-                    </div>
-
-                    <div class="square">
-                        <input type="text" id="3" name="3" placeholder="Event 3" maxlength="45" required>
-                    </div>
-                    <div class="square">
-                        <input type="text" id="4" name="4" placeholder="Event 4" maxlength="45" required>
-                    </div>
-
-                    <div class="square">
-                        <input type="text" id="5" name="5" placeholder="Event 5" maxlength="45" required>
-                    </div>
-                    <div class="square">
-                        <input type="text" id="6" name="6" placeholder="Event 6" maxlength="45" required>
-                    </div>
-
-                    <div class="square">
-                        <input type="text" id="7" name="7" placeholder="Event 7" maxlength="45" required>
-                    </div>
-                    <div class="square">
-                        <input type="text" id="8" name="8" placeholder="Event 8" maxlength="45" required>
-                    </div> -->
+                               
                 </div>
-            </div>
+            </div> -->
         </div>
-        <div class="container">
+        <div class="container create-sub-container">
             <button type="submit" class="room-button">Create Room</button>
         </div>
     </form>

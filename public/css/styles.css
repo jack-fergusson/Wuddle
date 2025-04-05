@@ -173,10 +173,17 @@ body {
   font-size: calc(0.5vh + 2vw);
 }
 
-.create-container {
-  height: 85vh;
-  display: grid;
-  grid-template-rows: 25% 70% 5%;
+.create-sub-container {
+  margin: 2vh;
+}
+
+.create-info {
+  margin: 0;
+  padding: 0;
+}
+
+label {
+  font-family: 'Lucida Sans', 'Lucida Sans Regular', 'Lucida Grande', 'Lucida Sans Unicode', Geneva, Verdana, sans-serif;
 }
 
 .signup-container {
@@ -429,6 +436,22 @@ h3 {
   grid-template-rows: minmax(0, 1fr) minmax(0, 1fr) minmax(0, 1fr);
 }
 
+.personal-board-4 {
+  background-color: black;
+  border-style: solid;
+  border-color: black;
+  width: calc(30vh + 20vw);
+  height: calc(30vh + 20vw);
+  max-width: 390px;
+  max-height: 390px;
+  min-width: 40vh;
+  min-height: 40vh;
+  display: grid;
+  gap: 2px;
+  grid-template-columns: minmax(0, 1fr) minmax(0, 1fr) minmax(0, 1fr) minmax(0, 1fr);
+  grid-template-rows: minmax(0, 1fr) minmax(0, 1fr) minmax(0, 1fr) minmax(0, 1fr);
+}
+
 .blank-board {
   background-color: black;
   border-style: solid;
@@ -439,6 +462,18 @@ h3 {
   gap: 1px;
   grid-template-columns: 1fr 1fr 1fr;
   grid-template-rows: 1fr 1fr 1fr;
+}
+
+.blank-board-4 {
+  background-color: black;
+  border-style: solid;
+  border-color: black;
+  width: calc(10vh + 6vw);
+  height: calc(10vh + 6vw);
+  display: grid;
+  gap: 1px;
+  grid-template-columns: 1fr 1fr 1fr 1fr;
+  grid-template-rows: 1fr 1fr 1fr 1fr;
 }
 
 .blank-square {
@@ -542,6 +577,16 @@ textarea:focus, input:focus{
   color: black;
   margin: 2px;
   font-size: calc(1.5vh + 0.5vw);
+  font-family: lazy_dog;
+  overflow-wrap: break-word;
+}
+
+.square-text-4 {
+  display: inline-block;
+  width: 99%;
+  color: black;
+  margin: 2px;
+  font-size: calc(1vh + 0.6vw);
   font-family: lazy_dog;
   overflow-wrap: break-word;
 }

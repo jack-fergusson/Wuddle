@@ -2,7 +2,7 @@
     <div class="container all-boards-container">
         <div class="roomName-container">
             <div class="spacer"></div>
-            <h2><%= room.Name %>!</h2>
+            <h2><%= room.Name %></h2>
             <div class="spacer"></div>
         </div>
         <div class="container view-selector">
@@ -30,7 +30,7 @@
             </h4>
         </div>
         <div class="copyText-container" id="copyText-container" style="display: none;">
-            <textarea id="copyText" class="copyText" readonly>Come play Wuddle! Follow this link to join the room '<%= room.Name %>' play-wuddle.com/rooms/<%= room.ID %> Please ensure you have cookies turned on!</textarea>
+            <textarea id="copyText" class="copyText" readonly>Come play Wuddle! Follow this link to join the room '<%= room.Name %>' play-wuddle.com/rooms/<%= room.ID %> or go to play-wuddle.com and enter room code <%= room.ID %></textarea>
             <button class="closeCopyText" onclick="closeCopyText()">X</button>
         </div>
         <div class="spacer"></div>
@@ -38,23 +38,43 @@
             <div class="boardGrid">
                 <% for (let i = 0; i < room.Players.length; i++) { %>
                     <div class="container blank-board-container">
-                        <div class="blank-board" id="<%= room.Players[i].ID %>">
-                            <% for (let j = 0; j < 9; j++) { %>
-                                <% if (room.Players[i].BoardState[j] == true ) { %>
-                                    <div class="blank-square" id="<%= room.Players[i].ID %><%= j %>" style="background-color: #4daa57;">
-                                        <div>
-                                            <!-- Individual square of individiual player -->
+                        <% if (room.BoardSize == 3) { %>
+                            <div class="blank-board" id="<%= room.Players[i].ID %>">
+                                <% for (let j = 0; j < 9; j++) { %>
+                                    <% if (room.Players[i].BoardState[j] == true ) { %>
+                                        <div class="blank-square" id="<%= room.Players[i].ID %><%= j %>" style="background-color: #4daa57;">
+                                            <div>
+                                                <!-- Individual square of individiual player -->
+                                            </div>
                                         </div>
-                                    </div>
-                                <% } else { %>
-                                    <div class="blank-square" id="<%= room.Players[i].ID %><%= j %>">
-                                        <div>
-                                            <!-- Individual square of individiual player -->
+                                    <% } else { %>
+                                        <div class="blank-square" id="<%= room.Players[i].ID %><%= j %>">
+                                            <div>
+                                                <!-- Individual square of individiual player -->
+                                            </div>
                                         </div>
-                                    </div>
+                                    <% } %>
                                 <% } %>
-                            <% } %>
-                        </div>
+                            </div>
+                        <% } else if (room.BoardSize == 4) { %>
+                            <div class="blank-board-4" id="<%= room.Players[i].ID %>">
+                                <% for (let j = 0; j < 16; j++) { %>
+                                    <% if (room.Players[i].BoardState[j] == true ) { %>
+                                        <div class="blank-square" id="<%= room.Players[i].ID %><%= j %>" style="background-color: #4daa57;">
+                                            <div>
+                                                <!-- Individual square of individiual player -->
+                                            </div>
+                                        </div>
+                                    <% } else { %>
+                                        <div class="blank-square" id="<%= room.Players[i].ID %><%= j %>">
+                                            <div>
+                                                <!-- Individual square of individiual player -->
+                                            </div>
+                                        </div>
+                                    <% } %>
+                                <% } %>
+                            </div>
+                        <% } %>
                         <div class="nametag" id="<%= room.Players[i].ID %>-nametag">
                             <h4 style="padding-top: 5px;"><%= room.Players[i].DisplayName %></h4>
                             <div class="container crowns-container">
@@ -94,6 +114,8 @@
 
         socket.emit('joinRoom', '<%=roomID%>');
 
+        var BoardSize = JSON.parse('<%- JSON.stringify(room.BoardSize) %>');
+
         // Register hits from player pages and change color of given square
         socket.on('hit', (playerID, hitIndex, winCondition) => {
             document.getElementById(playerID + hitIndex).style.backgroundColor = "#4daa57";
@@ -126,11 +148,15 @@
         });
 
         socket.on('clear', (PlayerID) => {
-            for (let i = 0; i < 9; i++) {
-                document.getElementById(PlayerID + i.toString()).style.backgroundColor = "white";
+            if (BoardSize == 3) {
+                for (let i = 0; i < 9; i++) {
+                    document.getElementById(PlayerID + i.toString()).style.backgroundColor = "white";
+                }
+            } else if  (BoardSize == 4) {
+                for (let i = 0; i < 16; i++) {
+                    document.getElementById(PlayerID + i.toString()).style.backgroundColor = "white";
+                }
             }
-
-            // document.getElementById("crown" + PlayerID).style.display = "none";
         });
 
         function closeCopyText() {   

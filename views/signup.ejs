@@ -22,7 +22,7 @@
         <div class="container check-container">
             <h3>Check!</h3>
             <p class="instruction">
-                Check off events from your personal random board as they happen. Three in a row is a win and lets you play again!
+                Check off events from your personal random board as they happen. Finishin any line is a win and lets you play again!
             </p>
         </div>
     </div>
@@ -38,10 +38,11 @@
             <input type="text" class="room-name-input" size="10" maxlength="15" name="displayName" placeholder="John" autocomplete="off" required>
         </div>
         <div class="container room-name-input-container">
-            <div>
+            <div style="display: flex; flex-direction: row; align-items: center;">
                 <h3>
                     Wuddle happen?
                 </h3>
+                <a href="/info"><img class="info" src="/images/info.svg" style="filter: none; padding-left: 1vw; padding-top: 4px; width: calc(1vh + 1.8vw);"></a>
             </div>
             <div class="spacer"></div>
             <div>
@@ -56,21 +57,3 @@
 </div>
 
 <%- include('footer.ejs') %>
-
-<!-- <script src="js/script.js"></script>
-<script>
-    if (document.cookie.includes("roomID") && document.cookie.includes("playerID")) {
-        // alert("It looks like you already have an ongoing game. Click 'submit' to redirect");
-        const roomValue = document.cookie
-        .split("; ")
-        .find((row) => row.startsWith("roomID="))
-        ?.split("=")[1];
-
-        const playerValue = document.cookie
-        .split("; ")
-        .find((row) => row.startsWith("playerID="))
-        ?.split("=")[1];
-
-        window.location.replace("/rooms/" + roomValue + "/" + playerValue);
-    }
-</script> -->
