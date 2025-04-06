@@ -103,6 +103,18 @@
                 <button type="submit" class="submitEvent">ADD EVENT</button>
             </div>
         </form>
+        <div class="container pool-container" id="pool-container" style="display: none;">
+            <div class="pool">
+                <h3 style="margin-bottom: 2vh; margin-top: 2vh;">THE POOL</h3>
+                <% for (let i = room.Events.length - 1; i >= 0; i--) { %>
+                    <div class="container pool-item-container">
+                        <p class="pool-item">
+                            <%= room.Events[i] %>
+                        </p>
+                    </div>
+                <% } %>
+            </div>
+        </div>
         <div>
             <div class="spacer"></div>
         </div>
@@ -170,11 +182,14 @@
 
         function unhideEvent() {
             let addEvent = document.getElementById("addEvent-container");
+            let pool = document.getElementById("pool-container");
 
             if (addEvent.style.display == "none") {
                 addEvent.style = "display: flex;";
+                pool.style = "display: flex;"
             } else {
                 addEvent.style = "display: none;";
+                pool.style = "display: none";
             }
         }
 

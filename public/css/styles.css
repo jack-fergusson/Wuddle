@@ -491,6 +491,26 @@ h3 {
   align-items: center;
 }
 
+.pool-container {
+  margin-top: 2vh;
+  margin-bottom: 2vh;
+}
+
+.pool-item-container {
+  padding: 1vh;
+}
+
+.pool-item {
+  display: inline-block;
+  text-align: center;
+  width: 99%;
+  color: black;
+  margin: 2px;
+  font-size: calc(1vh + 0.8vw);
+  font-family: lazy_dog;
+  overflow-wrap: break-word;
+}
+
 .square {
   background-color: white;
   display: flex;
