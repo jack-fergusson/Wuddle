@@ -63,9 +63,12 @@
         <div class="container icons-container">
             <button class="trash-button" title="Clear Board" onclick="clearAll()">
                 <img src="/images/trash-can.svg" class="trash">
+                <p class="icon-label">Clear Board</p>
             </button>
-            <button class="refresh-button" id="refresh" title="New Board!" onclick="newBoard()">
-                <img src="/images/refresh.svg" class="refresh">
+            <div class="spacer"></div>
+            <button class="refresh-button" title="New Board!" onclick="newBoard()">
+                <img src="/images/refresh.svg" id="refresh" class="refresh">
+                <p class="icon-label">New Board</p>
             </button>
         </div>
         <div class="spacer"></div>
@@ -83,7 +86,7 @@
         var BoardSize = JSON.parse('<%- JSON.stringify(Room.BoardSize) %>');
 
         if (WinCondition == false) {
-            document.getElementById("refresh").style = "opacity: 0.50";
+            document.getElementById("refresh").style = "opacity: 0.40";
         } else {
             document.getElementById("refresh").style = "opacity: 1";
         }

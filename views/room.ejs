@@ -94,16 +94,19 @@
                 <% } %>
             </div>
         </div>
-        <button class="add-button" title="Add Event" onclick="unhideEvent()">
+        <!-- <button class="add-button" title="Add Event" onclick="unhideEvent()">
             <img src="/images/add.svg" class="add">
-        </button>
+        </button> -->
+        <h3 style="margin-top: 3vh; margin-bottom: 2vh;">
+            ADD To The Pool
+        </h3>
         <form action="/rooms/<%= roomID %>/<%=PlayerID%>/boards" method="post" id="addEvent-form">
-            <div class="addEvent-container" id="addEvent-container" style="display: none;">
+            <div class="addEvent-container" id="addEvent-container" style="display: flex;">
                 <input type="text" class="addEvent-input" id="event" name="event" placeholder="<%= room.Players[0].DisplayName %> gets hurt" maxlength="45" autocomplete="off" required>
                 <button class="submitEvent" onclick="addEvent()">ADD EVENT</button>
             </div>
         </form>
-        <div class="container pool-container" id="pool-container" style="display: none;">
+        <div class="container pool-container" id="pool-container" style="display: flex;">
             <div class="pool">
                 <h3 style="margin-bottom: 2vh; margin-top: 2vh;">THE POOL</h3>
                 <div id="poolEvents">
@@ -182,18 +185,18 @@
             document.getElementById("copyText").select();
         }
 
-        function unhideEvent() {
-            let addEvent = document.getElementById("addEvent-container");
-            let pool = document.getElementById("pool-container");
+        // function unhideEvent() {
+        //     let addEvent = document.getElementById("addEvent-container");
+        //     let pool = document.getElementById("pool-container");
 
-            if (addEvent.style.display == "none") {
-                addEvent.style = "display: flex;";
-                pool.style = "display: flex;"
-            } else {
-                addEvent.style = "display: none;";
-                pool.style = "display: none";
-            }
-        }
+        //     if (addEvent.style.display == "none") {
+        //         addEvent.style = "display: flex;";
+        //         pool.style = "display: flex;"
+        //     } else {
+        //         addEvent.style = "display: none;";
+        //         pool.style = "display: none";
+        //     }
+        // }
 
         var form = document.getElementById("addEvent-form");
         function handleForm(event) { 
