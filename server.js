@@ -270,10 +270,12 @@ io.on("connection", (socket) => {
       room.Players.forEach(player => {
         if (player.ID == playerID) {
           if (room.BoardSize == 3) {
-            player.Events = helpers.shuffle(room.Events).slice(0, 9);
+            let tempEvents = room.Events.slice();
+            player.Events = helpers.shuffle(tempEvents).slice(0, 9);
             player.BoardState = [false, false, false, false, false, false, false, false, false];
           } else if (room.BoardSize == 4) {
-            player.Events = helpers.shuffle(room.Events).slice(0, 16);
+            let tempEvents = room.Events.slice();
+            player.Events = helpers.shuffle(tempEvents).slice(0, 16);
             player.BoardState = [false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false];
           }
           player.WinCondition = false;
@@ -605,12 +607,14 @@ app.post("/rooms/:roomID/signup", async (req, res) => {
   playerInstance.NumWins = 0;
 
   if (room.BoardSize == 3) {
-    playerInstance.Events = helpers.shuffle(room.Events).slice(0, 9);
+    let tempEvents = room.Events.slice();
+    playerInstance.Events = helpers.shuffle(tempEvents).slice(0, 9);
     playerInstance.BoardState = [false, false, false, false, false, false, false, false, false];
   } 
   else if (room.BoardSize == 4) {
     console.log("Big board!");
-    playerInstance.Events = helpers.shuffle(room.Events).slice(0, 16);
+    let tempEvents = room.Events.slice();
+    playerInstance.Events = helpers.shuffle(tempEvents).slice(0, 16);
     playerInstance.BoardState = [false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false];
   }
 
