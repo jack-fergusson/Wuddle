@@ -97,22 +97,24 @@
         <button class="add-button" title="Add Event" onclick="unhideEvent()">
             <img src="/images/add.svg" class="add">
         </button>
-        <form action="/rooms/<%= roomID %>/<%=PlayerID%>/boards" method="post">
+        <form action="/rooms/<%= roomID %>/<%=PlayerID%>/boards" method="post" id="addEvent-form">
             <div class="addEvent-container" id="addEvent-container" style="display: none;">
                 <input type="text" class="addEvent-input" id="event" name="event" placeholder="<%= room.Players[0].DisplayName %> gets hurt" maxlength="45" autocomplete="off" required>
-                <button type="submit" class="submitEvent">ADD EVENT</button>
+                <button class="submitEvent" onclick="addEvent()">ADD EVENT</button>
             </div>
         </form>
         <div class="container pool-container" id="pool-container" style="display: none;">
             <div class="pool">
                 <h3 style="margin-bottom: 2vh; margin-top: 2vh;">THE POOL</h3>
-                <% for (let i = room.Events.length - 1; i >= 0; i--) { %>
-                    <div class="container pool-item-container">
-                        <p class="pool-item">
-                            <%= room.Events[i] %>
-                        </p>
-                    </div>
-                <% } %>
+                <div id="poolEvents">
+                    <% for (let i = room.Events.length - 1; i >= 0; i--) { %>
+                        <div class="container pool-item-container">
+                            <p class="pool-item">
+                                <%= room.Events[i] %>
+                            </p>
+                        </div>
+                    <% } %>
+                </div>
             </div>
         </div>
         <div>
@@ -192,6 +194,24 @@
                 pool.style = "display: none";
             }
         }
+
+        var form = document.getElementById("addEvent-form");
+        function handleForm(event) { 
+            event.preventDefault();
+            // alert(document.getElementById("event").value);
+            socket.emit('newEvent', '<%=roomID%>', document.getElementById("event").value);
+            document.getElementById("event").value = "";
+        } 
+        form.addEventListener('submit', handleForm);
+
+        socket.on('addEvent', (event) => {
+            // alert(event);
+
+            poolInnerHTML = document.getElementById("poolEvents").innerHTML;
+            newEventHTML = `<div class="container pool-item-container"><p class="pool-item">${event}</p></div>`;
+
+            document.getElementById("poolEvents").innerHTML = newEventHTML + poolInnerHTML;
+        });
 
     </script>
 

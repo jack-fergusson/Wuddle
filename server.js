@@ -359,6 +359,25 @@ io.on("connection", (socket) => {
       });
     });
   });
+
+  socket.on('newEvent', async(roomID, eventText) => {
+    await Room.findOne({ ID : roomID }).exec()
+    .then(async function(room) {
+      room.Events.push(eventText);
+
+      await Room.updateOne(
+        { ID : roomID },
+        { Events: room.Events }
+      )
+      .exec()
+      .then(function() {
+        io.to(roomID).emit('addEvent', eventText);
+      })
+      .catch(function(err) {
+        console.log(err);
+      });
+    });
+  });
 });
 
 app.post('/create', async (req, res, next) => {
@@ -502,28 +521,28 @@ app.get('/rooms/:roomID/:playerID/boards', checkRoomID, checkPlayerID, async (re
   });
 }); 
 
-app.post('/rooms/:roomID/:playerID/boards', async (req, res) => {
-  // req.params.roomID;
-  // req.body.event
+// app.post('/rooms/:roomID/:playerID/boards', async (req, res) => {
+//   // req.params.roomID;
+//   // req.body.event
 
-  // Add new event to room
-  await Room.findOne({ ID : req.params.roomID }).exec()
-  .then(async function(room) {
-    room.Events.push(req.body.event);
+//   // Add new event to room
+//   await Room.findOne({ ID : req.params.roomID }).exec()
+//   .then(async function(room) {
+//     room.Events.push(req.body.event);
 
-    await Room.updateOne(
-      { ID : req.params.roomID },
-      { Events: room.Events }
-    )
-    .exec()
-    .then(function() {
-      res.redirect("/rooms/" + req.params.roomID + "/" + req.params.playerID + "/boards");
-    })
-    .catch(function(err) {
-      console.log(err);
-    });
-  });
-});
+//     await Room.updateOne(
+//       { ID : req.params.roomID },
+//       { Events: room.Events }
+//     )
+//     .exec()
+//     .then(function() {
+//       res.redirect("/rooms/" + req.params.roomID + "/" + req.params.playerID + "/boards");
+//     })
+//     .catch(function(err) {
+//       console.log(err);
+//     });
+//   });
+// });
 
 app.get('/rooms/:roomID/:playerID/chat', checkRoomID, async (req, res) => {
   let room;
