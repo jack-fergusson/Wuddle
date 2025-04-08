@@ -455,13 +455,13 @@ async function checkPlayerID(req, res, next) {
         playerIDs.push(player.ID);
       });
 
-      if (playerIDs.includes(req.params.playerID)) {
+      if (playerIDs.includes(req.cookies.playerID)) {
         // Good to go!
         next();
       }
       else {
-        console.log("Error. No such player: ", req.params.playerID);
-        var string = ('Invalid Player ID: ' + req.params.playerID);
+        console.log("Error. No such player: ", req.cookies.playerID);
+        var string = ('Invalid Player ID: ' + req.cookies.playerID);
         res.render("error", {
           msg: string
         });
@@ -479,7 +479,7 @@ app.get("/rooms/:roomID", checkRoomID, async (req, res) => {
     let flag = 0;
     
     await Room.findOne({ ID: req.params.roomID }, 'Players').exec()
-    .then(function(results) {
+    .then(function(results) { // check if they've been to this room before
       results.Players.forEach((player) => {
         playerIDs.push(player.ID);
       });
@@ -488,7 +488,7 @@ app.get("/rooms/:roomID", checkRoomID, async (req, res) => {
         // They have been here before!
         console.log("They have been here before!");
         flag = 1;
-        res.redirect("/rooms/" + req.params.roomID + "/" + req.cookies.playerID);
+        res.redirect("/rooms/" + req.params.roomID + "/my-board");
       }
     });
 
@@ -504,10 +504,11 @@ app.get("/rooms/:roomID", checkRoomID, async (req, res) => {
   }
 });
 
-app.get('/rooms/:roomID/:playerID/boards', checkRoomID, checkPlayerID, async (req, res) => {
+app.get('/rooms/:roomID/boards', checkRoomID, checkPlayerID, async (req, res) => {
+  // If you get tot his point, you by definition have a playerID cookie
+
   // Refresh the cookie
-  // res.cookie("roomID", JSON.stringify(JSON.parse(req.params.roomID)), {maxAge: 3600000000}, "/");
-  res.cookie("playerID", req.params.playerID, {maxAge: 3600000000}, "/");
+  res.cookie("playerID", req.cookies.playerID, {maxAge: 3600000000}, "/");
 
   let room;
   // Query this room's squares from database
@@ -520,37 +521,14 @@ app.get('/rooms/:roomID/:playerID/boards', checkRoomID, checkPlayerID, async (re
 
   // Render the room with the found roomID and squares.
   res.render("room", { 
-    PlayerID: req.params.playerID,
+    PlayerID: req.cookies.playerID,
     roomID: req.params.roomID,
     IP: process.env.IP,
     room: room,
   });
 }); 
 
-// app.post('/rooms/:roomID/:playerID/boards', async (req, res) => {
-//   // req.params.roomID;
-//   // req.body.event
-
-//   // Add new event to room
-//   await Room.findOne({ ID : req.params.roomID }).exec()
-//   .then(async function(room) {
-//     room.Events.push(req.body.event);
-
-//     await Room.updateOne(
-//       { ID : req.params.roomID },
-//       { Events: room.Events }
-//     )
-//     .exec()
-//     .then(function() {
-//       res.redirect("/rooms/" + req.params.roomID + "/" + req.params.playerID + "/boards");
-//     })
-//     .catch(function(err) {
-//       console.log(err);
-//     });
-//   });
-// });
-
-app.get('/rooms/:roomID/:playerID/chat', checkRoomID, async (req, res) => {
+app.get('/rooms/:roomID/chat', checkRoomID, checkPlayerID, async (req, res) => {
   let room;
   // Query this room's squares from database
   await Room.findOne({ ID: req.params.roomID }).exec()
@@ -562,7 +540,7 @@ app.get('/rooms/:roomID/:playerID/chat', checkRoomID, async (req, res) => {
 
   // Render the room with the found roomID and squares.
   res.render("chat", { 
-    PlayerID: req.params.playerID,
+    PlayerID: req.cookies.playerID,
     roomID: req.params.roomID,
     IP: process.env.IP,
     room: room,
@@ -579,7 +557,7 @@ app.get("/rooms/:roomID/signup", checkRoomID, async (req, res) => {
     room.Players.forEach((player) => {
       if (player.ID == playerID) {
         // This person has been here before!
-        res.redirect("/rooms/" + req.params.roomID + "/" + req.cookies.playerID);
+        res.redirect("/rooms/" + req.params.roomID + "/my-board");
       }
     });
   }
@@ -641,10 +619,10 @@ app.post("/rooms/:roomID/signup", async (req, res) => {
   res.cookie("playerID", playerInstance.ID, {maxAge: 3600000000}, "/");
 
   // Redirect them to their personal view.
-  res.redirect("/rooms/" + req.params.roomID + "/" + playerInstance.ID);
+  res.redirect("/rooms/" + req.params.roomID + "/my-board");
 });
 
-app.get("/rooms/:roomID/:playerID", checkRoomID, checkPlayerID, async (req, res) => {
+app.get("/rooms/:roomID/my-board", checkRoomID, checkPlayerID, async (req, res) => {
   console.log("Almost made it!");
 
   await Room.findOne({ ID : req.params.roomID }).exec()
@@ -652,7 +630,7 @@ app.get("/rooms/:roomID/:playerID", checkRoomID, checkPlayerID, async (req, res)
     // Search for the requested player in the room's players list
     var currentPlayer;
     room.Players.forEach((player) => {
-      if (player.ID == req.params.playerID) {
+      if (player.ID == req.cookies.playerID) {
         currentPlayer = player;
       }
     });
