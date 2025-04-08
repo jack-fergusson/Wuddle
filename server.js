@@ -98,10 +98,19 @@ app.get('/', async (req, res) => {
 
       console.log(playerRooms);
 
-      res.render("home", {
-        rooms: playerRooms,
-        signedIn: true,
-      });
+      if (playerRooms.length == 0) {
+        res.clearCookie("playerID");
+        res.render("home", {
+          rooms: playerRooms,
+          signedIn: false,
+        });
+      } 
+      else {
+        res.render("home", {
+          rooms: playerRooms,
+          signedIn: true,
+        });
+      }
     });
   } else {
     res.render("home", {
@@ -118,7 +127,7 @@ app.post('/', (req, res, next) => {
 });
 
 app.post('/sign-in', (req, res) => {
-  res.cookie("playerID", req.body.playerID, {maxAge: 3600000000}, "/");
+  res.cookie("playerID", req.body.playerID.toUpperCase(), {maxAge: 3600000000}, "/");
   res.redirect("/");
 });
 
