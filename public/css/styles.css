@@ -463,8 +463,8 @@ h3 {
   border-color: black;
   width: calc(30vh + 20vw);
   height: calc(30vh + 20vw);
-  max-width: 390px;
-  max-height: 390px;
+  /* max-width: 390px;
+  max-height: 390px; */
   min-width: 40vh;
   min-height: 40vh;
   display: grid;
@@ -479,8 +479,8 @@ h3 {
   border-color: black;
   width: calc(30vh + 20vw);
   height: calc(30vh + 20vw);
-  max-width: 390px;
-  max-height: 390px;
+  /* max-width: 390px;
+  max-height: 390px; */
   min-width: 40vh;
   min-height: 40vh;
   display: grid;
