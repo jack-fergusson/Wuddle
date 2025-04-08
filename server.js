@@ -119,10 +119,6 @@ app.get('/info', (req, res) => {
   res.render("info");
 });
 
-// root GET request
-app.get('/create', (req, res) => {
-  res.render("create");
-});
 
 // What to do when a client-side socket connects to io
 io.on("connection", (socket) => {
@@ -382,12 +378,20 @@ io.on("connection", (socket) => {
   });
 });
 
+app.get('/create', (req, res) => {
+  let roomCode = helpers.makeID(8);
+  res.render("create", {
+    roomID: roomCode,
+  });
+});
+
 app.post('/create', async (req, res, next) => {
   // When form is sent, create a new room instance
   const roomInstance = new Room();
 
   // Create a new 6-letter ID for this specific room
-  roomInstance.ID = helpers.makeID(8);
+  // roomInstance.ID = helpers.makeID(8);
+  roomInstance.ID = req.body.roomID;
   roomInstance.Chats = [];
 
   let events = req.body.events.split(/\r?\n/);

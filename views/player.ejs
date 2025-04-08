@@ -61,12 +61,17 @@
             </div>
         <% } %>
         <div class="container icons-container">
+            <a class="trash-button icon-label" title="Rules" href="/info">
+                <img src="/images/info.svg" class="trash">
+                <p class="icon-label" style="f">Rules</p>
+            </a>
+            <div class="spacer"></div>
             <button class="trash-button" title="Clear Board" onclick="clearAll()">
                 <img src="/images/trash-can.svg" class="trash">
                 <p class="icon-label">Clear Board</p>
             </button>
             <div class="spacer"></div>
-            <button class="refresh-button" title="New Board!" onclick="newBoard()">
+            <button class="refresh-button" title="New Board" onclick="newBoard()">
                 <img src="/images/refresh.svg" id="refresh" class="refresh">
                 <p class="icon-label">New Board</p>
             </button>

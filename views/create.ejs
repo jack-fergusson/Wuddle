@@ -13,7 +13,7 @@
                 </h3>
             </div>
             <div class="spacer"></div>
-            <input type="text" class="room-name-input" name="roomName" size="15" maxlength="25" placeholder="Jim's Golf Trip 2025" autocomplete="off" required>
+            <input type="text" class="room-name-input" id="room-name-input" name="roomName" size="15" maxlength="25" placeholder="Jim's Golf Trip 2025" autocomplete="off" required>
         </div>
         <div class="container create-sub-container" style="flex-direction: row;">
             <div>
@@ -43,10 +43,51 @@
             </div>
         </div>
         <div class="container create-sub-container">
+            <div>
+                <h3>Invite Players</h3>
+            </div>
+            <div class="create-sub-container" style="margin-bottom: 0;">
+                <textarea readonly class="events-textarea" id="roomInvite" cols="40" rows="11">
+Come play WUDDLE!
+
+Guess what crazy things your friends and family will do!
+
+Follow this link to join the room: 
+play-wuddle.com/rooms/<%= roomID %> 
+
+Or, go to play-wuddle.com and enter room code: 
+<%= roomID %></textarea>
+            </div>
+            <div class="container">
+                <p class="invite-tooltip">^ Send this invitation to players after creating the room! ^</p>
+            </div>
+            <input type="text" style="display: none;" name="roomID" value="<%= roomID %>">
+        </div>
+        <div class="container create-sub-container">
             <button type="submit" class="room-button">Create Room</button>
         </div>
     </form>
     <div></div>
 </div>
+
+<script>
+    $('.room-name-input').on("change", function() {
+        let inviteScript1 = `Come play WUDDLE!
+
+Guess what crazy things your friends and family will do during
+'`;
+
+        let inviteScript2 = `'
+
+Follow this link to join the room: 
+play-wuddle.com/rooms/<%= roomID %> 
+
+Or, go to play-wuddle.com and enter room code: 
+<%= roomID %>`;
+
+        document.getElementById("roomInvite").innerHTML = inviteScript1 + document.getElementById("room-name-input").value + inviteScript2;
+        document.getElementById("roomInvite").select();
+    });
+</script>
 
 <%- include('footer.ejs') %>

@@ -21,14 +21,6 @@
         <div>
             <div class="spacer"></div>
         </div>
-        <div class="container room-code-container">
-            <h4>
-                Room code:&nbsp;<span><%= room.ID %>&nbsp;</span>
-                <button class="copy-button" id="opener" title="Copy Invitation" onclick="copyInvite()">
-                    <img src="/images/copy.svg" class="copy">
-                </button>
-            </h4>
-        </div>
         <div class="copyText-container" id="copyText-container" style="display: none;">
             <textarea id="copyText" class="copyText" readonly>Come play Wuddle! Follow this link to join the room '<%= room.Name %>' play-wuddle.com/rooms/<%= room.ID %> or go to play-wuddle.com and enter room code <%= room.ID %></textarea>
             <button class="closeCopyText" onclick="closeCopyText()">X</button>
@@ -94,9 +86,17 @@
                 <% } %>
             </div>
         </div>
-        <!-- <button class="add-button" title="Add Event" onclick="unhideEvent()">
-            <img src="/images/add.svg" class="add">
-        </button> -->
+        <div class="container create-sub-container">
+            <hr style="border: 1px solid black; width: 65%;">
+        </div>
+        <div class="container">
+            <h3>
+                Room code:&nbsp;<span style="color: black; font-size: calc(2.5vh + 1vw);"><%= room.ID %>&nbsp;</span>
+                <!-- <button class="copy-button" id="opener" title="Copy Invitation" onclick="copyInvite()">
+                    <img src="/images/copy.svg" class="copy">
+                </button> -->
+            </h3>
+        </div>
         <h3 style="margin-top: 3vh; margin-bottom: 2vh;">
             ADD To The Pool
         </h3>
