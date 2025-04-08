@@ -174,6 +174,17 @@ body {
   font-size: calc(0.5vh + 2vw);
 }
 
+.been-here {
+  font-size: calc(1.5vh + 1vw);
+  margin-bottom: 0;
+}
+
+.player-id-input {
+  text-align: center;
+  font-size: calc(2vh + 1vw);
+  text-transform: uppercase;
+}
+
 .create-sub-container {
   margin: 2vh;
 }

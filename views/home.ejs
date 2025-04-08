@@ -42,6 +42,9 @@
                 </form>
             </div>
         </div>
+        <div class="container">
+            <hr style="border: 1px solid black; width: 65%;">
+        </div>
         <% if (rooms.length > 0) { %>
             <div class="container my-rooms-container">
                 <div class="my-rooms-text">
@@ -55,6 +58,20 @@
                         <% } %>
                         <a href="/rooms/<%=rooms[i].ID%>/"><button class="my-rooms-button"><%= rooms[i].Name %></button></a>
                     <% } %>
+                </div>
+            </div>
+        <% } else if (!signedIn) { %>
+            <div class="container my-rooms-container create-sub-container">
+                <p class="p-info been-here">Been here before?</p>
+                <div><h2 style="font-size: calc(6vh + 3vw);">↓</h2></div>
+                <div class="container my-rooms-text create-sub-container">
+                    <h2>Sign In</h2>
+                </div>
+                <div class="container create-sub-container">
+                    <form action="/sign-in" method="post">
+                        <input type="text" name="playerID" placeholder="Player Code" class="player-id-input" maxlength="8" autocomplete="off" autocorrect="off">
+                        <button type="submit" class="room-button" style="font-weight: normal;">Sign In</button>
+                    </form>
                 </div>
             </div>
         <% } %>

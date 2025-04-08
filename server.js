@@ -100,11 +100,13 @@ app.get('/', async (req, res) => {
 
       res.render("home", {
         rooms: playerRooms,
+        signedIn: true,
       });
     });
   } else {
     res.render("home", {
       rooms: [],
+      signedIn: false,
     });
   }
 });
@@ -113,6 +115,11 @@ app.get('/', async (req, res) => {
 app.post('/', (req, res, next) => {
   let roomID = req.body.roomID.toUpperCase();
   res.redirect("/rooms/" + roomID);
+});
+
+app.post('/sign-in', (req, res) => {
+  res.cookie("playerID", req.body.playerID, {maxAge: 3600000000}, "/");
+  res.redirect("/");
 });
 
 app.get('/info', (req, res) => {
@@ -582,7 +589,7 @@ app.post("/rooms/:roomID/signup", async (req, res) => {
   }
   else {
     // This is this user's first game
-    playerInstance.ID = helpers.makeID(6);
+    playerInstance.ID = helpers.makeID(8);
   }
   playerInstance.DisplayName = req.body.displayName;
   playerInstance.WinCondition = false;
