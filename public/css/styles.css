@@ -40,7 +40,7 @@ body {
 .header-container {
   height: 10vh;
   display: grid;
-  grid-template-columns: 4% 26% 63% 4% 3%;
+  grid-template-columns: 4% 26% 59% 9% 2%;
 }
 
 .info {
@@ -87,7 +87,7 @@ body {
   background-color: #33658A;
   margin: 0;
   padding-left: 0vh;
-  padding-right: 5vh;
+  padding-right: 3vh;
   padding-top: 2vh;
   padding-bottom: 2.5vh;
   font-size: calc(3.5vh + 1vw);
