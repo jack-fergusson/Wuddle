@@ -6,7 +6,7 @@
 html{
   background-color: #33658A;
   /* background: repeating-linear-gradient( 45deg, #1c364a, #1c364a 20px, #33658A 20px, #33658A 100px ); */
-  background: url(/images/background3.png);
+  background: url(/images/background4.png);
   background-size: 90%;
 }  /* background-color: #33658A; */
 
@@ -40,7 +40,7 @@ body {
 .header-container {
   height: auto;
   display: grid;
-  grid-template-columns: 4% 26% 59% 9% 2%;
+  grid-template-columns: 30% 59% 9% 2%;
 }
 
 .info {
@@ -86,7 +86,8 @@ body {
   color: white;
   background-color: #33658A;
   margin: 0;
-  padding-left: 0vh;
+  margin-left: 2vw;
+  padding-left: 2vw;
   padding-right: 3vh;
   padding-top: 2vh;
   padding-bottom: 2.5vh;
