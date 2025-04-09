@@ -3,9 +3,12 @@
   src: url('../fonts/Lazydog.otf');
 }
 
-html {
+html{
   background-color: #33658A;
-}
+  /* background: repeating-linear-gradient( 45deg, #1c364a, #1c364a 20px, #33658A 20px, #33658A 100px ); */
+  background: url(/images/background.png);
+  background-size: 90%;
+}  /* background-color: #33658A; */
 
 body {
   margin: 0;
@@ -23,11 +26,11 @@ body {
 .entire-container {
   height: 100%;
   justify-content: flex-start;
-  padding-bottom: 3vh;
+  padding-bottom: 5vh;
 }
 
 .page-container {
-  width: 95%;
+  width: 90%;
   height: 95%;
   /* display: grid;
   grid-template-rows: 10% 90%;
@@ -37,7 +40,7 @@ body {
 .header-container {
   height: 10vh;
   display: grid;
-  grid-template-columns: 5% 25% 60% 5% 5%;
+  grid-template-columns: 4% 26% 63% 4% 3%;
 }
 
 .info {
@@ -81,9 +84,12 @@ body {
   text-align: left;
   height: auto;
   color: white;
+  background-color: #33658A;
   margin: 0;
-  padding-top: 1.5vh;
-  padding-bottom: 1.5vh;
+  padding-left: 0vh;
+  padding-right: 5vh;
+  padding-top: 2vh;
+  padding-bottom: 2.5vh;
   font-size: calc(3.5vh + 1vw);
   font-family: lazy_dog;
 }
@@ -138,8 +144,8 @@ body {
 }
 
 .my-rooms-container {
-  padding-top: 30px;
-  padding-bottom: 30px;
+  margin-top: 3vh;
+  margin-bottom: 3vh;
   justify-content: space-between;
 }
 

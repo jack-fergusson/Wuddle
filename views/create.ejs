@@ -39,7 +39,7 @@
             </div>
 
             <div class="container create-sub-container">
-                <textarea id="events" name="events" class="events-textarea" rows="16" cols="40" placeholder="Enter events!&#10;&#10;Seperate events with a new line (enter).&#10;For a 3x3 board, enter 9+ events.&#10;For a 4x4 board, enter 16+ events.&#10;&#10;Each event should be no longer than 40 characters, which is the width of this box" autocomplete="off"></textarea>
+                <textarea id="events" name="events" class="events-textarea" rows="16" cols="38" placeholder="Enter events!&#10;&#10;Seperate events with a new line (enter).&#10;For a 3x3 board, enter 9+ events.&#10;For a 4x4 board, enter 16+ events.&#10;&#10;Each event should be no longer than 40 characters, which is the width of this box" autocomplete="off"></textarea>
             </div>
         </div>
         <div class="container create-sub-container">
@@ -47,7 +47,7 @@
                 <h3>Invite Players</h3>
             </div>
             <div class="create-sub-container" style="margin-bottom: 0;">
-                <textarea readonly class="events-textarea" id="roomInvite" cols="40" rows="11">
+                <textarea readonly class="events-textarea" id="roomInvite" cols="38" rows="12">
 Come play WUDDLE!
 
 Guess what crazy things your friends and family will do!
@@ -71,6 +71,10 @@ Or, go to play-wuddle.com and enter room code:
 </div>
 
 <script>
+    $(document).on("keydown", ":input:not(textarea)", function(event) {
+        return event.key != "Enter";
+    });
+
     $('.room-name-input').on("change", function() {
         let inviteScript1 = `Come play WUDDLE!
 

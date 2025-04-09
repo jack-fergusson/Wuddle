@@ -48,14 +48,16 @@
                 <div class="my-rooms-text">
                     <h2>My Rooms</h2>
                 </div>
-                <div class="my-rooms-row">
-                    <% for (let i = 0; i < rooms.length; i++) { %>
-                        <% if (i > 0 && i % 3 == 0) { %>
-                            </div>
-                            <div class="my-rooms-row">
+                <div class="container create-sub-container">
+                    <div class="my-rooms-row">
+                        <% for (let i = 0; i < rooms.length; i++) { %>
+                            <% if (i > 0 && i % 3 == 0) { %>
+                                </div>
+                                <div class="my-rooms-row">
+                            <% } %>
+                            <a href="/rooms/<%=rooms[i].ID%>/"><button class="my-rooms-button"><%= rooms[i].Name %></button></a>
                         <% } %>
-                        <a href="/rooms/<%=rooms[i].ID%>/"><button class="my-rooms-button"><%= rooms[i].Name %></button></a>
-                    <% } %>
+                    </div>
                 </div>
             </div>
         <% } else if (!signedIn) { %>

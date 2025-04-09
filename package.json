@@ -2,9 +2,7 @@
   "name": "bingocardproject",
   "version": "1.0.0",
   "main": "server.js",
-  "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
-  },
+  "scripts": {},
   "keywords": [],
   "author": "",
   "license": "ISC",
@@ -23,6 +21,8 @@
     "socket.io": "^4.7.5"
   },
   "devDependencies": {
-    "@types/cookie-parser": "^1.4.8"
+    "@playwright/test": "^1.51.1",
+    "@types/cookie-parser": "^1.4.8",
+    "@types/node": "^22.14.0"
   }
 }
