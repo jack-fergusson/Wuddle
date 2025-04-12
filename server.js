@@ -9,6 +9,9 @@ import herokuSSLRedirect from 'heroku-ssl-redirect';
 const sslRedirect = herokuSSLRedirect.default
 import express from 'express';
 
+import { Filter } from 'bad-words'
+const filter = new Filter();
+
 const port = process.env.PORT || 3000;
 
 import helpers from './helpers.js';
@@ -18,7 +21,9 @@ const app = express();
 import * as http from 'http';
 const server = http.createServer(app);
 import { Server } from "socket.io";
-const io = new Server(server);
+const io = new Server(server, {
+  connectionStateRecovery: {}
+});
 
 const __dirname = import.meta.dirname;
 
@@ -223,6 +228,8 @@ io.on("connection", (socket) => {
 
   // Register new chat messages FROM the client side
   socket.on('chat', async (playerID, chatMessage, roomID) => {
+    chatMessage = filter.clean(chatMessage);
+
     console.log("Player", playerID, "has sent message", chatMessage, ". Should save to db and message board.");
     let sender;
 
@@ -376,22 +383,26 @@ io.on("connection", (socket) => {
   });
 
   socket.on('newEvent', async(roomID, eventText) => {
-    await Room.findOne({ ID : roomID }).exec()
-    .then(async function(room) {
-      room.Events.push(eventText);
+    eventText = filter.clean(eventText);
 
-      await Room.updateOne(
-        { ID : roomID },
-        { Events: room.Events }
-      )
-      .exec()
-      .then(function() {
-        io.to(roomID).emit('addEvent', eventText);
-      })
-      .catch(function(err) {
-        console.log(err);
+    if (!eventText.includes('*')) {
+      await Room.findOne({ ID : roomID }).exec()
+      .then(async function(room) {
+        room.Events.push(eventText);
+
+        await Room.updateOne(
+          { ID : roomID },
+          { Events: room.Events }
+        )
+        .exec()
+        .then(function() {
+          io.to(roomID).emit('addEvent', eventText);
+        })
+        .catch(function(err) {
+          console.log(err);
+        });
       });
-    });
+    }
   });
 
   socket.on('deleteEvent', async (roomID, eventIndex) => {
@@ -433,11 +444,12 @@ app.post('/create', async (req, res, next) => {
   let events = req.body.events.split(/\r?\n/);
   console.log(events);
   for (let i = 0; i < events.length; i++) {
-    events[i] = events[i].substring(0, 40);
+    // Filter out bad words and truncate to 41 chars
+    events[i] = filter.clean(events[i].substring(0, 41));
   }
   
   roomInstance.Events = events;
-  roomInstance.Name = req.body.roomName;
+  roomInstance.Name = filter.clean(req.body.roomName);
   roomInstance.BoardSize = parseInt(req.body.boardSize);
 
   // If the creator already has an ID, snag it
@@ -625,7 +637,7 @@ app.get("/rooms/:roomID/signup", checkRoomID, async (req, res) => {
 // A user joins the game
 app.post("/rooms/:roomID/signup", async (req, res) => {
   const room = await Room.findOne({ ID: req.params.roomID });
-  room.Events.push(req.body.event);
+  room.Events.push(filter.clean(req.body.event));
 
   const playerInstance = new Player();
 
@@ -638,7 +650,7 @@ app.post("/rooms/:roomID/signup", async (req, res) => {
     console.log("GENERATING NEW ID");
     playerInstance.ID = helpers.makeID(8);
   }
-  playerInstance.DisplayName = req.body.displayName;
+  playerInstance.DisplayName = filter.clean(req.body.displayName);
   playerInstance.WinCondition = false;
   playerInstance.NumWins = 0;
 
