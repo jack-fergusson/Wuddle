@@ -10,6 +10,19 @@ function makeID(length) {
     return result;
 }
 
+function makeUniqueID(length, existing) {
+  const characters = 'AB';
+
+  let newID = makeID(length, characters);
+
+  while (existing.includes(newID)) {
+    console.log("collision!");
+    newID = makeID(length, characters);
+  }
+
+  return newID;
+}
+
 function shuffle(array) {
   let currentIndex = array.length;
 
@@ -42,6 +55,7 @@ function removeItemAll(arr, value) {
 
 module.exports = {
     makeID,
+    makeUniqueID,
     shuffle,
     removeItemAll,
 };

@@ -133,7 +133,7 @@
                                 <p class="pool-item">
                                     <%= room.Events[i] %>
                                 </p>
-                                <button onclick="deleteEvent(<%=i%>)" style="background-color: rgb(249, 8, 8); border: 1px solid black; width: calc(2vh + 1vw); height: calc(1vh + 1vw); font-size: calc(1vh + 0.5vw); margin-left: 1vw;">
+                                <button onclick="deleteEvent(<%=i%>)" class="container deleteEventButton">
                                     X
                                 </button>
                             </div>
@@ -233,7 +233,7 @@
             if (CreatorID != PlayerID) {
                 newEventHTML = `<div class="container pool-item-container"><p class="pool-item">${event}</p></div>`;
             } else {
-                newEventHTML = `<div class="container pool-item-container" style="flex-direction: row;"><p class="pool-item">${event}</p><button onclick="deleteEvent(${Events.length})" style="background-color: rgb(249, 8, 8); border: 1px solid black; width: calc(2vh + 1vw); height: calc(1vh + 1vw); font-size: calc(1vh + 0.5vw); margin-left: 1vw;">X</button></div>`;
+                newEventHTML = `<div class="container pool-item-container" style="flex-direction: row;"><p class="pool-item">${event}</p><button onclick="deleteEvent(${Events.length})" class="container deleteEventButton">X</button></div>`;
             }
 
             Events.push(event);
@@ -252,7 +252,7 @@
                 }
             } else {
                 for (let i = Events.length-1; i >= 0; i--) {
-                    newInnerHTML += `<div class="container pool-item-container" style="flex-direction: row;"><p class="pool-item">${Events[i]}</p><button onclick="deleteEvent(${i})" style="background-color: rgb(249, 8, 8); border: 1px solid black; width: calc(2vh + 1vw); height: calc(1vh + 1vw); font-size: calc(1vh + 0.5vw); margin-left: 1vw;">X</button></div>`
+                    newInnerHTML += `<div class="container pool-item-container" style="flex-direction: row;"><p class="pool-item">${Events[i]}</p><button onclick="deleteEvent(${i})" class="container deleteEventButton">X</button></div>`
                 }
             }
 
