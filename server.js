@@ -60,6 +60,7 @@ const roomSchema = new Schema ({
   BoardSize: Number,
   Events: [String],
   Players: [playerSchema],
+  CreatorID: String,
 });
 
 const Room = mongoose.model(
@@ -420,6 +421,21 @@ app.post('/create', async (req, res, next) => {
   roomInstance.Name = req.body.roomName;
   roomInstance.BoardSize = parseInt(req.body.boardSize);
 
+  // If the creator already has an ID, snag it
+  if (req.cookies.playerID) {
+    roomInstance.CreatorID = req.cookies.playerID;
+  }
+  else {
+    // else give them an ID
+    console.log("GENERATING CREATOR'S ID");
+    var ID = helpers.makeID(8);
+
+    // Store cookie
+    res.cookie("playerID", ID, {maxAge: 3600000000}, "/");
+
+    roomInstance.CreatorID = ID;
+  }
+
 
   // Save the room with all attributes.
   await roomInstance.save();
@@ -472,6 +488,8 @@ async function checkPlayerID(req, res, next) {
       });
 
       if (playerIDs.includes(req.cookies.playerID)) {
+        // Refresh the cookie
+        res.cookie("playerID", req.cookies.playerID, {maxAge: 3600000000}, "/");
         // Good to go!
         next();
       }
@@ -568,7 +586,7 @@ app.get("/rooms/:roomID/signup", checkRoomID, async (req, res) => {
 
   if (req.cookies.playerID) {
     let playerID = req.cookies.playerID;
-    console.log("PLAYER COOKIE EXISTS: ", playerID + "Check if belongs to room");
+    console.log("PLAYER COOKIE EXISTS: ", playerID + " check if belongs to room");
 
     room.Players.forEach((player) => {
       if (player.ID == playerID) {
@@ -598,6 +616,7 @@ app.post("/rooms/:roomID/signup", async (req, res) => {
   }
   else {
     // This is this user's first game
+    console.log("GENERATING NEW ID");
     playerInstance.ID = helpers.makeID(8);
   }
   playerInstance.DisplayName = req.body.displayName;
