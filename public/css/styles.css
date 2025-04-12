@@ -37,11 +37,18 @@ body {
   grid-template-columns: 100%; */
 }
 
+
 .header-container {
   height: auto;
   display: grid;
   grid-template-columns: 30% 59% 9% 2%;
 }
+
+/* @supports not (grid-template-columns: 1fr) {
+  .header-container {
+    height: 10000px;
+  }
+} */
 
 .info {
   width: calc(4vh + 0.2vw);
@@ -76,6 +83,8 @@ body {
 }
 
 .title-container {
+  display: inline-block;
+  height: 100%;
   align-items: start;
   justify-content: center;
 }
@@ -91,7 +100,7 @@ body {
   padding-left: 1vw;
   padding-right: 0.5vh;
   padding-top: 2vh;
-  padding-bottom: 2.5vh;
+  padding-bottom: calc(2vh);
   font-size: calc(3.5vh + 1.2vw);
   font-family: lazy_dog;
 }
@@ -331,6 +340,7 @@ h3 {
 }
 
 .nametag {
+  width: 100%;
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -464,6 +474,9 @@ h3 {
 }
 
 .grid-container {
+  /* display: block;
+  width: 50%;
+  overflow: hidden; */
   padding-top: 2vh;
   padding-bottom: 2vh;
   justify-content: flex-start;
@@ -505,6 +518,10 @@ h3 {
   grid-template-columns: minmax(0, 1fr) minmax(0, 1fr) minmax(0, 1fr) minmax(0, 1fr);
   grid-template-rows: minmax(0, 1fr) minmax(0, 1fr) minmax(0, 1fr) minmax(0, 1fr);
 }
+
+/* .blank-board-container {
+  width: 90%;
+} */
 
 .blank-board {
   background-color: black;
@@ -618,10 +635,15 @@ span {
   font-family: 'Lucida Sans', 'Lucida Sans Regular', 'Lucida Grande', 'Lucida Sans Unicode', Geneva, Verdana, sans-serif;
 }
 
-.chat-input-container {
+/* .chat-input-container {
   display: grid;
   grid-template-columns: 1fr 0fr;
-}
+} */
+
+/* .chat-input-container {
+  display: block;
+  overflow: hidden;
+} */
 
 .chat-input {
   width: 98%;

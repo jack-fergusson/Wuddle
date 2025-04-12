@@ -27,63 +27,65 @@
         </div>
         <div class="spacer"></div>
         <div class="container grid-container">
-            <div class="boardGrid">
-                <% for (let i = 0; i < room.Players.length; i++) { %>
-                    <div class="container blank-board-container">
-                        <% if (room.BoardSize == 3) { %>
-                            <div class="blank-board" id="<%= room.Players[i].ID %>">
-                                <% for (let j = 0; j < 9; j++) { %>
-                                    <% if (room.Players[i].BoardState[j] == true ) { %>
-                                        <div class="blank-square" id="<%= room.Players[i].ID %><%= j %>" style="background-color: #4daa57;">
-                                            <div>
-                                                <!-- Individual square of individiual player -->
+            <div style="display: block; overflow: hidden;">
+                <div class="boardGrid">
+                    <% for (let i = 0; i < room.Players.length; i++) { %>
+                        <div class="container blank-board-container">
+                            <% if (room.BoardSize == 3) { %>
+                                <div class="blank-board" id="<%= room.Players[i].ID %>">
+                                    <% for (let j = 0; j < 9; j++) { %>
+                                        <% if (room.Players[i].BoardState[j] == true ) { %>
+                                            <div class="blank-square" id="<%= room.Players[i].ID %><%= j %>" style="background-color: #4daa57;">
+                                                <div>
+                                                    <!-- Individual square of individiual player -->
+                                                </div>
                                             </div>
-                                        </div>
+                                        <% } else { %>
+                                            <div class="blank-square" id="<%= room.Players[i].ID %><%= j %>">
+                                                <div>
+                                                    <!-- Individual square of individiual player -->
+                                                </div>
+                                            </div>
+                                        <% } %>
+                                    <% } %>
+                                </div>
+                            <% } else if (room.BoardSize == 4) { %>
+                                <div class="blank-board-4" id="<%= room.Players[i].ID %>">
+                                    <% for (let j = 0; j < 16; j++) { %>
+                                        <% if (room.Players[i].BoardState[j] == true ) { %>
+                                            <div class="blank-square" id="<%= room.Players[i].ID %><%= j %>" style="background-color: #4daa57;">
+                                                <div>
+                                                    <!-- Individual square of individiual player -->
+                                                </div>
+                                            </div>
+                                        <% } else { %>
+                                            <div class="blank-square" id="<%= room.Players[i].ID %><%= j %>">
+                                                <div>
+                                                    <!-- Individual square of individiual player -->
+                                                </div>
+                                            </div>
+                                        <% } %>
+                                    <% } %>
+                                </div>
+                            <% } %>
+                            <div class="nametag" id="<%= room.Players[i].ID %>-nametag">
+                                <h4 style="padding-top: 5px;"><%= room.Players[i].DisplayName %></h4>
+                                <div class="container crowns-container">
+                                    <% if (room.Players[i].NumWins > 0 && room.Players[i].NumWins < 5) { %>
+                                        <% for (let k = 0; k < room.Players[i].NumWins; k++) { %>
+                                            <img src="/images/crown.svg" class="crown">
+                                        <% } %>
+                                        <div><h4 style="color: white; user-select: none;">`</h4></div>
+                                    <% } else if (room.Players[i].NumWins >= 5) { %>
+                                        <img src="/images/crown.svg" class="crown"><h4>x <%= room.Players[i].NumWins %></h4>
                                     <% } else { %>
-                                        <div class="blank-square" id="<%= room.Players[i].ID %><%= j %>">
-                                            <div>
-                                                <!-- Individual square of individiual player -->
-                                            </div>
-                                        </div>
+                                        <div><h4 style="color: white; user-select: none;">`</h4></div>
                                     <% } %>
-                                <% } %>
-                            </div>
-                        <% } else if (room.BoardSize == 4) { %>
-                            <div class="blank-board-4" id="<%= room.Players[i].ID %>">
-                                <% for (let j = 0; j < 16; j++) { %>
-                                    <% if (room.Players[i].BoardState[j] == true ) { %>
-                                        <div class="blank-square" id="<%= room.Players[i].ID %><%= j %>" style="background-color: #4daa57;">
-                                            <div>
-                                                <!-- Individual square of individiual player -->
-                                            </div>
-                                        </div>
-                                    <% } else { %>
-                                        <div class="blank-square" id="<%= room.Players[i].ID %><%= j %>">
-                                            <div>
-                                                <!-- Individual square of individiual player -->
-                                            </div>
-                                        </div>
-                                    <% } %>
-                                <% } %>
-                            </div>
-                        <% } %>
-                        <div class="nametag" id="<%= room.Players[i].ID %>-nametag">
-                            <h4 style="padding-top: 5px;"><%= room.Players[i].DisplayName %></h4>
-                            <div class="container crowns-container">
-                                <% if (room.Players[i].NumWins > 0 && room.Players[i].NumWins < 5) { %>
-                                    <% for (let k = 0; k < room.Players[i].NumWins; k++) { %>
-                                        <img src="/images/crown.svg" class="crown">
-                                    <% } %>
-                                    <div><h4 style="color: white; user-select: none;">`</h4></div>
-                                <% } else if (room.Players[i].NumWins >= 5) { %>
-                                    <img src="/images/crown.svg" class="crown"><h4>x <%= room.Players[i].NumWins %></h4>
-                                <% } else { %>
-                                    <div><h4 style="color: white; user-select: none;">`</h4></div>
-                                <% } %>
+                                </div>
                             </div>
                         </div>
-                    </div>
-                <% } %>
+                    <% } %>
+                </div>
             </div>
         </div>
         <div class="container create-sub-container">
