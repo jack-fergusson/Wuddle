@@ -393,6 +393,25 @@ io.on("connection", (socket) => {
       });
     });
   });
+
+  socket.on('deleteEvent', async (roomID, eventIndex) => {
+    await Room.findOne({ ID : roomID }).exec()
+    .then(async function(room) {
+      room.Events.splice(eventIndex, 1);
+
+      await Room.updateOne(
+        { ID : roomID },
+        { Events: room.Events }
+      )
+      .exec()
+      .then(function() {
+        io.to(roomID).emit('deleteEvent', eventIndex);
+      })
+      .catch(function(err) {
+        console.log(err);
+      });
+    });
+  });
 });
 
 app.get('/create', (req, res) => {

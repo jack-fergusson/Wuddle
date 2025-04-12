@@ -108,20 +108,40 @@
                 <button class="submitEvent" onclick="addEvent()">ADD EVENT</button>
             </div>
         </form>
-        <div class="container pool-container" id="pool-container" style="display: flex;">
-            <div class="pool">
-                <!-- <h3 style="margin-bottom: 2vh; margin-top: 2vh;">THE POOL</h3> -->
-                <div id="poolEvents">
-                    <% for (let i = room.Events.length - 1; i >= 0; i--) { %>
-                        <div class="container pool-item-container">
-                            <p class="pool-item">
-                                <%= room.Events[i] %>
-                            </p>
-                        </div>
-                    <% } %>
+        <% if (room.CreatorID != PlayerID) { %>
+            <div class="container pool-container" id="pool-container" style="display: flex;">
+                <div class="pool">
+                    <!-- <h3 style="margin-bottom: 2vh; margin-top: 2vh;">THE POOL</h3> -->
+                    <div id="poolEvents">
+                        <% for (let i = room.Events.length - 1; i >= 0; i--) { %>
+                            <div class="container pool-item-container">
+                                <p class="pool-item">
+                                    <%= room.Events[i] %>
+                                </p>
+                            </div>
+                        <% } %>
+                    </div>
                 </div>
             </div>
-        </div>
+        <% } else { %>
+            <div class="container pool-container" id="pool-container" style="display: flex;">
+                <div class="pool">
+                    <!-- <h3 style="margin-bottom: 2vh; margin-top: 2vh;">THE POOL</h3> -->
+                    <div id="poolEvents">
+                        <% for (let i = room.Events.length - 1; i >= 0; i--) { %>
+                            <div class="container pool-item-container" style="flex-direction: row;">
+                                <p class="pool-item">
+                                    <%= room.Events[i] %>
+                                </p>
+                                <button onclick="deleteEvent(<%=i%>)" style="background-color: rgb(249, 8, 8); border: 1px solid black; width: calc(2vh + 1vw); height: calc(1vh + 1vw); font-size: calc(1vh + 0.5vw); margin-left: 1vw;">
+                                    X
+                                </button>
+                            </div>
+                        <% } %>
+                    </div>
+                </div>
+            </div>
+        <% } %>
         <div>
             <div class="spacer"></div>
         </div>
@@ -134,6 +154,9 @@
         socket.emit('joinRoom', '<%=roomID%>');
 
         var BoardSize = JSON.parse('<%- JSON.stringify(room.BoardSize) %>');
+        var CreatorID = JSON.parse('<%- JSON.stringify(room.CreatorID) %>');
+        var PlayerID = JSON.parse('<%- JSON.stringify(PlayerID) %>');
+        var Events = JSON.parse('<%- JSON.stringify(room.Events) %>');
 
         // Register hits from player pages and change color of given square
         socket.on('hit', (playerID, hitIndex, winCondition) => {
@@ -187,18 +210,10 @@
             document.getElementById("copyText").select();
         }
 
-        // function unhideEvent() {
-        //     let addEvent = document.getElementById("addEvent-container");
-        //     let pool = document.getElementById("pool-container");
-
-        //     if (addEvent.style.display == "none") {
-        //         addEvent.style = "display: flex;";
-        //         pool.style = "display: flex;"
-        //     } else {
-        //         addEvent.style = "display: none;";
-        //         pool.style = "display: none";
-        //     }
-        // }
+        function deleteEvent(eventIndex) {
+            socket.emit('deleteEvent', '<%=roomID%>', eventIndex);
+            // xrlocation.reload();
+        }
 
         var form = document.getElementById("addEvent-form");
         function handleForm(event) { 
@@ -209,15 +224,40 @@
         } 
         form.addEventListener('submit', handleForm);
 
+
         socket.on('addEvent', (event) => {
             // alert(event);
 
             poolInnerHTML = document.getElementById("poolEvents").innerHTML;
-            newEventHTML = `<div class="container pool-item-container"><p class="pool-item">${event}</p></div>`;
+            
+            if (CreatorID != PlayerID) {
+                newEventHTML = `<div class="container pool-item-container"><p class="pool-item">${event}</p></div>`;
+            } else {
+                newEventHTML = `<div class="container pool-item-container" style="flex-direction: row;"><p class="pool-item">${event}</p><button onclick="deleteEvent(${Events.length})" style="background-color: rgb(249, 8, 8); border: 1px solid black; width: calc(2vh + 1vw); height: calc(1vh + 1vw); font-size: calc(1vh + 0.5vw); margin-left: 1vw;">X</button></div>`;
+            }
+
+            Events.push(event);
 
             document.getElementById("poolEvents").innerHTML = newEventHTML + poolInnerHTML;
         });
 
+
+        socket.on('deleteEvent', (eventIndex) => {
+            Events.splice(eventIndex, 1);
+            let newInnerHTML = '';
+
+            if (CreatorID != PlayerID) {
+                for (let i = Events.length-1; i >= 0; i--) {
+                    newInnerHTML += `<div class="container pool-item-container"><p class="pool-item">${Events[i]}</p></div>`
+                }
+            } else {
+                for (let i = Events.length-1; i >= 0; i--) {
+                    newInnerHTML += `<div class="container pool-item-container" style="flex-direction: row;"><p class="pool-item">${Events[i]}</p><button onclick="deleteEvent(${i})" style="background-color: rgb(249, 8, 8); border: 1px solid black; width: calc(2vh + 1vw); height: calc(1vh + 1vw); font-size: calc(1vh + 0.5vw); margin-left: 1vw;">X</button></div>`
+                }
+            }
+
+            document.getElementById("poolEvents").innerHTML = newInnerHTML;
+        });
     </script>
 
 <%- include('footer.ejs') %>
