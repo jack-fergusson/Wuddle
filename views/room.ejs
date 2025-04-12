@@ -104,7 +104,7 @@
         </h3>
         <form action="/rooms/<%= roomID %>/<%=PlayerID%>/boards" method="post" id="addEvent-form">
             <div class="addEvent-container" id="addEvent-container" style="display: flex;">
-                <input type="text" class="addEvent-input" id="event" name="event" placeholder="<%= room.Players[0].DisplayName %> gets hurt" maxlength="45" autocomplete="off" required>
+                <input type="text" class="addEvent-input" id="event" name="event" placeholder="Something happens..." maxlength="45" autocomplete="off" required>
                 <button class="submitEvent" onclick="addEvent()">ADD EVENT</button>
             </div>
         </form>
