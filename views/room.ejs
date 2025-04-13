@@ -102,7 +102,8 @@
         <h3 style="margin-top: 3vh; margin-bottom: 2vh;">
             ADD To The Pool
         </h3>
-        <form action="/rooms/<%= roomID %>/<%=PlayerID%>/boards" method="post" id="addEvent-form">
+        <!-- <form  action="/rooms/<%= roomID %>/<%=PlayerID%>/boards" method="post" id="addEvent-form"> -->
+        <form id="addEvent-form">
             <div class="addEvent-container" id="addEvent-container" style="display: flex;">
                 <input type="text" class="addEvent-input" id="event" name="event" placeholder="Something happens..." maxlength="45" autocomplete="off" required>
                 <button class="submitEvent" onclick="addEvent()">ADD EVENT</button>
@@ -156,7 +157,9 @@
         var BoardSize = JSON.parse('<%- JSON.stringify(room.BoardSize) %>');
         var CreatorID = JSON.parse('<%- JSON.stringify(room.CreatorID) %>');
         var PlayerID = JSON.parse('<%- JSON.stringify(PlayerID) %>');
-        var Events = JSON.parse('<%- JSON.stringify(room.Events) %>');
+
+        var Events = <%- JSON.stringify(room.Events) %>
+        // alert(Events[0]);
 
         // Register hits from player pages and change color of given square
         socket.on('hit', (playerID, hitIndex, winCondition) => {
@@ -218,7 +221,6 @@
         var form = document.getElementById("addEvent-form");
         function handleForm(event) { 
             event.preventDefault();
-            // alert(document.getElementById("event").value);
             socket.emit('newEvent', '<%=roomID%>', document.getElementById("event").value);
             document.getElementById("event").value = "";
         } 
@@ -244,6 +246,7 @@
 
         socket.on('deleteEvent', (eventIndex) => {
             Events.splice(eventIndex, 1);
+            // alert(Events);
             let newInnerHTML = '';
 
             if (CreatorID != PlayerID) {

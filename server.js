@@ -385,6 +385,8 @@ io.on("connection", (socket) => {
   socket.on('newEvent', async(roomID, eventText) => {
     eventText = filter.clean(eventText);
 
+    console.log(`New Event: ${eventText}`);
+
     if (!eventText.includes('*')) {
       await Room.findOne({ ID : roomID }).exec()
       .then(async function(room) {
