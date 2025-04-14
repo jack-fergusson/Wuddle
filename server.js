@@ -639,7 +639,10 @@ app.get("/rooms/:roomID/signup", checkRoomID, async (req, res) => {
 // A user joins the game
 app.post("/rooms/:roomID/signup", async (req, res) => {
   const room = await Room.findOne({ ID: req.params.roomID });
-  room.Events.push(filter.clean(req.body.event));
+  
+  if (req.body.event != "") {
+    room.Events.push(filter.clean(req.body.event));
+  }
 
   const playerInstance = new Player();
 
