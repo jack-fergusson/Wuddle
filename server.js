@@ -427,10 +427,25 @@ io.on("connection", (socket) => {
   });
 });
 
+app.get('/copy/:roomID', async (req, res) => {
+  await Room.findOne({ ID : req.params.roomID }).exec()
+  .then(async function(room) {
+    let roomCode = helpers.makeID(8);
+
+    res.render("create", {
+      roomID: roomCode,
+      roomName: room.Name,
+      roomEvents: room.Events,
+    });
+  });
+});
+
 app.get('/create', (req, res) => {
   let roomCode = helpers.makeID(8);
   res.render("create", {
     roomID: roomCode,
+    roomName: "",
+    roomEvents: [],
   });
 });
 
@@ -444,13 +459,16 @@ app.post('/create', async (req, res, next) => {
   roomInstance.Chats = [];
 
   let events = req.body.events.split(/\r?\n/);
+  let processedEvents = [];
   console.log(events);
   for (let i = 0; i < events.length; i++) {
-    // Filter out bad words and truncate to 41 chars
-    events[i] = filter.clean(events[i].substring(0, 41));
+    if (events[i].length > 0) {
+      // Filter out bad words and truncate to 43 chars
+      processedEvents.push(filter.clean(events[i].substring(0, 43)));
+    }
   }
   
-  roomInstance.Events = events;
+  roomInstance.Events = processedEvents;
   roomInstance.Name = filter.clean(req.body.roomName);
   roomInstance.BoardSize = parseInt(req.body.boardSize);
 

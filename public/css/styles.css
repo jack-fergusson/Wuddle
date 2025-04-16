@@ -326,6 +326,21 @@ h3 {
   margin-left: 1vw;
 }
 
+.duplicateRoomButton {
+  width: calc(15vh + 15vw);
+  background-color: #4daa57;
+  border: none;
+  border-radius: 8px;
+  color: white;
+  padding: 2vh 3vh;
+  margin-top: 2vh;
+  margin-bottom: 2vh;
+  text-align: center;
+  text-decoration: none;
+  display: inline-block;
+  font-size: calc(1vh + 1vw);
+}
+
 .board {
   width: 100%;
   height: 100%;

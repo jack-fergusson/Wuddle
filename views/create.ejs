@@ -13,7 +13,7 @@
                 </h3>
             </div>
             <div class="spacer"></div>
-            <input type="text" class="room-name-input" id="room-name-input" name="roomName" size="15" maxlength="25" placeholder="Jim's Golf Trip 2025" autocomplete="off" required>
+            <input type="text" class="room-name-input" id="room-name-input" name="roomName" size="15" maxlength="25" placeholder="Jim's Golf Trip 2025" autocomplete="off" value="<%= roomName %>" required>
         </div>
         <div class="container create-sub-container" style="flex-direction: row;">
             <div>
@@ -39,7 +39,12 @@
             </div>
 
             <div class="container create-sub-container">
-                <textarea required id="events" name="events" class="events-textarea" rows="16" cols="38" placeholder="Enter events!&#10;&#10;Seperate events with a new line (enter).&#10;For a 3x3 board, enter 9+ events.&#10;For a 4x4 board, enter 16+ events.&#10;&#10;Each event should be no longer than 40 characters, which is the width of this box" autocomplete="off"></textarea>
+                <textarea required id="events" name="events" class="events-textarea" rows="16" cols="38" placeholder="Enter events!&#10;&#10;Seperate events with a new line (enter).&#10;For a 3x3 board, enter 9+ events.&#10;For a 4x4 board, enter 16+ events.&#10;&#10;Each event should be no longer than 40 characters, which is the width of this box" autocomplete="off">
+<% for (let i = 0; i < roomEvents.length; i++) { %><%= roomEvents[i] %>
+<% } %></textarea>
+            </div>
+            <div class="container">
+                <p class="invite-tooltip" style="margin-bottom: 1vh;">^ Add as many predictions as you want! ^</p>
             </div>
         </div>
         <div class="container create-sub-container">
