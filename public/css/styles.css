@@ -544,6 +544,22 @@ h3 {
   grid-template-rows: minmax(0, 1fr) minmax(0, 1fr) minmax(0, 1fr) minmax(0, 1fr);
 }
 
+.personal-board-5 {
+  background-color: black;
+  border-style: solid;
+  border-color: black;
+  width: calc(30vh + 20vw);
+  height: calc(30vh + 20vw);
+  /* max-width: 390px;
+  max-height: 390px; */
+  min-width: 40vh;
+  min-height: 40vh;
+  display: grid;
+  gap: 2px;
+  grid-template-columns: minmax(0, 1fr) minmax(0, 1fr) minmax(0, 1fr) minmax(0, 1fr) minmax(0, 1fr);
+  grid-template-rows: minmax(0, 1fr) minmax(0, 1fr) minmax(0, 1fr) minmax(0, 1fr) minmax(0, 1fr);
+}
+
 /* .blank-board-container {
   width: 90%;
 } */
@@ -570,6 +586,18 @@ h3 {
   gap: 1px;
   grid-template-columns: 1fr 1fr 1fr 1fr;
   grid-template-rows: 1fr 1fr 1fr 1fr;
+}
+
+.blank-board-5 {
+  background-color: black;
+  border-style: solid;
+  border-color: black;
+  width: calc(10vh + 6vw);
+  height: calc(10vh + 6vw);
+  display: grid;
+  gap: 1px;
+  grid-template-columns: 1fr 1fr 1fr 1fr 1fr;
+  grid-template-rows: 1fr 1fr 1fr 1fr 1fr;
 }
 
 .blank-square {
@@ -707,7 +735,17 @@ textarea:focus, input:focus{
   width: 99%;
   color: black;
   margin: 2px;
-  font-size: calc(1vh + 0.5vw);
+  font-size: calc(1.3vh + 0.5vw);
+  font-family: lazy_dog;
+  overflow-wrap: break-word;
+}
+
+.square-text-5 {
+  display: inline-block;
+  width: 99%;
+  color: black;
+  margin: 2px;
+  font-size: calc(1vh + 0.4vw);
   font-family: lazy_dog;
   overflow-wrap: break-word;
 }

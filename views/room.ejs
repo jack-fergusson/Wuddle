@@ -67,6 +67,24 @@
                                         <% } %>
                                     <% } %>
                                 </div>
+                            <% } else if (room.BoardSize == 5) { %>
+                                <div class="blank-board-5" id="<%= room.Players[i].ID %>">
+                                    <% for (let j = 0; j < 25; j++) { %>
+                                        <% if (room.Players[i].BoardState[j] == true ) { %>
+                                            <div class="blank-square" id="<%= room.Players[i].ID %><%= j %>" style="background-color: #4daa57;">
+                                                <div>
+                                                    <!-- Individual square of individiual player -->
+                                                </div>
+                                            </div>
+                                        <% } else { %>
+                                            <div class="blank-square" id="<%= room.Players[i].ID %><%= j %>">
+                                                <div>
+                                                    <!-- Individual square of individiual player -->
+                                                </div>
+                                            </div>
+                                        <% } %>
+                                    <% } %>
+                                </div>
                             <% } %>
                             <div class="nametag" id="<%= room.Players[i].ID %>-nametag">
                                 <h4 style="padding-top: 5px;"><%= room.Players[i].DisplayName %></h4>
@@ -206,6 +224,10 @@
                 }
             } else if  (BoardSize == 4) {
                 for (let i = 0; i < 16; i++) {
+                    document.getElementById(PlayerID + i.toString()).style.backgroundColor = "white";
+                }
+            } else if  (BoardSize == 5) {
+                for (let i = 0; i < 25; i++) {
                     document.getElementById(PlayerID + i.toString()).style.backgroundColor = "white";
                 }
             }

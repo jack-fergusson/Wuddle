@@ -59,6 +59,26 @@
                     <% } %>
                 </div>
             </div>
+        <% } else if (Room.BoardSize == 5) { %>
+            <div class="container board-grid-container">
+                <div class="personal-board-5" id="board">
+                    <% for (let i = 0; i < 25; i++) { %>
+                        <% if (Player.BoardState[i] == true ) { %>
+                            <div class="square" id="<%= i %>" style="background-color: #4daa57;" onClick="eventHappened(<%= i %>)">
+                                <div class="container square-text-container">
+                                    <p class="square-text-5"><%= Player.Events[i] %></p>
+                                </div>
+                            </div>
+                        <% } else { %>
+                            <div class="square" id="<%= i %>" onClick="eventHappened(<%= i %>)">
+                                <div class="container square-text-container">
+                                    <p class="square-text-5"><%= Player.Events[i] %></p>
+                                </div>
+                            </div>  
+                        <% } %>
+                    <% } %>
+                </div>
+            </div>
         <% } %>
         <div class="container icons-container">
             <a class="trash-button icon-label" title="Rules" href="/info">
@@ -130,6 +150,12 @@
                     WinCondition = true;
                     document.getElementById("refresh").style = "opacity: 1;";
                 }
+            } else if (BoardSize == 5) {
+                if (board[0] && board[5] && board[10] && board[15] && board[20] || board[1] && board[6] && board[11] && board[16] && board[21] || board[2] && board[7] && board[12] && board[17] && board[22] || board[3] && board[8] && board[13] && board [18] && board[23] || board[4] && board[9] && board[14] && board [19] && board[24] || board[0] && board[1] && board[2] && board[3] && board[4] || board[5] && board[6] && board[7] && board[8] && board[9] || board[10] && board[11] && board[12] && board[13] && board[14] || board[15] && board[16] && board[17] && board[18] && board[19] || board[20] && board[21] && board[22] && board[23] && board[24] || board[0] && board[6] && board[12] && board[18] && board[24] || board[4] && board[8] && board[12] && board[16] && board[20]) {
+                    // update the player's wincondition
+                    WinCondition = true;
+                    document.getElementById("refresh").style = "opacity: 1;";
+                }
             }
         }
 
@@ -143,6 +169,11 @@
                 }
             } else if (BoardSize == 4) {
                 for (let i=0; i<16; i++) {
+                    document.getElementById(i).style.backgroundColor= "white";
+                    BoardState[i] = false;
+                }
+            } else if (BoardSize == 5) {
+                for (let i=0; i<25; i++) {
                     document.getElementById(i).style.backgroundColor= "white";
                     BoardState[i] = false;
                 }

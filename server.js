@@ -198,6 +198,11 @@ io.on("connection", (socket) => {
               // update the player's wincondition
               player.WinCondition = true;
             }
+          } else if (room.BoardSize == 5) {
+            if (board[0] && board[5] && board[10] && board[15] && board[20] || board[1] && board[6] && board[11] && board[16] && board[21] || board[2] && board[7] && board[12] && board[17] && board[22] || board[3] && board[8] && board[13] && board [18] && board[23] || board[4] && board[9] && board[14] && board [19] && board[24] || board[0] && board[1] && board[2] && board[3] && board[4] || board[5] && board[6] && board[7] && board[8] && board[9] || board[10] && board[11] && board[12] && board[13] && board[14] || board[15] && board[16] && board[17] && board[18] && board[19] || board[20] && board[21] && board[22] && board[23] && board[24] || board[0] && board[6] && board[12] && board[18] && board[24] || board[4] && board[8] && board[12] && board[16] && board[20]) {
+              // update the player's wincondition
+              player.WinCondition = true;
+            }
           }
 
           // THIS IS IT WOOOOO
@@ -292,11 +297,17 @@ io.on("connection", (socket) => {
           if (room.BoardSize == 3) {
             let tempEvents = room.Events.slice();
             player.Events = helpers.shuffle(tempEvents).slice(0, 9);
-            player.BoardState = [false, false, false, false, false, false, false, false, false];
+            // player.BoardState = [false, false, false, false, false, false, false, false, false];
+            player.BoardState = Array(9).fill(false);
           } else if (room.BoardSize == 4) {
             let tempEvents = room.Events.slice();
             player.Events = helpers.shuffle(tempEvents).slice(0, 16);
-            player.BoardState = [false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false];
+            // player.BoardState = [false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false];
+            player.BoardState = Array(16).fill(false);
+          } else if (room.BoardSize == 5) {
+            let tempEvents = room.Events.slice();
+            player.Events = helpers.shuffle(tempEvents).slice(0, 25);
+            player.BoardState = Array(25).fill(false);
           }
           player.WinCondition = false;
           player.NumWins += 1;
@@ -365,6 +376,10 @@ io.on("connection", (socket) => {
             }
           } else if (room.BoardSize == 4) {
             for (let i = 0; i < 16; i++) {
+              player.BoardState[i] = false;
+            }
+          } else if (room.BoardSize == 5) {
+            for (let i = 0; i < 25; i++) {
               player.BoardState[i] = false;
             }
           }
@@ -436,6 +451,7 @@ app.get('/copy/:roomID', async (req, res) => {
       roomID: roomCode,
       roomName: room.Name,
       roomEvents: room.Events,
+      roomBoardSize: room.BoardSize,
     });
   });
 });
@@ -443,9 +459,11 @@ app.get('/copy/:roomID', async (req, res) => {
 app.get('/create', (req, res) => {
   let roomCode = helpers.makeID(8);
   res.render("create", {
+    // Default blank room
     roomID: roomCode,
     roomName: "",
     roomEvents: [],
+    roomBoardSize: "3",
   });
 });
 
@@ -687,6 +705,12 @@ app.post("/rooms/:roomID/signup", async (req, res) => {
     let tempEvents = room.Events.slice();
     playerInstance.Events = helpers.shuffle(tempEvents).slice(0, 16);
     playerInstance.BoardState = [false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false];
+  }
+  else if (room.BoardSize == 5) {
+    console.log("5x5 board!");
+    let tempEvents = room.Events.slice();
+    playerInstance.Events = helpers.shuffle(tempEvents).slice(0, 25);
+    playerInstance.BoardState = Array(25).fill(false);
   }
 
   // Add the new player to the db using Mongoose syntax, not MongoDB.
