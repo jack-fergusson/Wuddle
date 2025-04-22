@@ -1,6 +1,6 @@
-function makeID(length) {
+function makeID(length, characters) {
     let result = '';
-    const characters = 'ABCDEFGHJKLMNPQRSTUVWXYZ23456789';
+    // const characters = 'ABCDEFGHJKLMNPQRSTUVWXYZ23456789';
     const charactersLength = characters.length;
     let counter = 0;
     while (counter < length) {
@@ -11,7 +11,7 @@ function makeID(length) {
 }
 
 function makeUniqueID(length, existing) {
-  const characters = 'AB';
+  const characters = 'ABCDEFGHJKLMNPQRSTUVWXYZ23456789';
 
   let newID = makeID(length, characters);
 

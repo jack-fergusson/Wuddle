@@ -1,13 +1,13 @@
 import 'dotenv/config'
 
-// const bodyParser = require('body-parser');
-// const { MongoClient } = require('mongodb');
 import mongoose from 'mongoose';
 import cookieParser from 'cookie-parser';
-// const ejs = require("ejs");
 import herokuSSLRedirect from 'heroku-ssl-redirect';
 const sslRedirect = herokuSSLRedirect.default
 import express from 'express';
+
+import * as fs from "fs";
+const JSON_FILE = "IDs.json";
 
 import { Filter } from 'bad-words'
 const filter = new Filter();
@@ -445,34 +445,57 @@ io.on("connection", (socket) => {
 app.get('/copy/:roomID', async (req, res) => {
   await Room.findOne({ ID : req.params.roomID }).exec()
   .then(async function(room) {
-    let roomCode = helpers.makeID(8);
+    try {
+      const jsonData = fs.readFileSync(JSON_FILE);
 
-    res.render("create", {
-      roomID: roomCode,
-      roomName: room.Name,
-      roomEvents: room.Events,
-      roomBoardSize: room.BoardSize,
-    });
+      let IDs = JSON.parse(jsonData);
+      let roomCode = helpers.makeUniqueID(8, IDs.roomIDs);
+      IDs.roomIDs.push(roomCode);
+
+      fs.writeFileSync(JSON_FILE, JSON.stringify(IDs));
+
+      res.render("create", {
+        roomID: roomCode,
+        roomName: room.Name,
+        roomEvents: room.Events,
+        roomBoardSize: room.BoardSize,
+      });
+    } catch (error) {
+      console.error(error);
+
+      throw error;
+    }
   });
 });
 
 app.get('/create', (req, res) => {
-  let roomCode = helpers.makeID(8);
-  res.render("create", {
-    // Default blank room
-    roomID: roomCode,
-    roomName: "",
-    roomEvents: [],
-    roomBoardSize: "3",
-  });
+  try {
+    const jsonData = fs.readFileSync(JSON_FILE);
+
+    let IDs = JSON.parse(jsonData);
+    let roomCode = helpers.makeUniqueID(8, IDs.roomIDs);
+    IDs.roomIDs.push(roomCode);
+
+    fs.writeFileSync(JSON_FILE, JSON.stringify(IDs));
+
+    res.render("create", {
+      // Default blank room
+      roomID: roomCode,
+      roomName: "",
+      roomEvents: [],
+      roomBoardSize: "3",
+    });
+  } catch (error) {
+    console.error(error);
+
+    throw error;
+  }
 });
 
 app.post('/create', async (req, res, next) => {
   // When form is sent, create a new room instance
   const roomInstance = new Room();
 
-  // Create a new 6-letter ID for this specific room
-  // roomInstance.ID = helpers.makeID(8);
   roomInstance.ID = req.body.roomID;
   roomInstance.Chats = [];
 
@@ -497,12 +520,26 @@ app.post('/create', async (req, res, next) => {
   else {
     // else give them an ID
     console.log("GENERATING CREATOR'S ID");
-    var ID = helpers.makeID(8);
+    // var ID = helpers.makeID(8);
+    try {
+      const jsonData = fs.readFileSync(JSON_FILE);
 
-    // Store cookie
-    res.cookie("playerID", ID, {maxAge: 3600000000}, "/");
+      let IDs = JSON.parse(jsonData);
+      let playerCode = helpers.makeUniqueID(8, IDs.playerIDs);
+      IDs.playerIDs.push(playerCode);
 
-    roomInstance.CreatorID = ID;
+      fs.writeFileSync(JSON_FILE, JSON.stringify(IDs));
+
+      // Store cookie
+      res.cookie("playerID", playerCode, {maxAge: 3600000000}, "/");
+
+      roomInstance.CreatorID = playerCode;
+
+    } catch (error) {
+      console.error(error);
+
+      throw error;
+    }
   }
 
 
@@ -689,7 +726,22 @@ app.post("/rooms/:roomID/signup", async (req, res) => {
   else {
     // This is this user's first game
     console.log("GENERATING NEW ID");
-    playerInstance.ID = helpers.makeID(8);
+    try {
+      const jsonData = fs.readFileSync(JSON_FILE);
+
+      let IDs = JSON.parse(jsonData);
+      let playerCode = helpers.makeUniqueID(8, IDs.playerIDs);
+      IDs.playerIDs.push(playerCode);
+
+      fs.writeFileSync(JSON_FILE, JSON.stringify(IDs));
+
+      playerInstance.ID = playerCode;
+
+    } catch (error) {
+      console.error(error);
+
+      throw error;
+    }
   }
   playerInstance.DisplayName = filter.clean(req.body.displayName);
   playerInstance.WinCondition = false;

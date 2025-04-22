@@ -350,6 +350,7 @@ h3 {
 }
 
 .icons-container {
+  margin-top: 3vh;
   flex-direction: row;
 }
 
@@ -509,7 +510,7 @@ h3 {
 
 .board-grid-container {
   padding-top: 2vh;
-  padding-bottom: 2vh;
+  padding-bottom: 0vh;
 }
 
 .personal-board {
