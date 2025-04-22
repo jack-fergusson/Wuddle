@@ -66,6 +66,8 @@ const roomSchema = new Schema ({
   Events: [String],
   Players: [playerSchema],
   CreatorID: String,
+  TemplateRoomID: { type: String, default: 0 }, // Original board from which this one was copied if applicable
+  DateCreated: {type: Date, default: Date.now},
 });
 
 const Room = mongoose.model(
@@ -100,6 +102,10 @@ app.get('/', async (req, res) => {
             });
           }
         });
+
+        // room.TemplateRoomID = "0";
+        // room.DateCreated = Date.now();
+        // room.save();
       });
 
       console.log(playerRooms);
@@ -459,6 +465,7 @@ app.get('/copy/:roomID', async (req, res) => {
         roomName: room.Name,
         roomEvents: room.Events,
         roomBoardSize: room.BoardSize,
+        TemplateRoomID: room.ID,
       });
     } catch (error) {
       console.error(error);
@@ -484,6 +491,7 @@ app.get('/create', (req, res) => {
       roomName: "",
       roomEvents: [],
       roomBoardSize: "3",
+      TemplateRoomID: "0",
     });
   } catch (error) {
     console.error(error);
@@ -497,6 +505,7 @@ app.post('/create', async (req, res, next) => {
   const roomInstance = new Room();
 
   roomInstance.ID = req.body.roomID;
+  roomInstance.TemplateRoomID = req.body.TemplateRoomID;
   roomInstance.Chats = [];
 
   let events = req.body.events.split(/\r?\n/);
