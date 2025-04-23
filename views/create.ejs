@@ -81,6 +81,21 @@ Or, go to play-wuddle.com and enter room code:
 </div>
 
 <script>
+    const TemplateRoomID = JSON.parse('<%- JSON.stringify(TemplateRoomID) %>');
+    const AlreadyCopied = JSON.parse('<%- JSON.stringify(AlreadyCopied) %>');
+    // alert(TemplateRoomID);
+
+    if (AlreadyCopied) {
+        if (confirm("You've already made a copy of this room! Hit 'Cancel' to see your existing rooms, or 'OK' to make another copy.")) {
+
+        } else {
+            window.location.href = "/";
+        }
+    } else {
+        // alert("Congratulations! You 'aven't dont this before!");
+    }
+
+
     $(document).on("keydown", ":input:not(textarea)", function(event) {
         return event.key != "Enter";
     });

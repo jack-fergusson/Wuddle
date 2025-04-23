@@ -4,7 +4,6 @@
 }
 
 html{
-  background-color: #33658A;
   /* background: repeating-linear-gradient( 45deg, #1c364a, #1c364a 20px, #33658A 20px, #33658A 100px ); */
   background: url(/images/background5.png);
   background-size: 90%;
@@ -12,6 +11,7 @@ html{
 
 body {
   margin: 0;
+  background-color: rgba(51, 101, 138, 0.4);
 }
 
 .container {
@@ -94,7 +94,7 @@ body {
   height: auto;
   color: white;
   /* background-color: #33658A; */
-  background-color: rgba(51, 101, 138, 0.5);
+  /* background-color: rgba(51, 101, 138, 0.5); */
   margin: 0;
   margin-left: 3vw;
   padding-left: 1vw;

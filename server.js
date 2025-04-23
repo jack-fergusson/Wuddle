@@ -56,6 +56,7 @@ const chatSchema = new Schema({
   PlayerID: String,
   PlayerName: String,
   Text: String,
+  DateCreated: {type: Date, default: Date.now},
 });
 
 const roomSchema = new Schema ({
@@ -460,12 +461,30 @@ app.get('/copy/:roomID', async (req, res) => {
 
       fs.writeFileSync(JSON_FILE, JSON.stringify(IDs));
 
+      let alreadyCopied = false;
+
+      // See if this user has already made a copy of this room
+      if (req.cookies.playerID) {
+        console.log("HERE!");
+        await Room.find({ TemplateRoomID : room.ID }).exec()
+        .then(async function(rooms) {
+          rooms.forEach(room => {
+            console.log(room.Name);
+            if (room.CreatorID == req.cookies.playerID) {
+              // This player has made a copy of this room before!
+              alreadyCopied = true;
+            }
+          });
+        });
+      }
+
       res.render("create", {
         roomID: roomCode,
         roomName: room.Name,
         roomEvents: room.Events,
         roomBoardSize: room.BoardSize,
         TemplateRoomID: room.ID,
+        AlreadyCopied: alreadyCopied,
       });
     } catch (error) {
       console.error(error);
@@ -492,6 +511,7 @@ app.get('/create', (req, res) => {
       roomEvents: [],
       roomBoardSize: "3",
       TemplateRoomID: "0",
+      alreadyCopied: false,
     });
   } catch (error) {
     console.error(error);
