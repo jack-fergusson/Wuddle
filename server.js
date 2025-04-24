@@ -6,9 +6,6 @@ import herokuSSLRedirect from 'heroku-ssl-redirect';
 const sslRedirect = herokuSSLRedirect.default
 import express from 'express';
 
-import * as fs from "fs";
-const JSON_FILE = "IDs.json";
-
 import { Filter } from 'bad-words'
 const filter = new Filter();
 
@@ -43,6 +40,11 @@ mongoose.connect(uri);
 
 const Schema = mongoose.Schema;
 
+const IdStorageSchema = new Schema({
+  RoomIds: [String],
+  PlayerIds: [String],
+})
+
 const playerSchema = new Schema({
   ID: String,
   DisplayName: String,
@@ -70,6 +72,11 @@ const roomSchema = new Schema ({
   TemplateRoomID: { type: String, default: 0 }, // Original board from which this one was copied if applicable
   DateCreated: {type: Date, default: Date.now},
 });
+
+const IdStorage = mongoose.model(
+    "IdStorage",
+    IdStorageSchema
+);
 
 const Room = mongoose.model(
   "Room",
@@ -106,6 +113,9 @@ app.get('/', async (req, res) => {
 
         // room.TemplateRoomID = "0";
         // room.DateCreated = Date.now();
+        // room.Chats.forEach(chat => {
+        //   chat.DateCreated = Date.now();
+        // });
         // room.save();
       });
 
@@ -453,13 +463,10 @@ app.get('/copy/:roomID', async (req, res) => {
   await Room.findOne({ ID : req.params.roomID }).exec()
   .then(async function(room) {
     try {
-      const jsonData = fs.readFileSync(JSON_FILE);
-
-      let IDs = JSON.parse(jsonData);
-      let roomCode = helpers.makeUniqueID(8, IDs.roomIDs);
-      IDs.roomIDs.push(roomCode);
-
-      fs.writeFileSync(JSON_FILE, JSON.stringify(IDs));
+      let IDs = await IdStorage.findOne({ ID : "1" });
+      let roomCode = helpers.makeUniqueID(8, IDs.RoomIds);
+      IDs.RoomIds.push(roomCode);
+      IDs.save();
 
       let alreadyCopied = false;
 
@@ -470,22 +477,33 @@ app.get('/copy/:roomID', async (req, res) => {
         .then(async function(rooms) {
           rooms.forEach(room => {
             console.log(room.Name);
-            if (room.CreatorID == req.cookies.playerID) {
+            if (room.CreatorID == req.cookies.playerID && room.Players.length > 0) {
               // This player has made a copy of this room before!
+              console.log("They have already made a copy!");
               alreadyCopied = true;
             }
           });
+
+          res.render("create", {
+            roomID: roomCode,
+            roomName: room.Name,
+            roomEvents: room.Events,
+            roomBoardSize: room.BoardSize,
+            TemplateRoomID: room.ID,
+            AlreadyCopied: alreadyCopied,
+          });
         });
       }
-
-      res.render("create", {
-        roomID: roomCode,
-        roomName: room.Name,
-        roomEvents: room.Events,
-        roomBoardSize: room.BoardSize,
-        TemplateRoomID: room.ID,
-        AlreadyCopied: alreadyCopied,
-      });
+      else {
+        res.render("create", {
+          roomID: roomCode,
+          roomName: room.Name,
+          roomEvents: room.Events,
+          roomBoardSize: room.BoardSize,
+          TemplateRoomID: room.ID,
+          AlreadyCopied: alreadyCopied,
+        });
+      }
     } catch (error) {
       console.error(error);
 
@@ -494,15 +512,12 @@ app.get('/copy/:roomID', async (req, res) => {
   });
 });
 
-app.get('/create', (req, res) => {
+app.get('/create', async (req, res) => {
   try {
-    const jsonData = fs.readFileSync(JSON_FILE);
-
-    let IDs = JSON.parse(jsonData);
-    let roomCode = helpers.makeUniqueID(8, IDs.roomIDs);
-    IDs.roomIDs.push(roomCode);
-
-    fs.writeFileSync(JSON_FILE, JSON.stringify(IDs));
+    let IDs = await IdStorage.findOne({ ID : "1" });
+    let roomCode = helpers.makeUniqueID(8, IDs.RoomIds);
+    IDs.RoomIds.push(roomCode);
+    IDs.save();
 
     res.render("create", {
       // Default blank room
@@ -511,7 +526,7 @@ app.get('/create', (req, res) => {
       roomEvents: [],
       roomBoardSize: "3",
       TemplateRoomID: "0",
-      alreadyCopied: false,
+      AlreadyCopied: false,
     });
   } catch (error) {
     console.error(error);
@@ -551,13 +566,10 @@ app.post('/create', async (req, res, next) => {
     console.log("GENERATING CREATOR'S ID");
     // var ID = helpers.makeID(8);
     try {
-      const jsonData = fs.readFileSync(JSON_FILE);
-
-      let IDs = JSON.parse(jsonData);
-      let playerCode = helpers.makeUniqueID(8, IDs.playerIDs);
-      IDs.playerIDs.push(playerCode);
-
-      fs.writeFileSync(JSON_FILE, JSON.stringify(IDs));
+      let IDs = await IdStorage.findOne({ ID : "1" });
+      let playerCode = helpers.makeUniqueID(8, IDs.PlayerIds);
+      IDs.PlayerIds.push(playerCode);
+      IDs.save();
 
       // Store cookie
       res.cookie("playerID", playerCode, {maxAge: 3600000000}, "/");
@@ -756,13 +768,10 @@ app.post("/rooms/:roomID/signup", async (req, res) => {
     // This is this user's first game
     console.log("GENERATING NEW ID");
     try {
-      const jsonData = fs.readFileSync(JSON_FILE);
-
-      let IDs = JSON.parse(jsonData);
-      let playerCode = helpers.makeUniqueID(8, IDs.playerIDs);
-      IDs.playerIDs.push(playerCode);
-
-      fs.writeFileSync(JSON_FILE, JSON.stringify(IDs));
+      let IDs = await IdStorage.findOne({ ID : "1" });
+      let playerCode = helpers.makeUniqueID(8, IDs.PlayerIds);
+      IDs.PlayerIds.push(playerCode);
+      IDs.save();
 
       playerInstance.ID = playerCode;
 
