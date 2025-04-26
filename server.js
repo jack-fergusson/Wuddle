@@ -120,8 +120,6 @@ app.get('/', async (req, res) => {
         // room.save();
       });
 
-      console.log(playerRooms);
-
       if (playerRooms.length == 0) {
         res.clearCookie("playerID");
         res.render("home", {
