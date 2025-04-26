@@ -28,7 +28,7 @@ const __dirname = import.meta.dirname;
 app.set('view engine', 'ejs');
 app.set('views', (__dirname + '/views'));
 
-const exampleIDs = ["T8BSP5FE", "G4UNKTTZ"];
+const exampleIDs = ["T8BSP5FE", "G4UNKTTZ", "3W2VGFK9"];
 
 app.use(express.static(__dirname + '/public'));
 app.use(express.urlencoded({ extended: false }));

@@ -27,7 +27,7 @@ body {
   height: 100%;
   justify-content: flex-start;
   /* padding-bottom: calc(3vh + 2vw); */
-  padding-bottom: calc(2vh);
+  padding-bottom: calc(1vh);
 }
 
 .page-container {
