@@ -583,12 +583,48 @@ app.post('/create', async (req, res, next) => {
     }
   }
 
+  const playerInstance = new Player();
+
+  playerInstance.ID = roomInstance.CreatorID;
+
+  playerInstance.DisplayName = filter.clean(req.body.displayName);
+  playerInstance.WinCondition = false;
+  playerInstance.NumWins = 0;
+
+  if (roomInstance.BoardSize == 3) {
+    let tempEvents = roomInstance.Events.slice();
+    playerInstance.Events = helpers.shuffle(tempEvents).slice(0, 9);
+    playerInstance.BoardState = [false, false, false, false, false, false, false, false, false];
+  } 
+  else if (roomInstance.BoardSize == 4) {
+    console.log("Big board!");
+    let tempEvents = roomInstance.Events.slice();
+    playerInstance.Events = helpers.shuffle(tempEvents).slice(0, 16);
+    playerInstance.BoardState = [false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false];
+  }
+  else if (roomInstance.BoardSize == 5) {
+    console.log("5x5 board!");
+    let tempEvents = roomInstance.Events.slice();
+    playerInstance.Events = helpers.shuffle(tempEvents).slice(0, 25);
+    playerInstance.BoardState = Array(25).fill(false);
+  }
+
+  // Add the new player to the db using Mongoose syntax, not MongoDB.
+  roomInstance.Players.push(playerInstance);
+
+  let chatInstance = new Chat();
+  chatInstance.PlayerID = "0";
+  chatInstance.PlayerName = "";
+  chatInstance.Text = `${req.body.displayName} has joined the room!`;
+
+  roomInstance.Chats.push(chatInstance);
+
 
   // Save the room with all attributes.
   await roomInstance.save();
 
-  // Route the owner of the room to be signed up to play.
-  res.redirect("/rooms/" + roomInstance.ID + "/signup");
+  // Route the owner of the room to their board
+  res.redirect("/rooms/" + roomInstance.ID + "/my-board");
 });
 
 // Middleware for checking roomID validity in the URL
@@ -754,9 +790,9 @@ app.get("/rooms/:roomID/signup", checkRoomID, async (req, res) => {
 app.post("/rooms/:roomID/signup", async (req, res) => {
   const room = await Room.findOne({ ID: req.params.roomID });
   
-  if (req.body.event != "") {
-    room.Events.push(filter.clean(req.body.event));
-  }
+  // if (req.body.event != "") {
+  //   room.Events.push(filter.clean(req.body.event));
+  // }
 
   const playerInstance = new Player();
 
@@ -860,6 +896,12 @@ app.get('/error', (req, res) => {
   res.render("error", {
     errorString: errorString
   });
+});
+
+// Allow robots.txt file to be accessed by googlebot
+// necessary for hosting online
+app.get("/robots.txt", function(req, res){
+  res.sendFile(__dirname + "/robots.txt");
 });
 
 // Heroku
