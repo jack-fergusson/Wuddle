@@ -1,0 +1,63 @@
+<%- include('header.ejs') %>
+    <div class="container personal-board-container">
+        <div class="roomName-container">
+            <div class="spacer"></div>
+            <h2>Example Boards</h2>
+            <div class="spacer"></div>
+        </div>
+        <% Rooms.forEach(Room => { %>
+            <div class="spacer"></div>
+            <div class="roomName-container">
+                <div class="spacer"></div>
+                <h2><%= Room.Name %></h2>
+            </div>
+            <% if (Room.BoardSize == 3) { %>
+                <div class="container board-grid-container">
+                    <div class="personal-board" id="board">
+                        <% for (let i = 0; i < 9; i++) { %>
+                            <div class="square">
+                                <div class="container square-text-container">
+                                    <p class="square-text"><%= Room.Events[i] %></p>
+                                </div>
+                            </div>  
+                        <% } %>
+                    </div>
+                </div>
+            <% } else if (Room.BoardSize == 4) { %>
+                <div class="container board-grid-container">
+                    <div class="personal-board-4" id="board">
+                        <% for (let i = 0; i < 16; i++) { %>
+                            <div class="square">
+                                <div class="container square-text-container">
+                                    <p class="square-text-4"><%= Room.Events[i] %></p>
+                                </div>
+                            </div>  
+                        <% } %>
+                    </div>
+                </div>
+            <% } else if (Room.BoardSize == 5) { %>
+                <div class="container board-grid-container">
+                    <div class="personal-board-5" id="board">
+                        <% for (let i = 0; i < 25; i++) { %>
+                            <div class="square">
+                                <div class="container square-text-container">
+                                    <p class="square-text-5"><%= Room.Events[i] %></p>
+                                </div>
+                            </div>  
+                        <% } %>
+                    </div>
+                </div>
+            <% } %>
+            <div class="container duplicateRoomContainer">
+                <a href="/copy/<%= Room.ID %>" class="container" style="text-decoration: none;">    
+                    <button class="container duplicateRoomButton">
+                        Create Room From Example
+                    </button>
+                </a>
+            </div>
+            <div class="spacer"></div>
+        <% }); %>
+        <div class="spacer"></div>
+    </div>
+
+<%- include('footer.ejs') %>

@@ -28,6 +28,7 @@ const __dirname = import.meta.dirname;
 app.set('view engine', 'ejs');
 app.set('views', (__dirname + '/views'));
 
+const exampleIDs = ["T8BSP5FE", "G4UNKTTZ"];
 
 app.use(express.static(__dirname + '/public'));
 app.use(express.urlencoded({ extended: false }));
@@ -419,7 +420,7 @@ io.on("connection", (socket) => {
 
     console.log(`New Event: ${eventText}`);
 
-    if (!eventText.includes('*')) {
+    if (!eventText.includes('*') && !exampleIDs.includes(roomID)) {
       await Room.findOne({ ID : roomID }).exec()
       .then(async function(room) {
         room.Events.push(eventText);
@@ -885,6 +886,25 @@ app.get("/rooms/:roomID/my-board", checkRoomID, checkPlayerID, async (req, res) 
     });
   });
 });
+
+app.get("/examples", async (req, res) => {
+  let exampleRooms = [];
+
+  exampleIDs.forEach(async roomID => {
+    await Room.findOne({"ID" : roomID}).exec()
+    .then(function(room) {
+      // console.log(room.Name);
+      exampleRooms.push(room);
+
+      if (exampleRooms.length == exampleIDs.length) {
+        exampleRooms.sort();
+        res.render("examples", {
+          Rooms: exampleRooms,
+        });
+      }
+    });
+  });
+})
 
 
 app.get('/error', (req, res) => {
