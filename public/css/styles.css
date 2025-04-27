@@ -747,7 +747,7 @@ textarea:focus, input:focus{
   width: 99%;
   color: black;
   margin: 2px;
-  font-size: calc(1vh + 0.4vw);
+  font-size: calc(0.8vh + 0.4vw);
   font-family: lazy_dog;
   overflow-wrap: break-word;
 }
