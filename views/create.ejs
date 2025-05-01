@@ -51,7 +51,7 @@
             </div>
 
             <div class="container create-sub-container">
-                <textarea required id="events" name="events" class="events-textarea" rows="16" cols="38" placeholder="Enter events!&#10;&#10;Seperate events with a new line (enter).&#10;For a 3x3 board, enter 9+ events.&#10;For a 4x4 board, enter 16+ events.&#10;&#10;Each event should be no longer than 40 characters, which is the width of this box" autocomplete="off">
+                <textarea required id="events" name="events" class="events-textarea" rows="16" cols="38" placeholder="Enter your predictions!&#10;&#10;Seperate predictions with a new line (enter).&#10;&#10;For a 3x3 board, enter 9+ predictions.&#10;For a 4x4 board, enter 16+ predictions.&#10;For a 5x5 board, enter 25+ predictions.&#10;If you fall short, you can always add more after creating.&#10;&#10;Each prediction should be no longer than 40 characters, which is the width of this box" autocomplete="off">
 <% for (let i = 0; i < roomEvents.length; i++) { %><%= roomEvents[i] %>
 <% } %></textarea>
             </div>

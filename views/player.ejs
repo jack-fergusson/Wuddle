@@ -19,81 +19,95 @@
             </button>
         </div>
         <div class="spacer"></div>
-        <% if (Room.BoardSize == 3) { %>
-            <div class="container board-grid-container">
-                <div class="personal-board" id="board">
-                    <% for (let i = 0; i < 9; i++) { %>
-                        <% if (Player.BoardState[i] == true ) { %>
-                            <div class="square" id="<%= i %>" style="background-color: #4daa57;" onClick="eventHappened(<%= i %>)">
-                                <div class="container square-text-container">
-                                    <p class="square-text"><%= Player.Events[i] %></p>
+        <% if (Player.Events.length == (Room.BoardSize * Room.BoardSize)) { %>
+            <% if (Room.BoardSize == 3) { %>
+                <div class="container board-grid-container">
+                    <div class="personal-board" id="board">
+                        <% for (let i = 0; i < 9; i++) { %>
+                            <% if (Player.BoardState[i] == true ) { %>
+                                <div class="square" id="<%= i %>" style="background-color: #4daa57;" onClick="eventHappened(<%= i %>)">
+                                    <div class="container square-text-container">
+                                        <p class="square-text"><%= Player.Events[i] %></p>
+                                    </div>
                                 </div>
-                            </div>
-                        <% } else { %>
-                            <div class="square" id="<%= i %>" onClick="eventHappened(<%= i %>)">
-                                <div class="container square-text-container">
-                                    <p class="square-text"><%= Player.Events[i] %></p>
-                                </div>
-                            </div>  
+                            <% } else { %>
+                                <div class="square" id="<%= i %>" onClick="eventHappened(<%= i %>)">
+                                    <div class="container square-text-container">
+                                        <p class="square-text"><%= Player.Events[i] %></p>
+                                    </div>
+                                </div>  
+                            <% } %>
                         <% } %>
-                    <% } %>
+                    </div>
                 </div>
-            </div>
-        <% } else if (Room.BoardSize == 4) { %>
-            <div class="container board-grid-container">
-                <div class="personal-board-4" id="board">
-                    <% for (let i = 0; i < 16; i++) { %>
-                        <% if (Player.BoardState[i] == true ) { %>
-                            <div class="square" id="<%= i %>" style="background-color: #4daa57;" onClick="eventHappened(<%= i %>)">
-                                <div class="container square-text-container">
-                                    <p class="square-text-4"><%= Player.Events[i] %></p>
+            <% } else if (Room.BoardSize == 4) { %>
+                <div class="container board-grid-container">
+                    <div class="personal-board-4" id="board">
+                        <% for (let i = 0; i < 16; i++) { %>
+                            <% if (Player.BoardState[i] == true ) { %>
+                                <div class="square" id="<%= i %>" style="background-color: #4daa57;" onClick="eventHappened(<%= i %>)">
+                                    <div class="container square-text-container">
+                                        <p class="square-text-4"><%= Player.Events[i] %></p>
+                                    </div>
                                 </div>
-                            </div>
-                        <% } else { %>
-                            <div class="square" id="<%= i %>" onClick="eventHappened(<%= i %>)">
-                                <div class="container square-text-container">
-                                    <p class="square-text-4"><%= Player.Events[i] %></p>
-                                </div>
-                            </div>  
+                            <% } else { %>
+                                <div class="square" id="<%= i %>" onClick="eventHappened(<%= i %>)">
+                                    <div class="container square-text-container">
+                                        <p class="square-text-4"><%= Player.Events[i] %></p>
+                                    </div>
+                                </div>  
+                            <% } %>
                         <% } %>
-                    <% } %>
+                    </div>
                 </div>
-            </div>
-        <% } else if (Room.BoardSize == 5) { %>
-            <div class="container board-grid-container">
-                <div class="personal-board-5" id="board">
-                    <% for (let i = 0; i < 25; i++) { %>
-                        <% if (Player.BoardState[i] == true ) { %>
-                            <div class="square" id="<%= i %>" style="background-color: #4daa57;" onClick="eventHappened(<%= i %>)">
-                                <div class="container square-text-container">
-                                    <p class="square-text-5"><%= Player.Events[i] %></p>
+            <% } else if (Room.BoardSize == 5) { %>
+                <div class="container board-grid-container">
+                    <div class="personal-board-5" id="board">
+                        <% for (let i = 0; i < 25; i++) { %>
+                            <% if (Player.BoardState[i] == true ) { %>
+                                <div class="square" id="<%= i %>" style="background-color: #4daa57;" onClick="eventHappened(<%= i %>)">
+                                    <div class="container square-text-container">
+                                        <p class="square-text-5"><%= Player.Events[i] %></p>
+                                    </div>
                                 </div>
-                            </div>
-                        <% } else { %>
-                            <div class="square" id="<%= i %>" onClick="eventHappened(<%= i %>)">
-                                <div class="container square-text-container">
-                                    <p class="square-text-5"><%= Player.Events[i] %></p>
-                                </div>
-                            </div>  
+                            <% } else { %>
+                                <div class="square" id="<%= i %>" onClick="eventHappened(<%= i %>)">
+                                    <div class="container square-text-container">
+                                        <p class="square-text-5"><%= Player.Events[i] %></p>
+                                    </div>
+                                </div>  
+                            <% } %>
                         <% } %>
-                    <% } %>
+                    </div>
+                </div>
+            <% } %>
+            <div class="container">
+                <p class="invite-tooltip" style="margin-bottom: 1vh;">^ Check things off as they happen! ^</p>
+            </div>
+            <div class="container icons-container">
+                <button class="trash-button" title="Clear Board" onclick="clearAll()">
+                    <img src="/images/trash-can.svg" class="trash">
+                    <p class="icon-label">Clear Board</p>
+                </button>
+                <div class="spacer"></div>
+                <button class="refresh-button" title="New Board" onclick="newBoard()">
+                    <img src="/images/refresh.svg" id="refresh" class="refresh">
+                    <p class="icon-label">New Board</p>
+                </button>
+            </div>
+        <% } else { %>
+            <div class="container no-board-container">
+                <div>
+                    <p class="no-board-instructions">No board yet!</p>
+                </div>
+                <div>
+                    <p class="no-board-instructions">There aren't enough submissions yet to make a full board.</p>
+                </div>
+                <div>
+                    <p class="no-board-instructions">Wait until there are <%= Room.BoardSize * Room.BoardSize %> or more submisions in the pool on the 'All Boards' page.</p>
                 </div>
             </div>
         <% } %>
-        <div class="container">
-            <p class="invite-tooltip" style="margin-bottom: 1vh;">^ Check things off as they happen! ^</p>
-        </div>
-        <div class="container icons-container">
-            <button class="trash-button" title="Clear Board" onclick="clearAll()">
-                <img src="/images/trash-can.svg" class="trash">
-                <p class="icon-label">Clear Board</p>
-            </button>
-            <div class="spacer"></div>
-            <button class="refresh-button" title="New Board" onclick="newBoard()">
-                <img src="/images/refresh.svg" id="refresh" class="refresh">
-                <p class="icon-label">New Board</p>
-            </button>
-        </div>
         <div class="container icons-container">
             <a class="trash-button icon-label" title="Rules" href="/info">
                 <img src="/images/info.svg" class="trash">

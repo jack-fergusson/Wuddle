@@ -873,7 +873,17 @@ app.get("/rooms/:roomID/my-board", checkRoomID, checkPlayerID, async (req, res) 
       }
     });
 
-    // console.log(currentPlayer);
+    // How many events you need for a full BINGO board
+    let neededEvents = (room.BoardSize * room.BoardSize);
+    if (currentPlayer.Events.length < neededEvents && room.Events.length >= neededEvents) {
+      // This user has not been given enough events
+      // And now there are enough events to give them
+      // Therefore create new events array for player
+      let tempEvents = room.Events.slice();
+      currentPlayer.Events = helpers.shuffle(tempEvents).slice(0, neededEvents);
+      console.log("AHHHHHHH");
+      room.save();
+    }
 
     // Pass along the player's info to the ejs page
     res.render("player", {

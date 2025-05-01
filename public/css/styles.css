@@ -178,7 +178,7 @@ body {
   margin-right: 5px;
 }
 
-.my-rooms-button {
+/* .my-rooms-button {
   height: 100%;
   width: 100%;
   background-color: #4daa57;
@@ -190,7 +190,38 @@ body {
   text-decoration: none;
   display: inline-block;
   font-size: calc(0.5vh + 2vw);
+} */
+
+.my-rooms-button {
+  height: 100%;
+  width: 100%;
+  background-color: white;
+  border: solid;
+  border-radius: 8px;
+  border-color: #33658A;
+  color: #33658A;
+  padding: 0.5vh;
+  text-align: center;
+  text-decoration: none;
+  display: inline-block;
+  font-size: calc(0.5vh + 2vw);
 }
+
+.my-rooms-button:hover {
+  height: 100%;
+  width: 100%;
+  background-color: #33658A;
+  border: solid;
+  border-radius: 8px;
+  border-color: #33658A;
+  color: white;
+  padding: 0.5vh;
+  text-align: center;
+  text-decoration: none;
+  display: inline-block;
+  font-size: calc(0.5vh + 2vw);
+}
+
 
 .been-here {
   font-size: calc(1.5vh + 1vw);
@@ -272,9 +303,10 @@ h3 {
 }
 
 .room-button {
-  background-color: #4daa57;
-  border: none;
+  background-color: #33658A;
+  border: solid;
   border-radius: 8px;
+  border-color: #33658A;
   color: white;
   padding: 2vh 2vh;
   text-align: center;
@@ -306,9 +338,10 @@ h3 {
 .submitEvent {
   /* font-family: 'Lucida Sans', 'Lucida Sans Regular', 'Lucida Grande', 'Lucida Sans Unicode', Geneva, Verdana, sans-serif;
   font-size: calc(1vh + 1vw); */
-  background-color: #4daa57;
-  border: none;
+  background-color: #33658A;
+  border: solid;
   border-radius: 8px;
+  border-color: #33658A;
   color: white;
   padding: 2vh 2.5vh;
   text-align: center;
@@ -329,9 +362,10 @@ h3 {
 
 .duplicateRoomButton {
   width: calc(15vh + 15vw);
-  background-color: #4daa57;
-  border: none;
+  background-color: #33658A;
+  border: solid;
   border-radius: 8px;
+  border-color: #33658A;
   color: white;
   padding: 2vh 3vh;
   margin-top: 2vh;
@@ -492,12 +526,47 @@ h3 {
   font-size: calc(1vh + 1vw);
 }
 
+.unselected:hover {
+  background-color: #33658A;
+  border: solid;
+  border-color: #33658A;
+  border-radius: 8px;
+  color: white;
+  /* padding: 1.5vh 2vh; */
+  padding: 0;
+  text-align: center;
+  text-decoration: none;
+  display: inline-block;
+  font-size: calc(1vh + 1vw);
+}
+
+.unselected:hover > a {
+  color: white;
+  text-decoration: none;
+  font-family: lazy_dog;
+  display: block;
+  padding: 1.5vh 2vh;
+}
+
 .unselected > a {
   color: #33658A;
   text-decoration: none;
   font-family: lazy_dog;
   display: block;
   padding: 1.5vh 2vh;
+}
+
+.no-board-container {
+  height: 55vh;
+  width: 55vh;
+  border: 2px solid black;
+  padding: 2vw;
+}
+
+.no-board-instructions {
+  text-align: center;
+  font-family: 'Lucida Sans', 'Lucida Sans Regular', 'Lucida Grande', 'Lucida Sans Unicode', Geneva, Verdana, sans-serif;
+  font-size: calc(1vh + 1vw);
 }
 
 .grid-container {
