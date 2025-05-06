@@ -165,7 +165,7 @@ body {
   padding-top: 10px;
   height: calc(6vh + 3vw);
   display: flex;
-  width: 70%;
+  width: 80%;
   flex-direction: row;
   align-items: center;
   justify-content: center;
@@ -603,8 +603,8 @@ h3 {
   background-color: black;
   border-style: solid;
   border-color: black;
-  width: calc(30vh + 20vw);
-  height: calc(30vh + 20vw);
+  width: calc(30vh + 23vw);
+  height: calc(30vh + 23vw);
   /* max-width: 390px;
   max-height: 390px; */
   min-width: 40vh;
@@ -619,8 +619,8 @@ h3 {
   background-color: black;
   border-style: solid;
   border-color: black;
-  width: calc(30vh + 20vw);
-  height: calc(30vh + 20vw);
+  width: calc(30vh + 23vw);
+  height: calc(30vh + 23vw);
   /* max-width: 390px;
   max-height: 390px; */
   min-width: 40vh;
