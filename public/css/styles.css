@@ -587,8 +587,8 @@ h3 {
   background-color: black;
   border-style: solid;
   border-color: black;
-  width: calc(30vh + 20vw);
-  height: calc(30vh + 20vw);
+  width: calc(30vh + 23vw);
+  height: calc(30vh + 23vw);
   /* max-width: 390px;
   max-height: 390px; */
   min-width: 40vh;
