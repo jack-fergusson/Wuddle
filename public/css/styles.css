@@ -805,8 +805,8 @@ textarea:focus, input:focus{
   display: inline-block;
   width: 99%;
   color: black;
-  margin: 1px;
-  font-size: calc(1.4vh + 0.5vw);
+  margin: 2px;
+  font-size: calc(1.3vh + 0.5vw);
   font-family: lazy_dog;
   overflow-wrap: break-word;
 }
@@ -815,8 +815,8 @@ textarea:focus, input:focus{
   display: inline-block;
   width: 99%;
   color: black;
-  margin: 0.5px;
-  font-size: calc(0.9vh + 0.5vw);
+  margin: 1px;
+  font-size: calc(0.8vh + 0.4vw);
   font-family: lazy_dog;
   overflow-wrap: break-word;
 }
