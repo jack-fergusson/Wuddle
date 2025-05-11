@@ -821,6 +821,16 @@ textarea:focus, input:focus{
   overflow-wrap: break-word;
 }
 
+.square-text-5-big {
+  display: inline-block;
+  width: 99%;
+  color: black;
+  margin: 1px;
+  font-size: calc(1.1vh + 0.5vw);
+  font-family: lazy_dog;
+  overflow-wrap: break-word;
+}
+
 h4 {
   color: black;
   margin: 2px;
