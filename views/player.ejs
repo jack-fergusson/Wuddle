@@ -1,4 +1,6 @@
 <%- include('header.ejs') %>
+<title>WUDDLE! | <%= Room.Name %></title>
+
     <div class="container personal-board-container">
         <div class="roomName-container">
             <div class="spacer"></div>
@@ -67,13 +69,21 @@
                             <% if (Player.BoardState[i] == true ) { %>
                                 <div class="square" id="<%= i %>" style="background-color: #4daa57;" onClick="eventHappened(<%= i %>)">
                                     <div class="container square-text-container">
-                                        <p class="square-text-5"><%= Player.Events[i] %></p>
+                                        <% if (Player.Events[i].length > 20) { %>
+                                            <p class="square-text-5"><%= Player.Events[i] %></p>
+                                        <% } else { %>
+                                            <p class="square-text-4"><%= Player.Events[i] %></p>
+                                        <% } %>
                                     </div>
                                 </div>
                             <% } else { %>
                                 <div class="square" id="<%= i %>" onClick="eventHappened(<%= i %>)">
                                     <div class="container square-text-container">
-                                        <p class="square-text-5"><%= Player.Events[i] %></p>
+                                        <% if (Player.Events[i].length > 20) { %>
+                                            <p class="square-text-5"><%= Player.Events[i] %></p>
+                                        <% } else { %>
+                                            <p class="square-text-4"><%= Player.Events[i] %></p>
+                                        <% } %>
                                     </div>
                                 </div>  
                             <% } %>

@@ -163,7 +163,7 @@ body {
 
 .my-rooms-row {
   padding-top: 10px;
-  height: calc(6vh + 3vw);
+  height: calc(6vh + 4vw);
   display: flex;
   width: 80%;
   flex-direction: row;

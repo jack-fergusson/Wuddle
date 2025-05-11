@@ -1,31 +1,35 @@
-<%- include('header.ejs') %>
+<%- include('headerWithIndexing.ejs') %>
+<title>WUDDLE! | Custom BINGO Boards With Friends</title>
+
     <div class="container">
         <div class="roomName-container">
             <div class="spacer"></div>
             <h2>WELCOME To WUDDLE!</h2>
             <div class="spacer"></div>
         </div>
-        <div class="container brief-instructions-container">
-            <div class="container join-container">
-                <h3>Join!</h3>
-                <p class="instruction">
-                    Join a game with all your friends for an upcoming party, trip, or other fun event!
-                </p>
+        <% if (rooms.length < 2) { %>
+            <div class="container brief-instructions-container">
+                <div class="container join-container">
+                    <h3>Join!</h3>
+                    <p class="instruction">
+                        Join a game with all your friends for an upcoming party, trip, or other fun event!
+                    </p>
+                </div>
+                <div class="container guess-container">
+                    <h3>Guess!</h3>
+                    <p class="instruction">
+                        Enter a prediction for something that will happen during the event. This can be anything from a frequent gag to a true psychic vision!
+                    </p>
+                </div>
+                <div class="container check-container">
+                    <h3>Check!</h3>
+                    <p class="instruction">
+                        Check off events from your personal random board as they happen. Finishing any line is a win and lets you play again!
+                    </p>
+                </div>
             </div>
-            <div class="container guess-container">
-                <h3>Guess!</h3>
-                <p class="instruction">
-                    Enter a prediction for something that will happen during the event. This can be anything from a frequent gag to a true psychic vision!
-                </p>
-            </div>
-            <div class="container check-container">
-                <h3>Check!</h3>
-                <p class="instruction">
-                    Check off events from your personal random board as they happen. Finishing any line is a win and lets you play again!
-                </p>
-            </div>
-        </div>
-        <div><h2 style="font-size: calc(6vh + 3vw);">↓</h2></div>
+            <div><h2 style="font-size: calc(6vh + 3vw);">↓</h2></div>
+        <% } %>
         <div class="container landing-options-container">
             <div>
                 <h3 class="or">CREATE A GAME</h3>
