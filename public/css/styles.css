@@ -425,7 +425,7 @@ h3 {
 }
 
 .copy {
-  width: calc(2vh + 1vw);
+  width: calc(3vh + 2vw);
 }
 
 .closeCopyText {

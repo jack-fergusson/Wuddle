@@ -111,13 +111,13 @@
         <div class="container create-sub-container">
             <hr style="border: 1px solid black; width: 65%;">
         </div>
-        <div class="container">
+        <div class="container" style="flex-direction: row;">
             <h3>
                 Room code:&nbsp;<span style="color: black; font-size: calc(2.5vh + 1vw);"><%= room.ID %>&nbsp;</span>
-                <!-- <button class="copy-button" id="opener" title="Copy Invitation" onclick="copyInvite()">
-                    <img src="/images/copy.svg" class="copy">
-                </button> -->
             </h3>
+            <button type="button" class="copy-button share" title="Copy Invitation">
+                <img src="/images/share.svg" class="copy">
+            </button>
         </div>
         <div class="container">
             <p class="invite-tooltip" style="margin-bottom: 1vh;">^ Have other players join the room! ^</p>
@@ -294,6 +294,26 @@
             }
 
             document.getElementById("poolEvents").innerHTML = newInnerHTML;
+        });
+
+
+        const shareData = {
+            title: "WUDDLE!",
+            text: `Come play WUDDLE!\n\nGuess what crazy things your friends and family will do!\n\nFollow this link to join the room: www.play-wuddle.com/rooms/${JSON.parse('<%- JSON.stringify(roomID) %>')}\n\nor go to play-wuddle.com and enter room code: ${JSON.parse('<%- JSON.stringify(roomID) %>')}`,
+            url: `www.play-wuddle.com/rooms/${JSON.parse('<%- JSON.stringify(roomID) %>')}`,
+        };
+
+        const btn = document.querySelector(".share");
+        // const resultPara = document.querySelector(".result");
+
+        // Share must be triggered by "user activation"
+        btn.addEventListener("click", async () => {
+            try {
+                await navigator.share(shareData);
+                // resultPara.textContent = "Shared successfully";
+            } catch (err) {
+                // resultPara.textContent = `Cannot share on this device, please copy invitation instead`;
+            }
         });
     </script>
 

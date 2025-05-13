@@ -80,8 +80,12 @@ www.play-wuddle.com/rooms/<%= roomID %>
 Or, go to play-wuddle.com and enter room code:
 <%= roomID %></textarea>
             </div>
+            <div>
+                <button type="button" class="share" style="font-size: calc(1vh + 1vw);">Share Invite!</button>
+            </div>
+            <p class="result invite-tooltip" style="margin-top: 6px; margin-bottom: 2px;"></p>
             <div class="container">
-                <p class="invite-tooltip">^ Send this invitation to players after creating the room! ^</p>
+                <p class="invite-tooltip">^ Send this invitation to your friends, then hit 'Create Room' ^</p>
             </div>
             <input type="text" style="display: none;" name="roomID" value="<%= roomID %>">
         </div>
@@ -102,6 +106,26 @@ Or, go to play-wuddle.com and enter room code:
         window.location.reload();
     }
     });
+
+    const shareData = {
+        title: "WUDDLE!",
+        text: `Come play WUDDLE!\n\nGuess what crazy things your friends and family will do!\n\nFollow this link to join the room: www.play-wuddle.com/rooms/${JSON.parse('<%- JSON.stringify(roomID) %>')}\n\nor go to play-wuddle.com and enter room code: ${JSON.parse('<%- JSON.stringify(roomID) %>')}`,
+        url: `www.play-wuddle.com/rooms/${JSON.parse('<%- JSON.stringify(roomID) %>')}`,
+    };
+
+    const btn = document.querySelector(".share");
+    const resultPara = document.querySelector(".result");
+
+    // Share must be triggered by "user activation"
+    btn.addEventListener("click", async () => {
+        try {
+            await navigator.share(shareData);
+            resultPara.textContent = "Shared successfully";
+        } catch (err) {
+            resultPara.textContent = `Cannot share on this device, please copy invitation instead`;
+        }
+    });
+
 
     const TemplateRoomID = JSON.parse('<%- JSON.stringify(TemplateRoomID) %>');
     const AlreadyCopied = JSON.parse('<%- JSON.stringify(AlreadyCopied) %>');
